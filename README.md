@@ -1,16 +1,16 @@
 # LMDeploy-Skills
 
-Personal Claude Code skills for LMDeploy development.
+Personal skills for LMDeploy development.
 
 ## Skills
 
 ### `/check-env`
 
-Use when `import lmdeploy` fails, CUDA not found, wrong Python version, editable install not recognized, or `conda run` invokes system Python. Covers conda activation, editable install verification, and CUDA sanity check.
+Use when LMDeploy commands fail because the Python env, CUDA visibility, or tool invocation is wrong. Assumes the `fp8` and `vl` conda envs already exist and helps diagnose repo/env pairing, active Python, and GPU visibility.
 
 ### `/code-navigation`
 
-Use when you need to locate a specific subsystem, module, or key file in the LMDeploy codebase. Covers pytorch backend, vl/, serve/, and top-level orchestration files.
+Use when you need to quickly find the right LMDeploy files for a task or bug. Routes by task first, then points to likely entry files in `pytorch/`, `vl/`, `serve/`, and top-level orchestration code.
 
 ### `/support-new-model`
 
@@ -25,11 +25,11 @@ Use when adding support for a new LLM or VLM architecture to LMDeploy's PyTorch 
 
 ### `/submit-pr`
 
-Use when ready to open a new pull request against `InternLM/lmdeploy`. Covers branch creation, lint, staged commit, push, and `gh pr create`. Returns: PR URL, branch name, commit SHA, lint status.
+Use when local LMDeploy changes are ready to become a pull request. Verifies repo state, base branch, `gh` auth, and validation first; then stages only intended files, commits, pushes, and creates the PR. Returns: PR URL, branch name, commit SHA, validation status.
 
 ### `/resolve-review`
 
-Use when a PR has inline or top-level review comments to address. Fetches all comments via `gh api`, guides through fixing each, then lints, commits, and pushes. Returns: list of comments addressed, commit SHA, push confirmation.
+Use when a LMDeploy pull request has review comments to address. Verifies repo state, branch, env, and `gh` auth first; then fetches comments, makes minimal fixes, validates locally, and commits/pushes only when the branch is ready. Returns: list of comments addressed, commit SHA, push confirmation.
 
 ### `/karpathy-guidelines`
 
