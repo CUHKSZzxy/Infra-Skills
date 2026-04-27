@@ -1,73 +1,91 @@
 ---
 name: check-env
-description: Use when `import lmdeploy` fails, CUDA not found, wrong Python version, editable install not recognized, or `conda run` invokes system Python instead of the env's Python.
+description: Use when LMDeploy commands fail because the Python env, CUDA visibility, or tool invocation is wrong. Assume the `fp8` and `vl` conda envs already exist; diagnose the active repo, Python, and GPU first, then use the local env defaults if they match the current checkout.
 ---
 
-# Check LMDeploy Dev Environment
+# Check the LMDeploy Dev Environment
 
-> Last verified: 2026-04-23. Update Known Environments table if you add or rename envs.
+## 1. Identify the current repo and env target
 
-## Configuration
+First determine which LMDeploy checkout you are in and which ready-made env should back it.
 
-| Placeholder    | Meaning                                                                      |
-| -------------- | ---------------------------------------------------------------------------- |
-| `<conda-root>` | Root of your miniconda/anaconda install (e.g. `/nvme1/zhouxinyu/miniconda3`) |
-| `<env-name>`   | Conda env name (see Known Environments table below)                          |
-| `<repo-dir>`   | Absolute path to the lmdeploy repo clone                                     |
+Local defaults:
 
-## 1. Find and activate the conda env
+- `lmdeploy_fp8` -> `fp8`
+- `lmdeploy_vl` -> `vl`
+
+Treat these as local conventions, not universal truth.
+
+## 2. Check Python and repo wiring
+
+Run these first:
 
 ```bash
-conda env list                        # starred = currently active
-conda activate <env-name>             # pick the right env for this project
+pwd
+which python
+python -c "import sys, lmdeploy; print(sys.executable); print(lmdeploy.__file__)"
 ```
 
-## 2. Verify editable install
+Healthy state:
+
+- `python` points to the intended conda env
+- `lmdeploy.__file__` points into the current repo checkout
+
+If `import lmdeploy` fails or points elsewhere, switch to the correct env first, then retry.
+
+## 3. Activate or recover the right env
 
 ```bash
-python -c "import lmdeploy; print(lmdeploy.__file__)"
-# Must point into the repo dir, e.g. /nvme1/zhouxinyu/lmdeploy_vl/lmdeploy/__init__.py
+conda env list
+conda activate <env-name>
 ```
 
-If it doesn't:
+If `conda` is not initialized:
 
 ```bash
-pip install -e .                      # run from repo root
+source ~/miniconda3/etc/profile.d/conda.sh
 ```
 
-## 3. Pick a free GPU
+## 4. Check CUDA visibility
 
 ```bash
-nvidia-smi   # pick a GPU with 0% utilization and only a few MiB allocated
-export CUDA_VISIBLE_DEVICES=<gpu_id>
-```
-
-## 4. Confirm python and CUDA
-
-```bash
-which python                          # must show conda env path, not /usr/bin/python
+nvidia-smi
 python -c "import torch; print(torch.__version__, torch.version.cuda, torch.cuda.device_count())"
 ```
 
-## Known Environments
+If a specific GPU is needed, pick it explicitly:
 
-| Repo dir       | Conda env | Direct python path                                |
-| -------------- | --------- | ------------------------------------------------- |
-| `lmdeploy_fp8` | `fp8`     | `/nvme1/zhouxinyu/miniconda3/envs/fp8/bin/python` |
-| `lmdeploy_vl`  | `vl`      | `/nvme1/zhouxinyu/miniconda3/envs/vl/bin/python`  |
+```bash
+export CUDA_VISIBLE_DEVICES=<gpu_id>
+```
 
-**Important**: `conda run -n <env> python` may invoke the system Python (3.6, no packages).
-Always use the direct path for `pytest` and scripts:
+## 5. Prefer direct env Python when wrappers are unreliable
+
+On this machine, `conda run -n <env> python` may resolve to the wrong Python. If that happens, use the env's interpreter directly for tests and scripts.
+
+Local defaults:
+
+- `/nvme1/zhouxinyu/miniconda3/envs/fp8/bin/python`
+- `/nvme1/zhouxinyu/miniconda3/envs/vl/bin/python`
+
+Example:
 
 ```bash
 CUDA_VISIBLE_DEVICES=X /nvme1/zhouxinyu/miniconda3/envs/<env>/bin/python -m pytest ...
 ```
 
-## Troubleshooting
+## 6. Common diagnosis patterns
 
-| Problem              | Fix                                                                  |
-| -------------------- | -------------------------------------------------------------------- |
-| `conda: not found`   | `source ~/miniconda3/etc/profile.d/conda.sh`                         |
-| Wrong Python         | `conda deactivate && conda activate <env-name>`                      |
-| `lmdeploy` not found | `pip install -e .` from repo root                                    |
-| `conda run` wrong py | Use direct path: `/nvme1/zhouxinyu/miniconda3/envs/<env>/bin/python` |
+- `import lmdeploy` fails: wrong env is active or `python` is not from the intended conda env
+- `lmdeploy.__file__` points outside the repo: wrong env or wrong install is winning
+- `which python` shows system Python: env activation failed
+- Torch imports but sees zero GPUs: CUDA visibility, driver, or container issue
+- `conda run` uses the wrong Python: switch to the direct env interpreter
+
+## Output Contract
+
+This skill should help produce:
+
+- The intended repo and env pairing
+- The exact command to use next
+- The first concrete mismatch: wrong Python, wrong install path, or missing GPU visibility
