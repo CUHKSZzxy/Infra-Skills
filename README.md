@@ -45,9 +45,34 @@ Use when optimizing, reviewing, or validating LMDeploy PyTorch CUDA/Triton kerne
 
 ______________________________________________________________________
 
-## Wiring to a repo
+## Wiring locally
 
-Add to `.claude/settings.json` in the repo:
+Link the repo skills into local agent skill directories:
+
+```bash
+scripts/link_skills.sh
+```
+
+By default this links every folder under `skills/` into both `~/.claude/skills`
+and `~/.codex/skills`. Built-in Codex skills under `~/.codex/skills/.system`
+are left in place.
+
+Useful variants:
+
+```bash
+scripts/link_skills.sh claude
+scripts/link_skills.sh codex
+scripts/link_skills.sh copilot
+scripts/link_skills.sh --dry-run
+scripts/link_skills.sh --dest my-agent=/path/to/skills
+```
+
+Copilot does not have a standard local skills directory in this workspace. If
+your Copilot client watches one, set `COPILOT_SKILLS_DIR` or pass a custom
+`--dest`.
+
+For Claude repo-level wiring without symlinks, add to `.claude/settings.json`
+in the target repo:
 
 ```json
 {
