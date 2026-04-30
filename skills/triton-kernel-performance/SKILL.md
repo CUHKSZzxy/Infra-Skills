@@ -16,7 +16,8 @@ Use this skill for kernel PRs where correctness and performance both matter. The
 5. patch one bottleneck at a time,
 6. re-run the same correctness and performance gates.
 
-Prefer this with `code-navigation` and `check-env` when the repo/env is uncertain.
+Prefer this with `lmdeploy-attention-dataflow` and `check-env` when the
+runtime path or repo/env is uncertain.
 
 ## Bundled Helpers
 

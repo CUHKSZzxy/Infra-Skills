@@ -8,10 +8,6 @@ Personal skills for LMDeploy development.
 
 Use when LMDeploy commands fail because the Python env, CUDA visibility, or tool invocation is wrong. Assumes the `fp8` and `vl` conda envs already exist and helps diagnose repo/env pairing, active Python, and GPU visibility.
 
-### `/code-navigation`
-
-Use when you need to quickly find the right LMDeploy files for a task or bug. Routes by task first, then points to likely entry files in `pytorch/`, `vl/`, `serve/`, and top-level orchestration code.
-
 ### `/support-new-model`
 
 Use when adding support for a new LLM or VLM architecture to LMDeploy's PyTorch backend. The SKILL.md is a lean workflow with step summaries; deep content lives in `references/` and is loaded only when needed:
@@ -23,17 +19,13 @@ Use when adding support for a new LLM or VLM architecture to LMDeploy's PyTorch 
 | `references/vlm-preprocessor.md`  | Implementing Step 4 (VL preprocessor)                       |
 | `references/pitfalls.md`          | Anything fails or produces wrong outputs                    |
 
-### `/submit-pr`
+### `/pr-workflow`
 
-Use when local LMDeploy changes are ready to become a pull request. Verifies repo state, base branch, `gh` auth, and validation first; then stages only intended files, commits, pushes, and creates the PR. Returns: PR URL, branch name, commit SHA, validation status.
-
-### `/resolve-review`
-
-Use when a LMDeploy pull request has review comments to address. Verifies repo state, branch, env, and `gh` auth first; then fetches comments, makes minimal fixes, validates locally, handles hook auto-fix/CI lint triage carefully, and commits/pushes only when the branch is ready. Returns: list of comments addressed, commit SHA, push confirmation.
+Use when creating, updating, reviewing, or pushing an LMDeploy pull request. Verifies repo state, branch, remote, `gh` auth, validation, staged files, and target branch before commit, push, or PR actions.
 
 ### `/karpathy-guidelines`
 
-Use at the start of any non-trivial implementation task to set behavioral ground rules: think before coding, minimum code, surgical edits only, keep experimental surface out of public APIs until proven, and define verifiable success criteria.
+Use when writing, reviewing, or refactoring code to stay surgical: surface assumptions, avoid speculative features, touch only necessary lines, and define verifiable success criteria.
 
 ### `/lmdeploy-attention-dataflow`
 
@@ -55,7 +47,8 @@ scripts/link_skills.sh
 
 By default this links every folder under `skills/` into both `~/.claude/skills`
 and `~/.codex/skills`. Built-in Codex skills under `~/.codex/skills/.system`
-are left in place.
+are left in place. Stale symlinks that point to removed skills in this repo are
+pruned.
 
 Useful variants:
 

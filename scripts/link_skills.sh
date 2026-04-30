@@ -85,7 +85,7 @@ add_agent() {
 link_one_dest() {
   local label="$1"
   local dest="$2"
-  local resolved skill_md src name target current_target
+  local resolved skill_md src name target current_target link_target
 
   # If a skills destination is a symlink that resolves into this repo, we'd end
   # up writing per-skill symlinks back into the repo's own skills/ tree.
@@ -104,6 +104,23 @@ link_one_dest() {
 
   if [ "$DRY_RUN" -eq 0 ]; then
     mkdir -p "$dest"
+  fi
+
+  if [ -d "$dest" ]; then
+    find "$dest" -maxdepth 1 -type l -print0 |
+    while IFS= read -r -d '' target; do
+      link_target="$(readlink "$target" || true)"
+      case "$link_target" in
+        "$SKILLS_ROOT"/*)
+          if [ ! -e "$link_target/SKILL.md" ]; then
+            if [ "$DRY_RUN" -eq 0 ]; then
+              rm "$target"
+            fi
+            echo "pruned stale $label/$(basename "$target")"
+          fi
+          ;;
+      esac
+    done
   fi
 
   find "$SKILLS_ROOT" -name SKILL.md -not -path '*/node_modules/*' -print0 |
