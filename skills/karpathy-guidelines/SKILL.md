@@ -1,6 +1,6 @@
 ---
 name: karpathy-guidelines
-description: Use when writing, reviewing, or refactoring code to stay surgical: surface assumptions, avoid speculative features, touch only necessary lines, and define verifiable success criteria.
+description: "Use when writing, reviewing, or refactoring code to stay surgical: surface assumptions, avoid speculative features, touch only necessary lines, and define verifiable success criteria."
 license: MIT
 ---
 
