@@ -21,7 +21,11 @@ Use when adding support for a new LLM or VLM architecture to LMDeploy's PyTorch 
 
 ### `/pr-workflow`
 
-Use when creating, updating, reviewing, or pushing an LMDeploy pull request. Verifies repo state, branch, remote, `gh` auth, validation, staged files, and target branch before commit, push, or PR actions.
+Use when creating, updating, reviewing, or pushing an LMDeploy pull request. Verifies repo state, branch, remote, `gh` or GitHub API access, validation, staged files, and target branch before commit, push, or PR actions.
+
+### `/lmdeploy-runtime-debugging`
+
+Use when LMDeploy serve or generation has runtime symptoms such as hanging curl, slow endpoints, streaming stalls, timeouts, stuck requests, concurrency-only latency, first-token delay, or confusing serve logs. Helps classify the stall boundary before patching.
 
 ### `/karpathy-guidelines`
 

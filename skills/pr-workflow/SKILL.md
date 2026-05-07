@@ -1,6 +1,6 @@
 ---
 name: pr-workflow
-description: Use when creating, updating, reviewing, or pushing an LMDeploy pull request. Verify repo state, branch, remote, `gh` auth, validation, staged files, and target branch before commit, push, or PR actions.
+description: Use when creating, updating, reviewing, or pushing an LMDeploy pull request. Verify repo state, branch, remote, `gh` or GitHub API access, validation, staged files, and target branch before commit, push, or PR actions.
 ---
 
 # LMDeploy PR Workflow
@@ -16,7 +16,7 @@ Before fetching comments, changing branches, or pushing:
 git remote -v
 git branch --show-current
 git status --short
-gh auth status
+command -v gh && gh auth status
 ```
 
 Confirm:
@@ -24,6 +24,7 @@ Confirm:
 - this is the intended LMDeploy checkout and branch,
 - unrelated local changes are understood and left unstaged,
 - the base branch and push remote are known,
+- the available PR tool is known: `gh`, GitHub API via git credential, or browser URL,
 - the right env is available (`fp8` for `lmdeploy_fp8`, `vl` for `lmdeploy_vl`).
 
 ## 2. New PR Path
@@ -51,6 +52,15 @@ Create the PR only after confirming base/head branches and committed contents:
 ```bash
 gh pr create --repo InternLM/lmdeploy --title "<type>: <summary>" --body-file <body.md>
 ```
+
+If `gh` is unavailable, push first and use the fallback that matches the
+machine:
+
+- If `git push` prints a GitHub "new pull request" URL, report that URL.
+- If a git credential helper can provide a GitHub token, create the PR through
+  the GitHub API without printing the token.
+- If neither exists, report the pushed branch, intended base/head, and PR body
+  path so the user can open the browser URL.
 
 ## 3. Existing PR / Review Fix Path
 
