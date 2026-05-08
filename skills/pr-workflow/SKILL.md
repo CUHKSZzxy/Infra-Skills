@@ -87,7 +87,19 @@ For each actionable comment:
 Commit review fixes only after validation and staged-file review, then push to
 the PR head branch.
 
-## 4. Validation And Lint
+## 4. Merging Base Branch Updates
+
+Before merging `main` or another base branch, commit the feature work first.
+After conflicts are resolved, run targeted tests for both the feature files and
+the conflicted neighboring surface. If a test failure is caused by sandbox,
+network, or environment limits, rerun the same command in the correct env before
+changing code.
+
+Keep merge conflict resolutions additive where both sides introduced real
+support. Update nearby tests when the resolved behavior intentionally broadens a
+supported API surface.
+
+## 5. Validation And Lint
 
 Prefer targeted checks during iteration; broaden before final push.
 
@@ -101,7 +113,7 @@ If CI says a hook modified files, rerun that hook locally and inspect
 `git diff --name-only` before committing; hook auto-fixes can touch unrelated
 files in large or dirty worktrees.
 
-## 5. Output Contract
+## 6. Output Contract
 
 Report:
 

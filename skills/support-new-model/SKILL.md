@@ -49,6 +49,17 @@ ______________________________________________________________________
 
 Load **references/vlm-preprocessor.md** for new-style vs old-style guide and code skeletons.
 
+For new-style multimodal models, prefer the shared
+`get_input_prompt -> VisionModel.preprocess(...)` path. Keep model files small:
+resolve processors and special token IDs there, but add model-specific
+preprocess/modeling code only when HF behavior cannot be unified cleanly.
+
+When adding audio/video support, compare the HF processor and a nearby runtime
+such as SGLang or vLLM. Preserve modality-specific contracts: offsets are
+usually enough for placeholder spans, audio lengths may be derived from
+`feature_attention_mask`, and video expansion can differ between related model
+families.
+
 After creating the file, add an explicit import in `lmdeploy/vl/model/builder.py`:
 
 ```python

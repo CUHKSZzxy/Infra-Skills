@@ -46,6 +46,12 @@ If `conda` is not initialized:
 source ~/miniconda3/etc/profile.d/conda.sh
 ```
 
+On this machine the concrete path is often:
+
+```bash
+source /nvme1/zhouxinyu/miniconda3/etc/profile.d/conda.sh
+```
+
 ## 4. Check CUDA visibility
 
 ```bash
@@ -81,6 +87,10 @@ CUDA_VISIBLE_DEVICES=X /nvme1/zhouxinyu/miniconda3/envs/<env>/bin/python -m pyte
 - `which python` shows system Python: env activation failed
 - Torch imports but sees zero GPUs: CUDA visibility, driver, or container issue
 - `conda run` uses the wrong Python: switch to the direct env interpreter
+- pytest fails on DNS, HF metadata, or proxy access: rerun the same command with
+  network access before treating it as a code failure
+- async tests that use executor threads hang only in the sandbox: rerun outside
+  sandbox before debugging application logic
 
 ## Output Contract
 
