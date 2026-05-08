@@ -27,6 +27,10 @@ Use when creating, updating, reviewing, or pushing an LMDeploy pull request. Ver
 
 Use when LMDeploy serve or generation has runtime symptoms such as hanging curl, slow endpoints, streaming stalls, timeouts, stuck requests, concurrency-only latency, first-token delay, or confusing serve logs. Helps classify the stall boundary before patching.
 
+### `/session-skill-maintenance`
+
+Use when a task, debug session, PR fix, or study session has just completed and reusable skills, workflow guidance, or skill repo updates should be summarized or applied. Helps decide whether to update an existing skill, add a small new skill, sync README, link locally, and validate.
+
 ### `/karpathy-guidelines`
 
 Use when writing, reviewing, or refactoring code to stay surgical: surface assumptions, avoid speculative features, touch only necessary lines, and define verifiable success criteria.
