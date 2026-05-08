@@ -16,6 +16,8 @@ Before fetching comments, changing branches, or pushing:
 git remote -v
 git branch --show-current
 git status --short
+# Replace <env> with the repo env, commonly fp8 or vl on this machine.
+source /nvme1/zhouxinyu/miniconda3/etc/profile.d/conda.sh && conda activate <env>
 command -v gh && gh auth status
 ```
 
@@ -26,6 +28,9 @@ Confirm:
 - the base branch and push remote are known,
 - the available PR tool is known: `gh`, GitHub API via git credential, or browser URL,
 - the right env is available (`fp8` for `lmdeploy_fp8`, `vl` for `lmdeploy_vl`).
+
+Prefer `gh` from the repo's conda env before falling back to raw GitHub API.
+On this machine, `gh` is commonly available after activating `fp8` or `vl`.
 
 ## 2. New PR Path
 
@@ -50,7 +55,7 @@ git push -u origin <branch>
 Create the PR only after confirming base/head branches and committed contents:
 
 ```bash
-gh pr create --repo InternLM/lmdeploy --title "<type>: <summary>" --body-file <body.md>
+gh pr create --repo InternLM/lmdeploy --base <base> --head <fork>:<branch> --title "<type>: <summary>" --body-file <body.md>
 ```
 
 If `gh` is unavailable, push first and use the fallback that matches the
@@ -67,7 +72,7 @@ machine:
 Confirm the PR branch first:
 
 ```bash
-gh pr view <PR>
+gh pr view <PR> --repo InternLM/lmdeploy
 ```
 
 Fetch inline comments when needed:
@@ -85,7 +90,11 @@ For each actionable comment:
 - keep a short note of file, issue, and fix.
 
 Commit review fixes only after validation and staged-file review, then push to
-the PR head branch.
+the PR head branch. For an existing fork PR, prefer an explicit push target:
+
+```bash
+git push origin HEAD:<headRefName>
+```
 
 ## 4. Merging Base Branch Updates
 

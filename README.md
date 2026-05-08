@@ -6,7 +6,7 @@ Personal skills for LMDeploy development.
 
 ### `/check-env`
 
-Use when LMDeploy commands fail because the Python env, CUDA visibility, or tool invocation is wrong. Assumes the `fp8` and `vl` conda envs already exist and helps diagnose repo/env pairing, active Python, and GPU visibility.
+Use when LMDeploy commands fail because the Python env, CUDA visibility, or tool invocation is wrong. Assumes the `fp8` and `vl` conda envs already exist and helps diagnose repo/env pairing, active Python, GPU visibility, and env-local tools such as `gh`.
 
 ### `/support-new-model`
 
@@ -21,7 +21,7 @@ Use when adding support for a new LLM or VLM architecture to LMDeploy's PyTorch 
 
 ### `/pr-workflow`
 
-Use when creating, updating, reviewing, or pushing an LMDeploy pull request. Verifies repo state, branch, remote, `gh` or GitHub API access, validation, staged files, and target branch before commit, push, or PR actions.
+Use when creating, updating, reviewing, or pushing an LMDeploy pull request. Verifies repo state, branch, remote, env-local `gh` or GitHub API access, validation, staged files, and target branch before commit, push, or PR actions.
 
 ### `/lmdeploy-runtime-debugging`
 

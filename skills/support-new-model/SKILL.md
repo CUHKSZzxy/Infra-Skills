@@ -93,11 +93,11 @@ ______________________________________________________________________
 
 **VLM (additional):**
 
-- \[ \] `vl/model/<model>.py` — `build_preprocessor` implemented; chose new-style or old-style
+- \[ \] `vl/model/<model>.py` — `build_preprocessor(self, trust_remote_code=False)` implemented; chose new-style or old-style
 - \[ \] New-style: `MultimodalSpecialTokens` populated with correct token IDs for each modality
-- \[ \] New-style: `apply_chat_template` returns token ID list (not string)
+- \[ \] New-style: uses `VisionModel.get_input_prompt(...) -> preprocess(...)`; custom prompt code only when needed
 - \[ \] `_arch` matches `config.json` `architectures[0]` exactly
-- \[ \] `image_token_id` correctly resolved from the tokenizer (not None)
+- \[ \] each supported multimodal token ID is resolved from the tokenizer/processor (not None)
 - \[ \] `vl/model/builder.py` — explicit import added
 - \[ \] `archs.py` entry added
 

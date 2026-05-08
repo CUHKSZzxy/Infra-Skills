@@ -22,7 +22,7 @@ ______________________________________________________________________
 | `lmdeploy/pytorch/models/<model>.py`         | Attention, MLP, DecoderLayer, Model, ForCausalLM                |
 | `lmdeploy/pytorch/models/module_map.py`      | HF class name → LMDeploy class path mapping                     |
 | `lmdeploy/pytorch/configurations/<model>.py` | Config builder — only needed for non-standard/nested HF configs |
-| `lmdeploy/vl/model/<model>.py`               | VLM: image/video preprocessing *(VLM only)*                     |
+| `lmdeploy/vl/model/<model>.py`               | VLM/multimodal preprocessing *(VLM only)*                       |
 | `lmdeploy/vl/model/base.py`                  | `VisionModel` base class + `VISION_MODELS` registry             |
 | `lmdeploy/vl/model/builder.py`               | Import location for new VLM classes                             |
 | `lmdeploy/archs.py`                          | VLM: arch name → task mapping *(VLM only)*                      |

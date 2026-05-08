@@ -1,12 +1,16 @@
 # VLM Preprocessor Guide
 
-Two styles exist. Choose based on whether the model needs mixed-modality support (image + video in the same message).
+Two styles exist. Use new-style for new VLM or multimodal models unless the
+target checkout only supports an older legacy path.
 
 ______________________________________________________________________
 
 ## New-Style (recommended for new models)
 
-Supports mixed image+video. Inherit from `VisionModel` and override only `build_preprocessor` and `apply_chat_template`. The base class handles all modality collection, HF processor dispatch, and per-modality output items automatically.
+Inherit from `VisionModel` and keep the model file small. Usually override only
+`build_preprocessor`; the base path handles `get_input_prompt -> preprocess`,
+modality collection, HF processor dispatch, token-span offsets, and per-item
+multimodal outputs.
 
 The engine detects new-style automatically:
 
@@ -24,21 +28,16 @@ from lmdeploy.vl.model.base import MultimodalSpecialTokens
 class MyModelVLModel(VisionModel):
     _arch = ['MyModelForConditionalGeneration']
 
-    def build_preprocessor(self):
+    def build_preprocessor(self, trust_remote_code: bool = False):
         from transformers import AutoProcessor
-        self.processor = AutoProcessor.from_pretrained(self.model_path)
+        self.processor = AutoProcessor.from_pretrained(self.model_path, trust_remote_code=trust_remote_code)
         tokenizer = self.processor.tokenizer
         # Set token IDs for each modality the model supports
-        self.mm_special_tokens = MultimodalSpecialTokens(
+        self.mm_tokens = MultimodalSpecialTokens(
             image_token_id=tokenizer.convert_tokens_to_ids('<image>'),
             video_token_id=tokenizer.convert_tokens_to_ids('<video>'),  # if supported
         )
-        self.image_token_id = self.mm_special_tokens.image_token_id
-
-    def apply_chat_template(self, messages, chat_template, sequence_start, chat_template_kwargs=None):
-        # Tokenise the message into input_ids using the model's own tokenizer
-        # Return a list of token IDs (not a string)
-        ...
+        self.image_token_id = self.mm_tokens.image_token_id
 ```
 
 ______________________________________________________________________

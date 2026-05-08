@@ -52,6 +52,10 @@ On this machine the concrete path is often:
 source /nvme1/zhouxinyu/miniconda3/etc/profile.d/conda.sh
 ```
 
+Do env activation before concluding a tool is missing. On this machine, common
+repo tools such as `gh` may be installed in the ready-made `fp8` or `vl` conda
+envs even when they are not on the base shell `PATH`.
+
 ## 4. Check CUDA visibility
 
 ```bash
@@ -86,6 +90,7 @@ CUDA_VISIBLE_DEVICES=X /nvme1/zhouxinyu/miniconda3/envs/<env>/bin/python -m pyte
 - `lmdeploy.__file__` points outside the repo: wrong env or wrong install is winning
 - `which python` shows system Python: env activation failed
 - Torch imports but sees zero GPUs: CUDA visibility, driver, or container issue
+- `which gh` fails: activate the repo env first, commonly `fp8` or `vl`, then retry
 - `conda run` uses the wrong Python: switch to the direct env interpreter
 - pytest fails on DNS, HF metadata, or proxy access: rerun the same command with
   network access before treating it as a code failure
