@@ -39,6 +39,13 @@ Use when tracing LMDeploy PyTorch attention, KV-cache, quant-policy, prefill, de
 
 Use when optimizing, reviewing, or validating LMDeploy PyTorch CUDA/Triton kernels for correctness and speed, especially attention, KV cache, quantization, FP8 KV cache, and Qwen3/Qwen3.5-family workloads. Includes reusable CUDA-event benchmark helpers, a generic direct-kernel microbench runner, JSONL artifact summary/compare scripts, a Qwen PyTorch pipeline smoke script, GPU/dtype compatibility checks, and Hopper/H100 plus LMDeploy attention/KV heuristics.
 
+## Model PR optimization history
+
+- `model-pr-optimization-history/qwen3.md`: Qwen3 dense/MoE PyTorch notes.
+- `model-pr-optimization-history/qwen3vl.md`: Qwen3-VL PyTorch and VL-serving notes.
+- `model-pr-optimization-history/qwen3-next.md`: Qwen3-Next PyTorch notes.
+- `model-pr-optimization-history/qwen35.md`: Qwen3.5 PyTorch, MoE, and MTP notes.
+
 ______________________________________________________________________
 
 ## Wiring locally
