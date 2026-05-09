@@ -9,6 +9,11 @@ Use this at the end of a meaningful work session to decide whether the lesson
 should become reusable skill guidance. Optimize for the user's preference:
 concise, operational, repo-aware, and easy to remove if it stops being useful.
 
+This skill is the compression gate for the repo's heuristic-learning loop. Use
+`docs/heuristic-learning.md` for boundaries, and use
+`templates/lesson-candidate.md` as a temporary scratchpad when the promotion
+decision is not obvious.
+
 ## 1. Decide Whether Anything Belongs In Skills
 
 Add or update skill guidance only when the session produced a pattern likely to
@@ -37,7 +42,10 @@ Choose the smallest durable form:
 1. update an existing skill if the lesson fits its trigger
 2. add a short section or bullet before creating a new skill
 3. create a new skill only if the trigger is distinct and likely to recur
-4. avoid bundled references/scripts unless deterministic reuse needs them
+4. add a reference only when the detail is useful but too long for `SKILL.md`
+5. add a script only when deterministic reuse beats retyping commands
+6. update model PR history when the lesson belongs to a model family
+7. avoid bundled references/scripts unless deterministic reuse needs them
 
 If the skill might consume context without clear value, say so and skip it.
 
