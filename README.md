@@ -1,4 +1,4 @@
-# LMDeploy-Skills
+# Infra-Skills
 
 Personal skills for LMDeploy development.
 
@@ -97,6 +97,6 @@ in the target repo:
 
 ```json
 {
-  "skillsDirectories": ["/nvme1/zhouxinyu/LMDeploy-Skills/skills"]
+  "skillsDirectories": ["/nvme1/zhouxinyu/Infra-Skills/skills"]
 }
 ```

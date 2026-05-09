@@ -119,7 +119,7 @@ its setup/run/check functions with the target kernel call, then run:
 ```bash
 CUDA_VISIBLE_DEVICES=X PYTHONPATH=/path/to/lmdeploy-checkout \
   /path/to/lmdeploy-env/bin/python \
-  /nvme1/zhouxinyu/LMDeploy-Skills/skills/triton-kernel-performance/scripts/kernel_microbench.py \
+  /nvme1/zhouxinyu/Infra-Skills/skills/triton-kernel-performance/scripts/kernel_microbench.py \
   path/to/my_case.py --out artifacts/candidate.jsonl --label candidate --warmup 25 --repeat 100 \
   -- --case-specific-arg value
 ```
@@ -134,7 +134,7 @@ from scripts.kernel_bench_utils import append_jsonl, cuda_event_bench, summarize
 Then compare candidates:
 
 ```bash
-python /nvme1/zhouxinyu/LMDeploy-Skills/skills/triton-kernel-performance/scripts/compare_kernel_bench.py \
+python /nvme1/zhouxinyu/Infra-Skills/skills/triton-kernel-performance/scripts/compare_kernel_bench.py \
   artifacts/baseline.jsonl artifacts/candidate.jsonl
 ```
 
@@ -142,7 +142,7 @@ For a fast read of many artifact files, summarize them before deciding what to
 rerun:
 
 ```bash
-python /nvme1/zhouxinyu/LMDeploy-Skills/skills/triton-kernel-performance/scripts/summarize_kernel_bench.py \
+python /nvme1/zhouxinyu/Infra-Skills/skills/triton-kernel-performance/scripts/summarize_kernel_bench.py \
   benchmark/artifacts/*.jsonl
 ```
 
@@ -152,7 +152,7 @@ Before/after kernel work, a quick end-to-end smoke can catch dispatch, quant-pol
 
 ```bash
 CUDA_VISIBLE_DEVICES=X /path/to/lmdeploy-env/bin/python \
-  /nvme1/zhouxinyu/LMDeploy-Skills/skills/triton-kernel-performance/scripts/qwen_pytorch_smoke.py \
+  /nvme1/zhouxinyu/Infra-Skills/skills/triton-kernel-performance/scripts/qwen_pytorch_smoke.py \
   --model /path/to/Qwen-or-Qwen3.5-checkpoint --case all --tp 1
 ```
 

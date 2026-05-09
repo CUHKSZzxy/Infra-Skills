@@ -76,7 +76,7 @@ Body style:
 
 ## 4. Keep The Skill Repo Aligned
 
-When changing skills in `/nvme1/zhouxinyu/LMDeploy-Skills`:
+When changing skills in `/nvme1/zhouxinyu/Infra-Skills`:
 
 - update `README.md` if the skill list, trigger, or behavior changes
 - stage only intended skill files
@@ -96,7 +96,7 @@ available write-capable path or approval rather than leaving a partial link.
 Run the narrow validation for changed skill docs:
 
 ```bash
-/nvme1/zhouxinyu/miniconda3/envs/lmdeploy-skills/bin/pre-commit run --files <changed-files>
+/nvme1/zhouxinyu/miniconda3/envs/infra-skills/bin/pre-commit run --files <changed-files>
 ```
 
 After adding a skill, verify local symlinks when possible:

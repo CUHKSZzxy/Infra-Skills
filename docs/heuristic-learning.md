@@ -82,7 +82,7 @@ Only adding rules is not enough.
 For changed docs or skills, run the narrow validation:
 
 ```bash
-/nvme1/zhouxinyu/miniconda3/envs/lmdeploy-skills/bin/pre-commit run --files <changed-files>
+/nvme1/zhouxinyu/miniconda3/envs/infra-skills/bin/pre-commit run --files <changed-files>
 ```
 
 When skills are added or removed, run `scripts/link_skills.sh` and verify the
