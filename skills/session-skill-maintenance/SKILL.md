@@ -10,11 +10,10 @@ should become reusable skill guidance. Optimize for the user's preference:
 concise, operational, repo-aware, and easy to remove if it stops being useful.
 
 This skill is the compression gate for the repo's heuristic-learning loop. Use
-`docs/heuristic-learning.md` for boundaries, and use
-`templates/lesson-candidate.md` as a temporary scratchpad when the promotion
-decision is not obvious.
+`docs/heuristic-learning.md` as the canonical policy. Use
+`templates/lesson-candidate.md` only when the promotion decision is not obvious.
 
-## 1. Decide Whether Anything Belongs In Skills
+## 1. Decide Whether Anything Belongs
 
 Add or update skill guidance only when the session produced a pattern likely to
 recur.
@@ -35,21 +34,13 @@ Poor candidates:
 - broad skills that would trigger too often
 - examples that are longer than the rule they teach
 
-## 2. Prefer Small Updates
+## 2. Choose The Smallest Home
 
-Choose the smallest durable form:
+Use the promotion choices in `docs/heuristic-learning.md`. Prefer updating an
+existing file over adding a new skill. If the lesson might consume context
+without clear value, say so and skip it.
 
-1. update an existing skill if the lesson fits its trigger
-2. add a short section or bullet before creating a new skill
-3. create a new skill only if the trigger is distinct and likely to recur
-4. add a reference only when the detail is useful but too long for `SKILL.md`
-5. add a script only when deterministic reuse beats retyping commands
-6. update model PR history when the lesson belongs to a model family
-7. avoid bundled references/scripts unless deterministic reuse needs them
-
-If the skill might consume context without clear value, say so and skip it.
-
-## 3. Write Trigger-First Skills
+## 3. Write Trigger-First Skills When Needed
 
 Frontmatter description should answer "when should an agent load this?"
 
@@ -74,13 +65,14 @@ Body style:
 - state what not to do when that prevents repeated mistakes
 - keep local machine assumptions explicit and scoped
 
-## 4. Keep The Skill Repo Aligned
+## 4. Keep The Repo Aligned
 
-When changing skills in `/nvme1/zhouxinyu/Infra-Skills`:
+Use local paths and envs from `docs/local-conventions.md`.
+
+When changing skills:
 
 - update `README.md` if the skill list, trigger, or behavior changes
 - stage only intended skill files
-- preserve `.codex/skills/.system`; custom skills are additive
 - expose repo skills by symlink, not copy, when applying locally
 - run the linker after adding/removing a skill:
 
@@ -93,18 +85,7 @@ available write-capable path or approval rather than leaving a partial link.
 
 ## 5. Validate And Report
 
-Run the narrow validation for changed skill docs:
-
-```bash
-/nvme1/zhouxinyu/miniconda3/envs/infra-skills/bin/pre-commit run --files <changed-files>
-```
-
-After adding a skill, verify local symlinks when possible:
-
-```bash
-readlink /nvme1/zhouxinyu/.codex/skills/<skill-name>
-readlink /nvme1/zhouxinyu/.claude/skills/<skill-name>
-```
+Run the narrow validation command from `docs/local-conventions.md`.
 
 Report:
 

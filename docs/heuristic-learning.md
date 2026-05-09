@@ -31,10 +31,12 @@ Use the smallest durable home:
   that should only load after a specific skill step needs it.
 - `skills/*/scripts/`: deterministic helpers that are safer to run than
   retyping commands or benchmark snippets.
+- `docs/local-conventions.md`: machine-specific paths, env names, and local
+  linking rules.
 - `model-pr-optimization-history/`: model-family lessons from upstream PRs and
   recurring review patterns.
-- `templates/lesson-candidate.md`: temporary compression scratchpad for deciding
-  whether a new lesson belongs in the repo.
+- `templates/lesson-candidate.md`: five-field scratchpad for deciding whether a
+  new lesson belongs in the repo.
 - rollout summaries and memory: raw session history, exact logs, private paths,
   and facts that are useful but not worth loading as skills.
 
@@ -79,11 +81,6 @@ Only adding rules is not enough.
 
 ## Validation
 
-For changed docs or skills, run the narrow validation:
-
-```bash
-/nvme1/zhouxinyu/miniconda3/envs/infra-skills/bin/pre-commit run --files <changed-files>
-```
-
-When skills are added or removed, run `scripts/link_skills.sh` and verify the
-local symlinks if possible.
+For changed docs or skills, run the narrow validation command from
+`docs/local-conventions.md`. When skills are added or removed, run
+`scripts/link_skills.sh` and verify the local symlinks if possible.
