@@ -52,6 +52,8 @@ Use when optimizing, reviewing, or validating LMDeploy PyTorch CUDA/Triton kerne
 
 - `model-pr-optimization-history/qwen3.md`: Qwen3 dense/MoE PyTorch notes.
 - `model-pr-optimization-history/qwen3vl.md`: Qwen3-VL PyTorch and VL-serving notes.
+- `model-pr-optimization-history/qwen3omni.md`: Qwen3-Omni PyTorch and
+  audio/video preprocessing notes.
 - `model-pr-optimization-history/qwen3-next.md`: Qwen3-Next PyTorch notes.
 - `model-pr-optimization-history/qwen35.md`: Qwen3.5 PyTorch, MoE, and MTP notes.
 
