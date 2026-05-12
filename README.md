@@ -13,6 +13,7 @@ boundaries and update loop.
 | --- | --- |
 | `/check-env` | Local LMDeploy env, Python, CUDA, and tool wiring |
 | `/karpathy-guidelines` | Surgical coding and review guardrails |
+| `/llm-e2e-benchmark` | End-to-end serving benchmark matrices, logs, and summaries |
 | `/lmdeploy-attention-dataflow` | Attention, KV cache, quant policy, and backend dispatch tracing |
 | `/lmdeploy-runtime-debugging` | Serve/generation stalls, slow endpoints, and runtime symptoms |
 | `/pr-workflow` | LMDeploy PR creation, review fixes, validation, and push |
