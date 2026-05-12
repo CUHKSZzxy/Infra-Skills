@@ -1,6 +1,6 @@
 ---
 name: check-env
-description: Use when LMDeploy commands fail because the Python env, CUDA visibility, or tool invocation is wrong. Assume the `fp8` and `vl` conda envs already exist; diagnose the active repo, Python, and GPU first, then use the local env defaults if they match the current checkout.
+description: Use when an LMDeploy command fails with wrong Python, wrong `lmdeploy` import path, missing CUDA/GPU visibility, missing repo tools such as `gh`, or sandbox/network fixture errors.
 ---
 
 # Check the LMDeploy Dev Environment

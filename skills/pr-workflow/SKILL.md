@@ -1,6 +1,6 @@
 ---
 name: pr-workflow
-description: Use when creating, updating, reviewing, or pushing an LMDeploy pull request. Verify repo state, branch, remote, `gh` or GitHub API access, validation, staged files, and target branch before commit, push, or PR actions.
+description: Use when committing, pushing, opening or updating an LMDeploy PR, resolving PR review feedback, or diagnosing branch, remote, `gh`, or non-fast-forward push issues.
 ---
 
 # LMDeploy PR Workflow
