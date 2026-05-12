@@ -12,12 +12,12 @@ boundaries and update loop.
 | Skill | Area |
 | --- | --- |
 | `/check-env` | Local LMDeploy env, Python, CUDA, and tool wiring |
-| `/support-new-model` | New LLM/VLM PyTorch backend support |
-| `/pr-workflow` | LMDeploy PR creation, review fixes, validation, and push |
-| `/lmdeploy-runtime-debugging` | Serve/generation stalls, slow endpoints, and runtime symptoms |
-| `/session-skill-maintenance` | End-of-session compression into skills, refs, scripts, or history |
 | `/karpathy-guidelines` | Surgical coding and review guardrails |
 | `/lmdeploy-attention-dataflow` | Attention, KV cache, quant policy, and backend dispatch tracing |
+| `/lmdeploy-runtime-debugging` | Serve/generation stalls, slow endpoints, and runtime symptoms |
+| `/pr-workflow` | LMDeploy PR creation, review fixes, validation, and push |
+| `/session-skill-maintenance` | End-of-session compression into skills, refs, scripts, or history |
+| `/support-new-model` | New LLM/VLM PyTorch backend support |
 | `/triton-kernel-performance` | CUDA/Triton correctness, benchmarking, and performance work |
 
 ## Model PR optimization history
