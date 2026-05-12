@@ -96,6 +96,19 @@ the PR head branch. For an existing fork PR, prefer an explicit push target:
 git push origin HEAD:<headRefName>
 ```
 
+If a pushed commit was amended and the remote branch must be rewritten, fetch
+the remote tip first and use a pinned lease rather than a broad force push:
+
+```bash
+git fetch origin <branch>:refs/remotes/origin/<branch>
+git log --oneline --left-right --cherry-pick origin/<branch>...HEAD
+git push --force-with-lease=<branch>:<old-remote-sha> origin HEAD:refs/heads/<branch>
+```
+
+Use this only when the left/right comparison shows the remote-only commit is the
+old version you intentionally replaced. If the remote has unrelated new work,
+integrate it instead of rewriting it.
+
 ## 4. Merging Base Branch Updates
 
 Before merging `main` or another base branch, commit the feature work first.

@@ -53,7 +53,31 @@ Map the delay to one boundary:
 
 Do not fix the symptom endpoint until the boundary is known.
 
-## 3. Probe At Boundaries
+## 3. Separate Sandbox And Server Reachability
+
+When testing LMDeploy through a local agent client such as Codex, first prove
+whether the client sandbox can reach the server. A sandbox with network disabled
+can make `curl http://0.0.0.0:<port>/...` fail even when Uvicorn is healthy.
+
+Use a cheap endpoint before debugging generation:
+
+```bash
+curl -fsS http://0.0.0.0:<port>/v1/models -H 'Authorization: Bearer <key>'
+```
+
+If the probe fails inside the agent sandbox, retry the same probe through the
+approved network-capable path. Only inspect LMDeploy code after an outside-
+sandbox probe also fails or server logs show request handling errors. For local
+Codex smoke tests, unset proxy variables in the script and keep runtime writes
+under a guarded scratch directory.
+
+For OpenAI-compatible agent endpoints, grow validation in layers: raw text curl,
+streaming/tool curl, agent no-tool smoke, agent read-tool smoke, agent write-tool
+smoke, then a multi-step tool-output-continuation smoke with exact file checks.
+This separates protocol bugs from model prompt variance and local sandbox
+issues.
+
+## 4. Probe At Boundaries
 
 Add temporary logs only around component boundaries, then remove them before the
 final patch.
@@ -76,7 +100,7 @@ while true; do
 done
 ```
 
-## 4. Compare Low And Concurrent Load
+## 5. Compare Low And Concurrent Load
 
 Run the same request shape at low and high concurrency.
 
@@ -88,7 +112,7 @@ Run the same request shape at low and high concurrency.
 Keep the workload fixed: model, prompt/media, max tokens, stream flag, backend,
 GPU, and checkout.
 
-## 5. Patch The Blocking Boundary
+## 6. Patch The Blocking Boundary
 
 Pick the smallest fix that addresses the classified boundary.
 
