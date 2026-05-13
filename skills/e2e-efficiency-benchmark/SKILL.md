@@ -12,26 +12,29 @@ kernel. Use `e2e-accuracy-benchmark` for dataset correctness checks.
 
 ## Workflow
 
-1. Record the exact matrix before running:
+1. Create the run folder under the current source checkout's `benchmark/`
+   directory, using `benchmark/e2e_<model>_<workload-or-feature>/`. Follow
+   `docs/local-conventions.md` for summary and artifact subfolder layout.
+2. Record the exact matrix before running:
    - repo/commit, package import path, Python env,
    - model path and model alias,
    - backend, TP/DP/EP, quant policy or KV-cache dtype,
    - dataset, prompt count, input/output length policy,
    - GPU/node placement and server extra args.
-2. Run one baseline and one candidate with the same workload. For KV-cache work,
+3. Run one baseline and one candidate with the same workload. For KV-cache work,
    keep weight quantization separate from KV-cache quantization in labels.
-3. Keep serving logs and benchmark logs under the same run directory. The log
+4. Keep serving logs and benchmark logs under the same run directory. The log
    filename must encode model, parallelism, feature label, dataset, output
    length, and prompt count.
-4. Summarize logs into CSV before drawing conclusions. Treat under 3-5%
+5. Summarize logs into CSV before drawing conclusions. Treat under 3-5%
    throughput deltas as noise unless reruns show lower variance.
-5. If end-to-end performance regresses, split the problem:
+6. If end-to-end performance regresses, split the problem:
    - server startup/model load,
    - prefill throughput and TTFT,
    - decode throughput and TPOT/ITL,
    - request scheduling/concurrency,
    - kernel-level cache fill/decode/attention.
-6. Finish by writing `summary.md` in the benchmark folder. Keep it short, but
+7. Finish by writing `summary.md` in the benchmark folder. Keep it short, but
    include the model/config, workload, commands, key metrics, artifact paths,
    whether server errors occurred, fixes made, and caveats. Put key output
    data in Markdown tables near the top, before config and command details, so
@@ -55,19 +58,25 @@ Copy or invoke the scripts from `scripts/`:
 Typical layout:
 
 ```bash
-cp skills/e2e-efficiency-benchmark/scripts/lmdeploy_config.sh ./config.sh
+INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/nvme1/zhouxinyu/Infra-Skills}
+SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-efficiency-benchmark"
+mkdir -p ./benchmark/e2e_qwen35_35b_kvfp8_medium
+cp "$SKILL_DIR/scripts/lmdeploy_config.sh" \
+  ./benchmark/e2e_qwen35_35b_kvfp8_medium/config.sh
+cd ./benchmark/e2e_qwen35_35b_kvfp8_medium
 # edit MODEL_PATH, MODEL_ABBR, TP, BACKEND, QUANT_POLICY
 source ./config.sh
+mkdir -p ./0_analysis
 
-bash skills/e2e-efficiency-benchmark/scripts/lmdeploy_serve.sh ./config.sh baseline
-bash skills/e2e-efficiency-benchmark/scripts/wait_server.sh ./config.sh
-python skills/e2e-efficiency-benchmark/scripts/api_smoke.py \
+bash "$SKILL_DIR/scripts/lmdeploy_serve.sh" ./config.sh baseline
+bash "$SKILL_DIR/scripts/wait_server.sh" ./config.sh
+python "$SKILL_DIR/scripts/api_smoke.py" \
   --base-url http://127.0.0.1:23334/v1 --model "$MODEL_ABBR" \
-  --out ./analysis/baseline_smoke.jsonl
-bash skills/e2e-efficiency-benchmark/scripts/bench_sharegpt.sh ./config.sh baseline
+  --out ./0_analysis/baseline_smoke.jsonl
+bash "$SKILL_DIR/scripts/bench_sharegpt.sh" ./config.sh baseline
 
-python skills/e2e-efficiency-benchmark/scripts/collect_bench.py \
-  --log-dir ./0_bench_logs --out-dir ./analysis \
+python "$SKILL_DIR/scripts/collect_bench.py" \
+  --log-dir ./0_bench_logs --out-dir ./0_analysis \
   --baseline-group baseline --candidate-group kvfp8 \
   --baseline-label "BF16 KV" --candidate-label "FP8 KV"
 ```
@@ -118,4 +127,4 @@ Before reporting a win, provide:
 - one short response-shape smoke if changing output-affecting behavior,
 - whether the run measured only API macrobenchmarks or also kernel/profiler
   evidence,
-- `summary.md` path in the benchmark folder.
+- `summary.md` path under `benchmark/e2e_<model>_<workload-or-feature>/`.
