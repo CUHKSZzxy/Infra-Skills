@@ -89,6 +89,14 @@ Useful probe fields:
 - whether work is synchronous, `await`ed, or submitted to an executor
 - executor queue behavior when concurrency is high
 
+When a large request appears stuck after preprocessing, use process and stack
+probes before assuming GPU prefill is slow. Compare `top`/`nvidia-smi` memory
+with Python stacks from `py-spy`, `pd`, or an equivalent sampler for the API
+process and engine worker. If the API process is busy serializing or sending a
+large payload while the worker waits to receive it, inspect the handoff payload
+for tensor views, duplicated buffers, or other objects whose backing storage is
+much larger than their logical request slice.
+
 For event-loop responsiveness, compare a tiny endpoint probe while the workload
 is active:
 
