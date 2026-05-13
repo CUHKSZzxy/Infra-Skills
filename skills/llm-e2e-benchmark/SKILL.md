@@ -95,6 +95,9 @@ For LMDeploy KV-cache quant labels:
 - `QUANT_POLICY=0`: no KV-cache quantization.
 - `QUANT_POLICY=fp8` or branch-specific numeric policy: FP8 KV cache if the
   checkout supports that CLI value.
+- Keep exact quant labels for variants, such as `fp8` vs `fp8_e5m2`. The
+  collector preserves `kvfp8_e5m2` as a distinct group, so compare it with
+  `--candidate-group kvfp8_e5m2` rather than folding it into `kvfp8`.
 
 Keep model weight dtype in `MODEL_ABBR`. Use `FEATURE_LABEL` for non-KV
 feature toggles; the scripts encode it as `feature-<label>` so the collector

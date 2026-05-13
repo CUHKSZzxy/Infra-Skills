@@ -81,9 +81,10 @@ def parse_args() -> argparse.Namespace:
 
 def parse_feature_group(prefix: str) -> str:
     """Derive a stable comparison group from the filename prefix."""
-    kv_match = re.search(r"(?:^|_)kv([^_]+)", prefix)
-    if kv_match:
-        return f"kv{kv_match.group(1)}"
+    parts = prefix.split("_")
+    for idx, part in enumerate(parts):
+        if part.startswith("kv") and len(part) > 2:
+            return "_".join(parts[idx:])
     feature_match = re.search(r"(?:^|_)feature-([^_]+)", prefix)
     if feature_match:
         return feature_match.group(1)
