@@ -1,14 +1,14 @@
 ---
-name: llm-e2e-benchmark
-description: Use when benchmarking end-to-end LLM serving performance or accuracy across LMDeploy/vLLM/SGLang, especially when comparing feature flags such as FP8 KV cache, quant policy, backend, TP/DP, or long-context throughput.
+name: e2e-efficiency-benchmark
+description: Use when benchmarking end-to-end efficiency or performance of model/API serving systems, including LMDeploy/vLLM/SGLang or similar servers, especially throughput, TTFT, TPOT/ITL, memory capacity, concurrency, or feature-flag speed comparisons.
 ---
 
-# LLM End-To-End Benchmark
+# E2E Efficiency Benchmark
 
-Use this when the question is user-visible serving behavior: throughput, TTFT,
-TPOT/ITL, memory capacity, output quality, or accuracy under a real API/server
-flow. Pair with `triton-kernel-performance` only after the slow stage is known
-to be a kernel.
+Use this when the question is user-visible serving efficiency: throughput, TTFT,
+TPOT/ITL, memory capacity, concurrency, or latency under a real API/server flow.
+Pair with `triton-kernel-performance` only after the slow stage is known to be a
+kernel. Use `e2e-accuracy-benchmark` for dataset correctness checks.
 
 ## Workflow
 
@@ -31,6 +31,11 @@ to be a kernel.
    - decode throughput and TPOT/ITL,
    - request scheduling/concurrency,
    - kernel-level cache fill/decode/attention.
+6. Finish by writing `summary.md` in the benchmark folder. Keep it short, but
+   include the model/config, workload, commands, key metrics, artifact paths,
+   whether server errors occurred, fixes made, and caveats. Put key output
+   data in Markdown tables near the top, before config and command details, so
+   baseline/candidate deltas are easy to compare at a glance.
 
 ## Bundled Scripts
 
@@ -44,24 +49,24 @@ Copy or invoke the scripts from `scripts/`:
 - `profile_restful_api.py`: bundled OpenAI-compatible benchmark client copied
   from the local LMDeploy benchmark flow.
 - `api_smoke.py`: save deterministic OpenAI-compatible responses for quick
-  baseline/candidate quality checks.
+  baseline/candidate response-shape checks.
 - `collect_bench.py`: parse benchmark logs into CSV and comparison plots.
 
 Typical layout:
 
 ```bash
-cp skills/llm-e2e-benchmark/scripts/lmdeploy_config.sh ./config.sh
+cp skills/e2e-efficiency-benchmark/scripts/lmdeploy_config.sh ./config.sh
 # edit MODEL_PATH, MODEL_ABBR, TP, BACKEND, QUANT_POLICY
 source ./config.sh
 
-bash skills/llm-e2e-benchmark/scripts/lmdeploy_serve.sh ./config.sh baseline
-bash skills/llm-e2e-benchmark/scripts/wait_server.sh ./config.sh
-python skills/llm-e2e-benchmark/scripts/api_smoke.py \
+bash skills/e2e-efficiency-benchmark/scripts/lmdeploy_serve.sh ./config.sh baseline
+bash skills/e2e-efficiency-benchmark/scripts/wait_server.sh ./config.sh
+python skills/e2e-efficiency-benchmark/scripts/api_smoke.py \
   --base-url http://127.0.0.1:23334/v1 --model "$MODEL_ABBR" \
   --out ./analysis/baseline_smoke.jsonl
-bash skills/llm-e2e-benchmark/scripts/bench_sharegpt.sh ./config.sh baseline
+bash skills/e2e-efficiency-benchmark/scripts/bench_sharegpt.sh ./config.sh baseline
 
-python skills/llm-e2e-benchmark/scripts/collect_bench.py \
+python skills/e2e-efficiency-benchmark/scripts/collect_bench.py \
   --log-dir ./0_bench_logs --out-dir ./analysis \
   --baseline-group baseline --candidate-group kvfp8 \
   --baseline-label "BF16 KV" --candidate-label "FP8 KV"
@@ -109,6 +114,8 @@ Before reporting a win, provide:
 
 - exact serve and benchmark commands,
 - summary CSV or table with baseline and candidate,
-- one short quality/accuracy smoke if changing quantization behavior,
+- Markdown tables for key output metrics at the top of `summary.md`,
+- one short response-shape smoke if changing output-affecting behavior,
 - whether the run measured only API macrobenchmarks or also kernel/profiler
-  evidence.
+  evidence,
+- `summary.md` path in the benchmark folder.
