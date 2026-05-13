@@ -12,8 +12,8 @@ only when you also need serving speed logs for the same model/config.
 ## Workflow
 
 1. Create the run folder under the current source checkout's `benchmark/`
-   directory, using `benchmark/e2e_<model>_<dataset-or-task>/`. Follow
-   `docs/local-conventions.md` for summary and artifact subfolder layout.
+   directory. Follow `docs/local-conventions.md` for naming, summary, and
+   artifact subfolder layout.
 2. Record the model alias, server URL, backend, quantization/KV-cache settings,
    dataset path or built-in smoke set, number of shots, number of examples, and
    generation settings.
@@ -46,34 +46,37 @@ Copy or invoke scripts from `scripts/`:
   OpenAI-compatible VLM server. It reads VLMEvalKit-style OCRBench TSV files
   with `index`, `image`, `question`, `answer`, and `category` fields, sends
   images as OpenAI `image_url` data URIs, and applies VLMEvalKit-style
-  substring scoring by category. Use `OCRBench.tsv` for normal benchmark
-  conclusions; use `OCRBench_MINI.tsv` only as a quick route smoke.
+  substring scoring by category. It reports `request_errors` in stdout and JSON.
+  Use `OCRBench.tsv` for normal benchmark conclusions; use `OCRBench_MINI.tsv`
+  only as a quick route smoke.
 
 Example:
 
 ```bash
 INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/nvme1/zhouxinyu/Infra-Skills}
 SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-accuracy-benchmark"
-mkdir -p ./benchmark/e2e_qwen35_35b_gsm8k/0_accuracy
+RUN_DIR="./benchmark/e2e_${MODEL_ABBR}_gsm8k"
+mkdir -p "$RUN_DIR/0_accuracy"
 
 python "$SKILL_DIR/scripts/gsm8k_acc.py" \
   --base-url http://127.0.0.1:23334/v1 \
   --model "$MODEL_ABBR" \
   --num-shots 5 \
-  --dump-json ./benchmark/e2e_qwen35_35b_gsm8k/0_accuracy/gsm8k_acc.json
+  --dump-json "$RUN_DIR/0_accuracy/gsm8k_acc.json"
 ```
 
 ```bash
 INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/nvme1/zhouxinyu/Infra-Skills}
 SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-accuracy-benchmark"
-mkdir -p ./benchmark/e2e_qwen3_omni_ocrbench/0_accuracy
+RUN_DIR="./benchmark/e2e_${MODEL_ABBR}_ocrbench"
+mkdir -p "$RUN_DIR/0_accuracy"
 
 python "$SKILL_DIR/scripts/ocrbench_acc.py" \
   --base-url http://127.0.0.1:23333/v1 \
   --model "$MODEL_ABBR" \
   --data-path /nvme1/zhouxinyu/LMUData/OCRBench.tsv \
-  --dump-json ./benchmark/e2e_qwen3_omni_ocrbench/0_accuracy/ocrbench_acc.json \
-  2>&1 | tee ./benchmark/e2e_qwen3_omni_ocrbench/0_accuracy/ocrbench_acc.client.log
+  --dump-json "$RUN_DIR/0_accuracy/ocrbench_acc.json" \
+  2>&1 | tee "$RUN_DIR/0_accuracy/ocrbench_acc.client.log"
 ```
 
 ## Acceptance
@@ -87,4 +90,4 @@ Before reporting accuracy, include:
 - server log path, or an explicit note that no server log was captured,
 - client log path, or an explicit note that no client log was captured,
 - result table covering accuracy, correct/total, errors, and artifact path,
-- `summary.md` path under `benchmark/e2e_<model>_<dataset-or-task>/`.
+- `summary.md` path under the repo-local `benchmark/e2e_*` run folder.

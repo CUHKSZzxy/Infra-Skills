@@ -23,12 +23,16 @@ Keep local end-to-end accuracy and speed benchmark outputs inside the source
 checkout being measured:
 
 ```text
-<source-checkout>/benchmark/e2e_<model>_<dataset-or-workload>/
+<source-checkout>/benchmark/e2e_<model>_<dataset-or-workload>[_<feature>]/
 ```
+
+Use lowercase, shell-friendly labels. Avoid ad hoc top-level folders such as
+`bench_*`; keep both accuracy and speed runs under `benchmark/`.
 
 Put `summary.md` at the run root. Use small numbered artifact folders beneath
 it, such as `0_accuracy/`, `0_eval_logs/`, `0_bench_logs/`, `0_analysis/`, and
-`0_serve_logs/`.
+`0_serve_logs/`. Keep server logs and client/eval logs in the same run folder
+so later comparisons can be audited without searching the checkout.
 
 ## Envs
 

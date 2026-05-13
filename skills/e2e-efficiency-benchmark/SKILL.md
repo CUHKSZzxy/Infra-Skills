@@ -13,8 +13,8 @@ kernel. Use `e2e-accuracy-benchmark` for dataset correctness checks.
 ## Workflow
 
 1. Create the run folder under the current source checkout's `benchmark/`
-   directory, using `benchmark/e2e_<model>_<workload-or-feature>/`. Follow
-   `docs/local-conventions.md` for summary and artifact subfolder layout.
+   directory. Follow `docs/local-conventions.md` for naming, summary, and
+   artifact subfolder layout.
 2. Record the exact matrix before running:
    - repo/commit, package import path, Python env,
    - model path and model alias,
@@ -49,8 +49,8 @@ Copy or invoke the scripts from `scripts/`:
   labels and logs.
 - `wait_server.sh`: poll `/v1/models` with proxy disabled for localhost.
 - `bench_sharegpt.sh`: run a ShareGPT-style API benchmark matrix.
-- `profile_restful_api.py`: bundled OpenAI-compatible benchmark client copied
-  from the local LMDeploy benchmark flow.
+- `profile_restful_api.py`: bundled OpenAI-compatible benchmark client; the
+  config template points to this copy by absolute local path.
 - `api_smoke.py`: save deterministic OpenAI-compatible responses for quick
   baseline/candidate response-shape checks.
 - `collect_bench.py`: parse benchmark logs into CSV and comparison plots.
@@ -60,10 +60,11 @@ Typical layout:
 ```bash
 INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/nvme1/zhouxinyu/Infra-Skills}
 SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-efficiency-benchmark"
-mkdir -p ./benchmark/e2e_qwen35_35b_kvfp8_medium
-cp "$SKILL_DIR/scripts/lmdeploy_config.sh" \
-  ./benchmark/e2e_qwen35_35b_kvfp8_medium/config.sh
-cd ./benchmark/e2e_qwen35_35b_kvfp8_medium
+MODEL_LABEL=qwen35_35b
+RUN_DIR="./benchmark/e2e_${MODEL_LABEL}_sharegpt_kvfp8"
+mkdir -p "$RUN_DIR"
+cp "$SKILL_DIR/scripts/lmdeploy_config.sh" "$RUN_DIR/config.sh"
+cd "$RUN_DIR"
 # edit MODEL_PATH, MODEL_ABBR, TP, BACKEND, QUANT_POLICY
 source ./config.sh
 mkdir -p ./0_analysis
@@ -84,7 +85,8 @@ python "$SKILL_DIR/scripts/collect_bench.py" \
 Local defaults on this machine:
 
 - ShareGPT dataset: `/nvme1/shared/ShareGPT_V3_unfiltered_cleaned_split.json`
-- Benchmark client: `scripts/profile_restful_api.py`
+- Benchmark client:
+  `$INFRA_SKILLS_HOME/skills/e2e-efficiency-benchmark/scripts/profile_restful_api.py`
 - Fast matrix: `OUT_LENS=(None 2048)` and
   `NUM_PROMPTS=(1000 1000)`
 - Medium matrix: `OUT_LENS=(None 2048 4096 8192)` and
@@ -127,4 +129,4 @@ Before reporting a win, provide:
 - one short response-shape smoke if changing output-affecting behavior,
 - whether the run measured only API macrobenchmarks or also kernel/profiler
   evidence,
-- `summary.md` path under `benchmark/e2e_<model>_<workload-or-feature>/`.
+- `summary.md` path under the repo-local `benchmark/e2e_*` run folder.

@@ -71,17 +71,19 @@ Use local paths and envs from `docs/local-conventions.md`.
 
 When changing skills:
 
-- update `README.md` if the skill list, trigger, or behavior changes
+- update `README.md` if the visible skill list or one-line index changes
 - stage only intended skill files
 - expose repo skills by symlink, not copy, when applying locally
-- run the linker after adding/removing a skill:
+- run the linker after adding/removing a skill or changing local symlink targets:
 
 ```bash
 scripts/link_skills.sh
 ```
 
-If Codex skill-home writes hit sandbox restrictions, rerun the linker with the
-available write-capable path or approval rather than leaving a partial link.
+Docs-only edits to existing skills do not need relinking when the existing
+symlink already points at this repo. If Codex skill-home writes hit sandbox
+restrictions, rerun the linker with the available write-capable path or approval
+rather than leaving a partial link.
 
 ## 5. Validate And Report
 
