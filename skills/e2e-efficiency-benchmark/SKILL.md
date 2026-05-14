@@ -49,8 +49,11 @@ Copy or invoke the scripts from `scripts/`:
   labels and logs.
 - `wait_server.sh`: poll `/v1/models` with proxy disabled for localhost.
 - `bench_sharegpt.sh`: run a ShareGPT-style API benchmark matrix.
+- `bench_image.sh`: run a synthetic image+text API benchmark matrix through
+  OpenAI chat-compatible multimodal requests.
 - `profile_restful_api.py`: bundled OpenAI-compatible benchmark client; the
-  config template points to this copy by absolute local path.
+  config template points to this copy by absolute local path. It supports
+  `sharegpt`, `random`, and `image` datasets.
 - `api_smoke.py`: save deterministic OpenAI-compatible responses for quick
   baseline/candidate response-shape checks.
 - `collect_bench.py`: parse benchmark logs into CSV and comparison plots.
@@ -73,13 +76,31 @@ bash "$SKILL_DIR/scripts/lmdeploy_serve.sh" ./config.sh baseline
 bash "$SKILL_DIR/scripts/wait_server.sh" ./config.sh
 python "$SKILL_DIR/scripts/api_smoke.py" \
   --base-url http://127.0.0.1:23334/v1 --model "$MODEL_ABBR" \
-  --out ./0_analysis/baseline_smoke.jsonl
+  --out ./0_analysis/baseline_response_check.jsonl
 bash "$SKILL_DIR/scripts/bench_sharegpt.sh" ./config.sh baseline
 
 python "$SKILL_DIR/scripts/collect_bench.py" \
   --log-dir ./0_bench_logs --out-dir ./0_analysis \
   --baseline-group baseline --candidate-group kvfp8 \
   --baseline-label "BF16 KV" --candidate-label "FP8 KV"
+```
+
+Image quick-check layout:
+
+```bash
+INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/nvme1/zhouxinyu/Infra-Skills}
+SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-efficiency-benchmark"
+MODEL_LABEL=qwen35_35b_a3b
+RUN_DIR="./benchmark/e2e_${MODEL_LABEL}_image_quick"
+mkdir -p "$RUN_DIR"
+cp "$SKILL_DIR/scripts/lmdeploy_config.sh" "$RUN_DIR/config.sh"
+cd "$RUN_DIR"
+# edit MODEL_PATH, MODEL_ABBR, TP, BACKEND, QUANT_POLICY, PORT
+source ./config.sh
+
+bash "$SKILL_DIR/scripts/lmdeploy_serve.sh" ./config.sh baseline
+bash "$SKILL_DIR/scripts/wait_server.sh" ./config.sh
+bash "$SKILL_DIR/scripts/bench_image.sh" ./config.sh baseline
 ```
 
 Local defaults on this machine:
@@ -94,9 +115,17 @@ Local defaults on this machine:
 - Full matrix: `OUT_LENS=(None 2048 4096 8192 16384 32768)` and
   `NUM_PROMPTS=(10000 8000 8000 4000 1000 500)`
 
-Use `WORKLOAD_PRESET=fast` for agent smoke benchmarks, `medium` for a more
+Use `WORKLOAD_PRESET=fast` for quick agent benchmarks, `medium` for a more
 useful development comparison, and `full` only when the server is stable and
 the comparison is worth the runtime.
+
+For image benchmarks, use `IMAGE_WORKLOAD_PRESET=quick` for a first agent check:
+`IMAGE_INPUT_LENS=(100)`, `IMAGE_OUTPUT_LENS=(100)`,
+`IMAGE_NUM_PROMPTS=(10)`, `IMAGE_RESOLUTIONS=(1024x1024)`, and
+`IMAGE_COUNTS=(1)`. The image wrapper defaults to
+`IMAGE_API_BACKEND_LABEL=lmdeploy-chat` and does not require `DATASET_PATH`,
+because it generates synthetic `image_url` data URIs in the benchmark client.
+Use `IMAGE_WORKLOAD_PRESET=fast` only after the server is stable.
 
 Do not add `--log-level` by default. Normal LMDeploy serve logging is useful
 and stays on disk because `SERVE_STREAM_LOGS=0` redirects stdout/stderr to the
@@ -126,7 +155,7 @@ Before reporting a win, provide:
 - exact serve and benchmark commands,
 - summary CSV or table with baseline and candidate,
 - Markdown tables for key output metrics at the top of `summary.md`,
-- one short response-shape smoke if changing output-affecting behavior,
+- one short response-shape check if changing output-affecting behavior,
 - whether the run measured only API macrobenchmarks or also kernel/profiler
   evidence,
 - `summary.md` path under the repo-local `benchmark/e2e_*` run folder.

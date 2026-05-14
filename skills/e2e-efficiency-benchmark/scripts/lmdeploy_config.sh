@@ -36,6 +36,14 @@ DATASET_PATH="/nvme1/shared/ShareGPT_V3_unfiltered_cleaned_split.json"
 BENCH_EXTRA_ARGS=()
 BENCH_STREAM_LOGS="${BENCH_STREAM_LOGS:-0}"
 
+# Synthetic image workload. bench_image.sh uses the OpenAI chat-compatible API
+# because images are sent as message content with image_url entries.
+IMAGE_API_BACKEND_LABEL="${IMAGE_API_BACKEND_LABEL:-lmdeploy-chat}"
+IMAGE_FORMAT="${IMAGE_FORMAT:-jpeg}"
+IMAGE_CONTENT="${IMAGE_CONTENT:-random}"  # random, blank
+IMAGE_RANGE_RATIO="${IMAGE_RANGE_RATIO:-1}"
+IMAGE_BENCH_EXTRA_ARGS=()
+
 # Workload presets. Use custom only after setting OUT_LENS and NUM_PROMPTS.
 WORKLOAD_PRESET="${WORKLOAD_PRESET:-fast}"  # fast, medium, full, custom
 case "${WORKLOAD_PRESET}" in
@@ -57,6 +65,36 @@ case "${WORKLOAD_PRESET}" in
         ;;
     *)
         echo "Unknown WORKLOAD_PRESET: ${WORKLOAD_PRESET}" >&2
+        return 1 2>/dev/null || exit 1
+        ;;
+esac
+
+# Image workload presets. Use custom only after setting all IMAGE_* arrays.
+IMAGE_WORKLOAD_PRESET="${IMAGE_WORKLOAD_PRESET:-quick}"  # quick, fast, custom
+case "${IMAGE_WORKLOAD_PRESET}" in
+    quick)
+        IMAGE_INPUT_LENS=(100)
+        IMAGE_OUTPUT_LENS=(100)
+        IMAGE_NUM_PROMPTS=(10)
+        IMAGE_RESOLUTIONS=(1024x1024)
+        IMAGE_COUNTS=(1)
+        ;;
+    fast)
+        IMAGE_INPUT_LENS=(100 100)
+        IMAGE_OUTPUT_LENS=(100 512)
+        IMAGE_NUM_PROMPTS=(100 50)
+        IMAGE_RESOLUTIONS=(1024x1024 1024x1024)
+        IMAGE_COUNTS=(1 1)
+        ;;
+    custom)
+        : "${IMAGE_INPUT_LENS:?set IMAGE_INPUT_LENS for IMAGE_WORKLOAD_PRESET=custom}"
+        : "${IMAGE_OUTPUT_LENS:?set IMAGE_OUTPUT_LENS for IMAGE_WORKLOAD_PRESET=custom}"
+        : "${IMAGE_NUM_PROMPTS:?set IMAGE_NUM_PROMPTS for IMAGE_WORKLOAD_PRESET=custom}"
+        : "${IMAGE_RESOLUTIONS:?set IMAGE_RESOLUTIONS for IMAGE_WORKLOAD_PRESET=custom}"
+        : "${IMAGE_COUNTS:?set IMAGE_COUNTS for IMAGE_WORKLOAD_PRESET=custom}"
+        ;;
+    *)
+        echo "Unknown IMAGE_WORKLOAD_PRESET: ${IMAGE_WORKLOAD_PRESET}" >&2
         return 1 2>/dev/null || exit 1
         ;;
 esac
