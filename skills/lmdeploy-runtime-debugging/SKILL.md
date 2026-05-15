@@ -72,6 +72,9 @@ it and replay it before starting profiler work. Use profiling after the problem
 is reproducible and queueing, routing, or request-preparation explanations are
 mostly ruled out.
 
+Load `references/api-server-mp-engine-zmq.md` when the boundary crosses
+FastAPI, `AsyncEngine`, PyTorch MP engine, or ZMQ RPC.
+
 ## 3. Separate Sandbox And Server Reachability
 
 When testing LMDeploy through a local agent client such as Codex, first prove
