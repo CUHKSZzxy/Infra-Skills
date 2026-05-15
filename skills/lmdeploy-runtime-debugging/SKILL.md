@@ -15,6 +15,20 @@ Prefer the adjacent skills when the symptom is already classified:
 - CUDA/Triton correctness or speed: `triton-kernel-performance`
 - New architecture or VLM implementation work: `support-new-model`
 
+## Output Contract
+
+When reporting progress or a final diagnosis, return:
+
+- problem class,
+- what was checked,
+- strongest signal so far,
+- current best guess,
+- what was ruled out,
+- next step,
+- production or validation risk.
+
+This keeps runtime debugging from becoming a loose log summary.
+
 ## 1. Build A Timeline First
 
 Collect timestamps before changing code.
@@ -52,6 +66,11 @@ Map the delay to one boundary:
 - network/proxy: local `127.0.0.1` differs from remote or `0.0.0.0`
 
 Do not fix the symptom endpoint until the boundary is known.
+
+If a crash dump, request dump, or exact failing payload already exists, preserve
+it and replay it before starting profiler work. Use profiling after the problem
+is reproducible and queueing, routing, or request-preparation explanations are
+mostly ruled out.
 
 ## 3. Separate Sandbox And Server Reachability
 
@@ -119,6 +138,19 @@ Run the same request shape at low and high concurrency.
 
 Keep the workload fixed: model, prompt/media, max tokens, stream flag, backend,
 GPU, and checkout.
+
+Quick direction hints:
+
+- startup or health failure: inspect startup logs, model load, CUDA OOM, and
+  route/auth mismatch before request-level profiling
+- TTFT spike: check queue depth, first handler timestamp, prompt/VLM prep time,
+  and prefill start before decode kernels
+- throughput collapse: compare request queueing, cache hit behavior, scheduler
+  pressure, and decode throughput
+- wrong output: preserve the exact request, model revision, chat template, and
+  preprocessing path before changing generation code
+- timeout or hang: collect per-rank logs and process stacks before assuming a
+  single endpoint is at fault
 
 ## 6. Patch The Blocking Boundary
 

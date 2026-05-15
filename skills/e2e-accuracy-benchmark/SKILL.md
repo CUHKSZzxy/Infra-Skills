@@ -1,6 +1,6 @@
 ---
 name: e2e-accuracy-benchmark
-description: Use when running or creating quick local end-to-end accuracy checks for model/API serving systems, including OpenAI-compatible LMDeploy/vLLM/SGLang or similar endpoints, especially GSM8K-style numeric-answer smoke tests or small real-dataset accuracy passes.
+description: Use when running or creating quick local LMDeploy end-to-end accuracy checks, especially GSM8K-style numeric-answer checks, OCRBench checks, or small real-dataset accuracy passes.
 ---
 
 # E2E Accuracy Benchmark
@@ -13,7 +13,8 @@ only when you also need serving speed logs for the same model/config.
 
 1. Create the run folder under the current source checkout's `benchmark/`
    directory. Follow `docs/local-conventions.md` for naming, summary, and
-   artifact subfolder layout.
+   artifact subfolder layout. If the user names a desired destination or run
+   folder, put the benchmark folder there and state that path before long runs.
 2. Record the model alias, server URL, backend, quantization/KV-cache settings,
    dataset path or built-in smoke set, number of shots, number of examples, and
    generation settings.
@@ -32,7 +33,8 @@ only when you also need serving speed logs for the same model/config.
    artifact paths, fixes made, and caveats. If server logs were not captured,
    say so explicitly. Put key result data in Markdown tables near the top,
    before config and command details, so accuracy variants are easy to compare
-   at a glance.
+   at a glance. The final response must include the run folder and exact
+   `summary.md` path.
 
 ## Bundled Scripts
 
@@ -88,6 +90,6 @@ Before reporting accuracy, include:
 - answer extraction rule,
 - score, failed examples if any, and result JSON path if saved,
 - server log path, or an explicit note that no server log was captured,
+- run folder and exact `summary.md` path.
 - client log path, or an explicit note that no client log was captured,
-- result table covering accuracy, correct/total, errors, and artifact path,
-- `summary.md` path under the repo-local `benchmark/e2e_*` run folder.
+- result table covering accuracy, correct/total, errors, and artifact path.

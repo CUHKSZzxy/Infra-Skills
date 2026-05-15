@@ -26,6 +26,11 @@ checkout being measured:
 <source-checkout>/benchmark/e2e_<model>_<dataset-or-workload>[_<feature>]/
 ```
 
+If the user names a desired destination, run directory, or source checkout, put
+the benchmark folder there instead of choosing a new top-level location. When
+the destination is ambiguous, ask or state the assumed checkout before running a
+long benchmark.
+
 Use lowercase, shell-friendly labels. Avoid ad hoc top-level folders such as
 `bench_*`; keep both accuracy and speed runs under `benchmark/`.
 
@@ -33,6 +38,8 @@ Put `summary.md` at the run root. Use small numbered artifact folders beneath
 it, such as `0_accuracy/`, `0_eval_logs/`, `0_bench_logs/`, `0_analysis/`, and
 `0_serve_logs/`. Keep server logs and client/eval logs in the same run folder
 so later comparisons can be audited without searching the checkout.
+Every benchmark final report should include the exact `summary.md` path and
+the run folder path.
 
 ## Envs
 

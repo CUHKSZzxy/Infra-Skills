@@ -1,6 +1,6 @@
 ---
 name: e2e-efficiency-benchmark
-description: Use when benchmarking end-to-end efficiency or performance of model/API serving systems, including LMDeploy/vLLM/SGLang or similar servers, especially throughput, TTFT, TPOT/ITL, memory capacity, concurrency, or feature-flag speed comparisons.
+description: Use when benchmarking LMDeploy end-to-end serving efficiency, especially throughput, TTFT, TPOT/ITL, memory capacity, concurrency, KV-cache settings, or feature-flag speed comparisons.
 ---
 
 # E2E Efficiency Benchmark
@@ -14,7 +14,8 @@ kernel. Use `e2e-accuracy-benchmark` for dataset correctness checks.
 
 1. Create the run folder under the current source checkout's `benchmark/`
    directory. Follow `docs/local-conventions.md` for naming, summary, and
-   artifact subfolder layout.
+   artifact subfolder layout. If the user names a desired destination or run
+   folder, put the benchmark folder there and state that path before long runs.
 2. Record the exact matrix before running:
    - repo/commit, package import path, Python env,
    - model path and model alias,
@@ -38,7 +39,12 @@ kernel. Use `e2e-accuracy-benchmark` for dataset correctness checks.
    include the model/config, workload, commands, key metrics, artifact paths,
    whether server errors occurred, fixes made, and caveats. Put key output
    data in Markdown tables near the top, before config and command details, so
-   baseline/candidate deltas are easy to compare at a glance.
+   baseline/candidate deltas are easy to compare at a glance. The final
+   response must include the run folder and exact `summary.md` path.
+8. When comparing several LMDeploy candidates or feature variants, keep failed
+   and skipped candidates in the same result set with concrete reasons. A readable
+   "what we tried but did not select" table prevents later reruns from
+   rediscovering the same bad command.
 
 ## Bundled Scripts
 
@@ -57,6 +63,10 @@ Copy or invoke the scripts from `scripts/`:
 - `api_smoke.py`: save deterministic OpenAI-compatible responses for quick
   baseline/candidate response-shape checks.
 - `collect_bench.py`: parse benchmark logs into CSV and comparison plots.
+
+Load `references/result-schema.md` when a local LMDeploy run needs normalized
+JSONL rows or failed-candidate reporting beyond the baseline/candidate CSV
+helpers.
 
 Typical layout:
 
@@ -155,7 +165,9 @@ Before reporting a win, provide:
 - exact serve and benchmark commands,
 - summary CSV or table with baseline and candidate,
 - Markdown tables for key output metrics at the top of `summary.md`,
+- failed, skipped, or SLA-failing candidates when a matrix tried more than the
+  selected baseline/candidate pair,
 - one short response-shape check if changing output-affecting behavior,
 - whether the run measured only API macrobenchmarks or also kernel/profiler
   evidence,
-- `summary.md` path under the repo-local `benchmark/e2e_*` run folder.
+- run folder and exact `summary.md` path.
