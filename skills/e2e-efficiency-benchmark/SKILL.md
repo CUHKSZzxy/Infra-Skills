@@ -24,6 +24,9 @@ kernel. Use `e2e-accuracy-benchmark` for dataset correctness checks.
    - GPU/node placement and server extra args.
 3. Run one baseline and one candidate with the same workload. For KV-cache work,
    keep weight quantization separate from KV-cache quantization in labels.
+   For request admission, concurrency, queue, or multimodal flow-control knobs,
+   include a disabled/default or high-limit variant; low limits can cap
+   effective batching and make TTFT mostly queue wait.
 4. Keep serving logs and benchmark logs under the same run directory. The log
    filename must encode model, parallelism, feature label, dataset, output
    length, and prompt count.
@@ -170,4 +173,7 @@ Before reporting a win, provide:
 - one short response-shape check if changing output-affecting behavior,
 - whether the run measured only API macrobenchmarks or also kernel/profiler
   evidence,
+- for admission/concurrency limit changes, evidence that the configured limit
+  did not become the throughput cap, such as a disabled/high-limit comparison
+  or visible request-completion wave analysis,
 - run folder and exact `summary.md` path.

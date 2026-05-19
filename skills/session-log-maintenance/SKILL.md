@@ -38,15 +38,28 @@ If a log already exists, update it instead of creating a duplicate.
 
 ## What To Record
 
-Keep entries factual and compact:
+Write the log as an expert handoff to another engineer. A reader should
+understand the objective, what was tried, what evidence came back, what was
+decided, and where to continue without replaying the full conversation.
+
+Keep entries factual, structured, and explanatory:
 
 - objective and current success criteria
 - user requests in chronological order
-- decisions, assumptions, and why they matter
+- attempts made, why they were tried, and what result they produced
+- decisions, assumptions, and why they matter for the next person
 - files changed or moved, using absolute paths when useful
-- validation commands and outcomes
+- validation commands, outcomes, and important caveats
 - commits, branches, remotes, PRs, and push status
 - unresolved questions, blockers, and next actions
+
+For meaningful timeline entries, prefer this shape:
+
+- request/objective
+- approach or attempt
+- result/evidence
+- outcome/decision
+- next implication
 
 Avoid:
 

@@ -10,6 +10,8 @@
 ## Current State
 
 - Status:
+- Success criteria:
+- Current diagnosis/outcome:
 - Working directory notes:
 - Blockers:
 
@@ -18,9 +20,13 @@
 ### YYYY-MM-DD HH:MM
 
 - User request:
-- Decisions:
-- Changes:
+- Objective:
+- Attempt/approach:
+- Result/evidence:
+- Outcome/decision:
+- Files changed:
 - Validation:
+- Next implication:
 - Commit/push:
 
 ## Important Files
