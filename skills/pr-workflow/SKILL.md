@@ -6,7 +6,12 @@ description: Use when committing, pushing, opening or updating an LMDeploy PR, r
 # LMDeploy PR Workflow
 
 Use this for both new PRs and existing PR review fixes. Keep the loop small:
-understand the branch, change only intended files, validate, then commit/push.
+understand the branch, change only intended files, validate, then commit.
+
+Never run `git push`, `gh pr create`, or any other command that publishes local
+commits/branches unless the user explicitly asks for that publish action in the
+current request. Validation success, a clean worktree, an existing PR, or prior
+general workflow memory is not push permission.
 
 ## 1. Preflight
 
@@ -49,10 +54,12 @@ Before committing, inspect the staged diff and stage explicit files only:
 git add <intended-files>
 git diff --cached --stat
 git commit -m "<type>: <summary>"
+# Only after explicit user permission to publish:
 git push -u origin <branch>
 ```
 
-Create the PR only after confirming base/head branches and committed contents:
+When the user explicitly asks to publish/open a PR, create it only after
+confirming base/head branches and committed contents:
 
 ```bash
 gh pr create --repo InternLM/lmdeploy --base <base> --head <fork>:<branch> --title "<type>: <summary>" --body-file <body.md>
@@ -76,8 +83,8 @@ Before creating or updating the PR body, keep reviewer-facing text portable:
   label the user provides, for example `Assisted with Codex + GPT-5.5 xHigh`;
   do not invent or normalize the model/reasoning label.
 
-If `gh` is unavailable, push first and use the fallback that matches the
-machine:
+If the user explicitly asked to publish and `gh` is unavailable, use the
+fallback that matches the machine:
 
 - If `git push` prints a GitHub "new pull request" URL, report that URL.
 - If a git credential helper can provide a GitHub token, create the PR through
@@ -108,7 +115,8 @@ For each actionable comment:
 - keep a short note of file, issue, and fix.
 
 Commit review fixes only after validation and staged-file review, then push to
-the PR head branch. For an existing fork PR, prefer an explicit push target:
+the PR head branch only when the user explicitly asks to publish the fix. For an
+existing fork PR, prefer an explicit push target:
 
 ```bash
 git push origin HEAD:<headRefName>
@@ -141,7 +149,8 @@ supported API surface.
 
 ## 5. Validation And Lint
 
-Prefer targeted checks during iteration; broaden before final push.
+Prefer targeted checks during iteration; broaden before final publish when the
+user has explicitly requested one.
 
 ```bash
 pre-commit run --files <changed-files>
@@ -157,7 +166,7 @@ files in large or dirty worktrees.
 
 Report:
 
-- branch and remote pushed,
+- branch and remote pushed, if a push was explicitly requested and completed,
 - commit SHA,
 - validation run and pass/fail status; keep exact local commands out of PR
   bodies unless they are portable,
