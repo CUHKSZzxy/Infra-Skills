@@ -65,7 +65,7 @@ Use the bundled helpers instead of rewriting timing loops:
 - `scripts/microbench_case_template.py`: copyable case-file template.
 - `scripts/summarize_kernel_bench.py`: table view for JSONL artifacts.
 - `scripts/compare_kernel_bench.py`: baseline/candidate comparison.
-- `scripts/qwen_pytorch_smoke.py`: small Qwen pipeline smoke.
+- `scripts/qwen_pytorch_smoke.py`: small Qwen pipeline quick check.
 
 Pin the imported checkout when comparing branches:
 

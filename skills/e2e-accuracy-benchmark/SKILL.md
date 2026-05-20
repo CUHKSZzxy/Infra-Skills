@@ -16,18 +16,18 @@ only when you also need serving speed logs for the same model/config.
    artifact subfolder layout. If the user names a desired destination or run
    folder, put the benchmark folder there and state that path before long runs.
 2. Record the model alias, server URL, backend, quantization/KV-cache settings,
-   dataset path or built-in smoke set, number of shots, number of examples, and
-   generation settings.
+   dataset path or built-in quick-check set, number of shots, number of
+   examples, and generation settings.
 3. Keep decoding deterministic for quick comparisons: `temperature=0`, stable
    `top_p`, and fixed `max_tokens`.
-4. Run the smallest smoke first. Move to a real dataset file only after the
+4. Run the smallest route check first. Move to a real dataset file only after the
    server route and answer extraction are working.
 5. For local server benchmarks, save the server stdout/stderr under
    `0_serve_logs/`, usually with `2>&1 | tee 0_serve_logs/<label>_serve.log`,
    before running clients. Keep client stdout/stderr and JSON results under
    `0_accuracy/` or `0_eval_logs/` when comparing variants.
-6. Treat tiny smoke accuracy as a regression signal only. For conclusions, run
-   enough real examples for the model and dataset.
+6. Treat tiny quick-check accuracy as a regression signal only. For conclusions,
+   run enough real examples for the model and dataset.
 7. Finish by writing `summary.md` in the benchmark folder. Keep it short, but
    include the model/config, commands, dataset, accuracy, request/server errors,
    artifact paths, fixes made, and caveats. If server logs were not captured,
@@ -42,7 +42,7 @@ Copy or invoke scripts from `scripts/`:
 
 - `gsm8k_acc.py`: GSM8K-style numeric-answer accuracy test against an
   OpenAI-compatible server. By default it downloads/caches the full GSM8K test
-  JSONL; pass `--mini` only for a tiny route smoke, or `--data-path` for a
+  JSONL; pass `--mini` only for a tiny route check, or `--data-path` for a
   local GSM8K-format JSONL file with `question` and `answer` fields.
 - `ocrbench_acc.py`: OCRBench visual accuracy test against an
   OpenAI-compatible VLM server. It reads VLMEvalKit-style OCRBench TSV files
@@ -50,7 +50,7 @@ Copy or invoke scripts from `scripts/`:
   images as OpenAI `image_url` data URIs, and applies VLMEvalKit-style
   substring scoring by category. It reports `request_errors` in stdout and JSON.
   Use `OCRBench.tsv` for normal benchmark conclusions; use `OCRBench_MINI.tsv`
-  only as a quick route smoke.
+  only as a quick route check.
 
 Example:
 

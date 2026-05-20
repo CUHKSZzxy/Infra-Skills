@@ -61,7 +61,7 @@ behavior cannot be unified cleanly. For audio/video, do not assume related model
 families expand placeholders or derive lengths the same way.
 
 Load `references/vlm-preprocessor.md` only when implementing the preprocessor.
-Load `references/pitfalls.md` when a smoke fails or the model has unusual
+Load `references/pitfalls.md` when a quick check fails or the model has unusual
 token, weight, or modality behavior.
 
 ## 4. Verification
@@ -80,7 +80,7 @@ python -m lmdeploy.pytorch.chat <model_path> --backend pytorch
 pytest tests/test_lmdeploy/test_vl/
 ```
 
-For VLMs, also run a tiny pipeline smoke:
+For VLMs, also run a tiny pipeline quick check:
 
 ```python
 from lmdeploy import pipeline

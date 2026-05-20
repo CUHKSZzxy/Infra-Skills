@@ -15,7 +15,8 @@ general workflow memory is not push permission.
 
 ## 1. Preflight
 
-Before fetching comments, changing branches, or pushing:
+Before fetching comments, changing branches, or any explicitly requested
+publish step:
 
 ```bash
 git remote -v

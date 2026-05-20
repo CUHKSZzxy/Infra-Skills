@@ -90,14 +90,14 @@ curl -fsS http://0.0.0.0:<port>/v1/models -H 'Authorization: Bearer <key>'
 If the probe fails inside the agent sandbox, retry the same probe through the
 approved network-capable path. Only inspect LMDeploy code after an outside-
 sandbox probe also fails or server logs show request handling errors. For local
-Codex smoke tests, unset proxy variables in the script and keep runtime writes
-under a guarded scratch directory.
+Codex compatibility checks, unset proxy variables in the script and keep runtime
+writes under a guarded scratch directory.
 
 For OpenAI-compatible agent endpoints, grow validation in layers: raw text curl,
-streaming/tool curl, agent no-tool smoke, agent read-tool smoke, agent write-tool
-smoke, then a multi-step tool-output-continuation smoke with exact file checks.
-This separates protocol bugs from model prompt variance and local sandbox
-issues.
+streaming/tool curl, agent no-tool check, agent read-tool check, agent
+write-tool check, then a multi-step tool-output-continuation check with exact
+file checks. This separates protocol bugs from model prompt variance and local
+sandbox issues.
 
 ## 4. Probe At Boundaries
 

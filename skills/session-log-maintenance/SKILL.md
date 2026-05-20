@@ -83,7 +83,8 @@ Avoid:
 2. After each meaningful request or design change, append a short timeline item.
 3. After file edits, record only user-relevant paths and intent.
 4. After validation, record command plus pass/fail/blocker.
-5. After commit/push/PR work, record SHA, branch, remote, and status.
+5. After commit, explicitly requested push, or PR work, record SHA, branch,
+   remote, and status.
 6. Before stopping, add a `Current State` and `Next Actions` section.
 
 Use `templates/session-log.md` when creating a new Markdown log. Trim sections
