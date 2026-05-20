@@ -53,6 +53,15 @@ Keep entries factual, structured, and explanatory:
 - commits, branches, remotes, PRs, and push status
 - unresolved questions, blockers, and next actions
 
+When the same work is summarized in an upstream PR description, do not copy
+machine-local validation commands there. Keep exact local commands in this
+session log when useful, and make the PR body use portable validation summaries
+instead.
+
+If the PR body includes a Codex assistance footer, record the exact
+user-provided Codex/model/reasoning label in the log so future PR edits preserve
+the attribution text.
+
 For meaningful timeline entries, prefer this shape:
 
 - request/objective

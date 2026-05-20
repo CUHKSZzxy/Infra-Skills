@@ -58,6 +58,24 @@ Create the PR only after confirming base/head branches and committed contents:
 gh pr create --repo InternLM/lmdeploy --base <base> --head <fork>:<branch> --title "<type>: <summary>" --body-file <body.md>
 ```
 
+Before creating or updating the PR body, keep reviewer-facing text portable:
+
+- Do not paste machine-local test commands that include absolute paths, conda
+  env names, local GPU IDs, proxy/Ray env vars, private checkpoint/media paths,
+  or scratch scripts such as `0_*.sh`.
+- Summarize local validation by intent and result instead, for example
+  "focused pytest coverage for the dtype path", "syntax checks for touched
+  modules", or "diff whitespace check".
+- Put exact local commands in chat, session logs, or benchmark artifacts when
+  they are useful for audit, but keep upstream PR descriptions free of local
+  machine details.
+- Include exact commands in the PR body only when they are public, portable,
+  and likely to work from a normal checkout.
+- When the user wants Codex assistance disclosed, append a final
+  `## Assistance` section to the PR body. Use the exact Codex/model/reasoning
+  label the user provides, for example `Assisted with Codex + GPT-5.5 xHigh`;
+  do not invent or normalize the model/reasoning label.
+
 If `gh` is unavailable, push first and use the fallback that matches the
 machine:
 
@@ -141,5 +159,6 @@ Report:
 
 - branch and remote pushed,
 - commit SHA,
-- validation commands and pass/fail status,
+- validation run and pass/fail status; keep exact local commands out of PR
+  bodies unless they are portable,
 - PR URL or review comments addressed.
