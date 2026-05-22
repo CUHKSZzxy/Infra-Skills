@@ -14,6 +14,7 @@ defaults, not general LMDeploy project facts.
 - Conda root: `/home/zhouxinyu/miniconda3`
 - Conda binary: `/home/zhouxinyu/miniconda3/bin/conda`
 - Conda profile script: `/home/zhouxinyu/miniconda3/etc/profile.d/conda.sh`
+- GitHub CLI: `/home/zhouxinyu/.local/bin/gh`
 
 For reusable commands, prefer these variables:
 
@@ -21,6 +22,7 @@ For reusable commands, prefer these variables:
 INFRA_SKILLS_HOME=/home/zhouxinyu/common/Infra-Skills
 LMDEPLOY_SOURCE=/home/zhouxinyu/lmdeploy_dev
 CONDA_EXE=/home/zhouxinyu/miniconda3/bin/conda
+GH_EXE=/home/zhouxinyu/.local/bin/gh
 ```
 
 ## Benchmark Artifacts
@@ -52,13 +54,17 @@ paths explicitly with `DATASET_PATH` or the script-specific `--data-path`.
 
 ## Envs
 
-- `dev`: default LMDeploy development env and local tool env.
+- `dev`: default LMDeploy development env. Once env preparation is complete,
+  assume `/home/zhouxinyu/lmdeploy_dev` is installed from source in this env.
 
-Use the narrow repo-doc validation command when `pre-commit` is installed in
-`dev`:
+During migration the env may exist before all project dependencies are
+installed. Treat `import lmdeploy` dependency errors as env-preparation
+evidence, not as proof that the source checkout convention is wrong.
+
+Use the direct env interpreter for deterministic commands:
 
 ```bash
-/home/zhouxinyu/miniconda3/envs/dev/bin/pre-commit run --files <changed-files>
+/home/zhouxinyu/miniconda3/envs/dev/bin/python
 ```
 
 If the shell is not initialized for conda yet:
@@ -68,10 +74,31 @@ source /home/zhouxinyu/miniconda3/etc/profile.d/conda.sh
 conda activate dev
 ```
 
-Prefer the direct env interpreter for deterministic commands:
+For Infra-Skills repo validation, use this fallback even when `pre-commit` is
+not installed:
 
 ```bash
-/home/zhouxinyu/miniconda3/envs/dev/bin/python
+PYTHONDONTWRITEBYTECODE=1 /home/zhouxinyu/miniconda3/envs/dev/bin/python -m unittest discover -s tests
+git diff --check
+```
+
+Use the narrower hook command only after `pre-commit` is installed in `dev`:
+
+```bash
+/home/zhouxinyu/miniconda3/envs/dev/bin/pre-commit run --files <changed-files>
+```
+
+## GitHub
+
+`gh` is installed under `/home/zhouxinyu/.local/bin`; `.zprofile` and `.zshrc`
+should put that directory on `PATH`.
+
+On this machine, GitHub SSH transport may hang. Prefer HTTPS remotes with the
+GitHub CLI credential helper:
+
+```bash
+gh auth setup-git
+git remote set-url origin https://github.com/<owner>/<repo>.git
 ```
 
 ## Linking

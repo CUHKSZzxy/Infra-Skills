@@ -22,8 +22,8 @@ publish step:
 git remote -v
 git branch --show-current
 git status --short
-source /home/zhouxinyu/miniconda3/etc/profile.d/conda.sh && conda activate dev
 command -v gh && gh auth status
+source /home/zhouxinyu/miniconda3/etc/profile.d/conda.sh && conda activate dev
 ```
 
 Confirm:
@@ -34,8 +34,10 @@ Confirm:
 - the available PR tool is known: `gh`, GitHub API via git credential, or browser URL,
 - the right env is available (`dev` for `/home/zhouxinyu/lmdeploy_dev`).
 
-Prefer `gh` from the repo's conda env before falling back to raw GitHub API.
-On this machine, `gh` is commonly available after activating `dev`.
+On this machine, `gh` is installed at `/home/zhouxinyu/.local/bin/gh`, not in
+the conda env. Prefer HTTPS GitHub remotes plus `gh auth setup-git`; SSH to
+GitHub may hang in this network. Run `gh auth setup-git` when HTTPS pushes
+cannot read credentials or the GitHub credential helper is absent.
 
 ## 2. New PR Path
 
@@ -91,6 +93,8 @@ fallback that matches the machine:
   the GitHub API without printing the token.
 - If neither exists, report the pushed branch, intended base/head, and PR body
   path so the user can open the browser URL.
+- If an SSH remote hangs, switch the remote to HTTPS and use the `gh` credential
+  helper before retrying the push.
 
 ## 3. Existing PR / Review Fix Path
 
@@ -157,7 +161,10 @@ pre-commit run --files <changed-files>
 pytest <targeted-tests>
 ```
 
-Use `pre-commit run --all-files` when the checkout is clean enough to interpret.
+If `pre-commit` is not installed in `dev`, run the narrowest meaningful
+available checks first, such as `python -m unittest discover -s tests` for this
+skills repo or targeted pytest in LMDeploy. Use `pre-commit run --all-files`
+when the checkout is clean enough to interpret and the tool is installed.
 If CI says a hook modified files, rerun that hook locally and inspect
 `git diff --name-only` before committing; hook auto-fixes can touch unrelated
 files in large or dirty worktrees.

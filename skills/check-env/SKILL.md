@@ -15,8 +15,11 @@ Local defaults:
 - LMDeploy checkout: `/home/zhouxinyu/lmdeploy_dev`
 - conda env: `dev`
 - conda binary: `/home/zhouxinyu/miniconda3/bin/conda`
+- GitHub CLI: `/home/zhouxinyu/.local/bin/gh`
 
-Treat these as local conventions, not universal truth.
+Treat these as local conventions, not universal truth. Once env preparation is
+complete, assume `/home/zhouxinyu/lmdeploy_dev` is installed from source in
+`dev`.
 
 ## 2. Check Python and repo wiring
 
@@ -31,15 +34,18 @@ python -c "import sys, lmdeploy; print(sys.executable); print(lmdeploy.__file__)
 Healthy state:
 
 - `python` points to the intended conda env
-- `lmdeploy.__file__` points into the current repo checkout
+- `lmdeploy.__file__` points into `/home/zhouxinyu/lmdeploy_dev`
 
-If `import lmdeploy` fails or points elsewhere, switch to the correct env first, then retry.
+If `import lmdeploy` points elsewhere, switch to `dev` first, then retry. If it
+fails with a missing dependency while `dev` is still being prepared, report the
+missing package as env-preparation work instead of changing the checkout
+assumption.
 
 ## 3. Activate or recover the right env
 
 ```bash
 conda env list
-conda activate <env-name>
+conda activate dev
 ```
 
 If `conda` is not initialized:
@@ -54,9 +60,9 @@ Or invoke conda directly:
 /home/zhouxinyu/miniconda3/bin/conda run -n dev python -c "import sys; print(sys.executable)"
 ```
 
-Do env activation before concluding a tool is missing. On this machine, common
-repo tools such as `gh` may be installed in the ready-made `dev` conda env even
-when they are not on the base shell `PATH`.
+Do env activation before concluding a Python package is missing. `gh` is not a
+conda-env tool on this machine; it is installed at `/home/zhouxinyu/.local/bin/gh`.
+If `command -v gh` fails, check that `~/.local/bin` is on `PATH`.
 
 ## 4. Check CUDA visibility
 
@@ -91,8 +97,12 @@ CUDA_VISIBLE_DEVICES=X /home/zhouxinyu/miniconda3/envs/dev/bin/python -m pytest 
 - `lmdeploy.__file__` points outside the repo: wrong env or wrong install is winning
 - `which python` shows system Python: env activation failed
 - Torch imports but sees zero GPUs: CUDA visibility, driver, or container issue
-- `which gh` fails: activate the repo env first, normally `dev`, then retry
+- `which gh` fails: ensure `~/.local/bin` is on `PATH`, or use
+  `/home/zhouxinyu/.local/bin/gh`
 - `conda run` uses the wrong Python: switch to the direct env interpreter
+- `git push` over HTTPS cannot read a username: run `gh auth setup-git`
+- `ssh -T git@github.com` hangs: prefer an HTTPS remote with the `gh`
+  credential helper
 - pytest fails on DNS, HF metadata, or proxy access: rerun the same command with
   network access before treating it as a code failure
 - async tests that use executor threads hang only in the sandbox: rerun outside
