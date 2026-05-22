@@ -22,8 +22,7 @@ publish step:
 git remote -v
 git branch --show-current
 git status --short
-# Replace <env> with the repo env, commonly fp8 or vl on this machine.
-source /nvme1/zhouxinyu/miniconda3/etc/profile.d/conda.sh && conda activate <env>
+source /home/zhouxinyu/miniconda3/etc/profile.d/conda.sh && conda activate dev
 command -v gh && gh auth status
 ```
 
@@ -33,10 +32,10 @@ Confirm:
 - unrelated local changes are understood and left unstaged,
 - the base branch and push remote are known,
 - the available PR tool is known: `gh`, GitHub API via git credential, or browser URL,
-- the right env is available (`fp8` for `lmdeploy_fp8`, `vl` for `lmdeploy_vl`).
+- the right env is available (`dev` for `/home/zhouxinyu/lmdeploy_dev`).
 
 Prefer `gh` from the repo's conda env before falling back to raw GitHub API.
-On this machine, `gh` is commonly available after activating `fp8` or `vl`.
+On this machine, `gh` is commonly available after activating `dev`.
 
 ## 2. New PR Path
 

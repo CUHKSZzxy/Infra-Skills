@@ -74,7 +74,7 @@ helpers.
 Typical layout:
 
 ```bash
-INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/nvme1/zhouxinyu/common/Infra-Skills}
+INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
 SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-efficiency-benchmark"
 MODEL_LABEL=qwen35_35b
 RUN_DIR="./benchmark/e2e_${MODEL_LABEL}_sharegpt_kvfp8"
@@ -101,7 +101,7 @@ python "$SKILL_DIR/scripts/collect_bench.py" \
 Image quick-check layout:
 
 ```bash
-INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/nvme1/zhouxinyu/common/Infra-Skills}
+INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
 SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-efficiency-benchmark"
 MODEL_LABEL=qwen35_35b_a3b
 RUN_DIR="./benchmark/e2e_${MODEL_LABEL}_image_quick"
@@ -118,7 +118,8 @@ bash "$SKILL_DIR/scripts/bench_image.sh" ./config.sh baseline
 
 Local defaults on this machine:
 
-- ShareGPT dataset: `/nvme1/shared/ShareGPT_V3_unfiltered_cleaned_split.json`
+- ShareGPT dataset: set `DATASET_PATH` in the copied config; no machine-local
+  dataset path is assumed.
 - Benchmark client:
   `$INFRA_SKILLS_HOME/skills/e2e-efficiency-benchmark/scripts/profile_restful_api.py`
 - Fast matrix: `OUT_LENS=(None 2048)` and

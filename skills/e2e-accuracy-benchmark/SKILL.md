@@ -55,7 +55,7 @@ Copy or invoke scripts from `scripts/`:
 Example:
 
 ```bash
-INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/nvme1/zhouxinyu/common/Infra-Skills}
+INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
 SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-accuracy-benchmark"
 RUN_DIR="./benchmark/e2e_${MODEL_ABBR}_gsm8k"
 mkdir -p "$RUN_DIR/0_accuracy"
@@ -68,7 +68,7 @@ python "$SKILL_DIR/scripts/gsm8k_acc.py" \
 ```
 
 ```bash
-INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/nvme1/zhouxinyu/common/Infra-Skills}
+INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
 SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-accuracy-benchmark"
 RUN_DIR="./benchmark/e2e_${MODEL_ABBR}_ocrbench"
 mkdir -p "$RUN_DIR/0_accuracy"
@@ -76,7 +76,7 @@ mkdir -p "$RUN_DIR/0_accuracy"
 python "$SKILL_DIR/scripts/ocrbench_acc.py" \
   --base-url http://127.0.0.1:23333/v1 \
   --model "$MODEL_ABBR" \
-  --data-path /nvme1/zhouxinyu/LMUData/OCRBench.tsv \
+  --data-path /path/to/OCRBench.tsv \
   --dump-json "$RUN_DIR/0_accuracy/ocrbench_acc.json" \
   2>&1 | tee "$RUN_DIR/0_accuracy/ocrbench_acc.client.log"
 ```

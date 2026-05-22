@@ -31,7 +31,7 @@ Choose the smallest durable home:
 
 - user-provided path, if given
 - project repo: `docs/agent-session-log.md`
-- multi-repo/shared effort: `/nvme1/zhouxinyu/common/session-logs/<project>.md`
+- multi-repo/shared effort: `/home/zhouxinyu/common/session-logs/<project>.md`
 - HTML mirror, when requested: same basename with `.html`
 
 If a log already exists, update it instead of creating a duplicate.

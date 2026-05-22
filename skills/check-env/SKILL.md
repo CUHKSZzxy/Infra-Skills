@@ -7,12 +7,14 @@ description: Use when an LMDeploy command fails with wrong Python, wrong `lmdepl
 
 ## 1. Identify the current repo and env target
 
-First determine which LMDeploy checkout you are in and which ready-made env should back it.
+First determine whether the current repo is the local LMDeploy checkout and
+which ready-made env should back it.
 
 Local defaults:
 
-- `lmdeploy_fp8` -> `fp8`
-- `lmdeploy_vl` -> `vl`
+- LMDeploy checkout: `/home/zhouxinyu/lmdeploy_dev`
+- conda env: `dev`
+- conda binary: `/home/zhouxinyu/miniconda3/bin/conda`
 
 Treat these as local conventions, not universal truth.
 
@@ -43,18 +45,18 @@ conda activate <env-name>
 If `conda` is not initialized:
 
 ```bash
-source ~/miniconda3/etc/profile.d/conda.sh
+source /home/zhouxinyu/miniconda3/etc/profile.d/conda.sh
 ```
 
-On this machine the concrete path is often:
+Or invoke conda directly:
 
 ```bash
-source /nvme1/zhouxinyu/miniconda3/etc/profile.d/conda.sh
+/home/zhouxinyu/miniconda3/bin/conda run -n dev python -c "import sys; print(sys.executable)"
 ```
 
 Do env activation before concluding a tool is missing. On this machine, common
-repo tools such as `gh` may be installed in the ready-made `fp8` or `vl` conda
-envs even when they are not on the base shell `PATH`.
+repo tools such as `gh` may be installed in the ready-made `dev` conda env even
+when they are not on the base shell `PATH`.
 
 ## 4. Check CUDA visibility
 
@@ -75,13 +77,12 @@ On this machine, `conda run -n <env> python` may resolve to the wrong Python. If
 
 Local defaults:
 
-- `/nvme1/zhouxinyu/miniconda3/envs/fp8/bin/python`
-- `/nvme1/zhouxinyu/miniconda3/envs/vl/bin/python`
+- `/home/zhouxinyu/miniconda3/envs/dev/bin/python`
 
 Example:
 
 ```bash
-CUDA_VISIBLE_DEVICES=X /nvme1/zhouxinyu/miniconda3/envs/<env>/bin/python -m pytest ...
+CUDA_VISIBLE_DEVICES=X /home/zhouxinyu/miniconda3/envs/dev/bin/python -m pytest ...
 ```
 
 ## 6. Common diagnosis patterns
@@ -90,7 +91,7 @@ CUDA_VISIBLE_DEVICES=X /nvme1/zhouxinyu/miniconda3/envs/<env>/bin/python -m pyte
 - `lmdeploy.__file__` points outside the repo: wrong env or wrong install is winning
 - `which python` shows system Python: env activation failed
 - Torch imports but sees zero GPUs: CUDA visibility, driver, or container issue
-- `which gh` fails: activate the repo env first, commonly `fp8` or `vl`, then retry
+- `which gh` fails: activate the repo env first, normally `dev`, then retry
 - `conda run` uses the wrong Python: switch to the direct env interpreter
 - pytest fails on DNS, HF metadata, or proxy access: rerun the same command with
   network access before treating it as a code failure

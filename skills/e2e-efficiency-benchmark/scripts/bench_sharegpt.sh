@@ -21,6 +21,10 @@ if [ ! -f "${PROFILE_RESTFUL_API}" ]; then
     echo "PROFILE_RESTFUL_API not found: ${PROFILE_RESTFUL_API}" >&2
     exit 1
 fi
+if [ -z "${DATASET_PATH}" ]; then
+    echo "DATASET_PATH must be set to a ShareGPT-format dataset file" >&2
+    exit 1
+fi
 if [ ! -f "${DATASET_PATH}" ]; then
     echo "DATASET_PATH not found: ${DATASET_PATH}" >&2
     exit 1

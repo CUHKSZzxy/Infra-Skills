@@ -29,10 +29,11 @@ SERVE_STREAM_LOGS="${SERVE_STREAM_LOGS:-0}"
 
 # Benchmark client.
 PYTHON_BIN="${PYTHON_BIN:-python3}"
-PROFILE_RESTFUL_API="/nvme1/zhouxinyu/common/Infra-Skills/skills/e2e-efficiency-benchmark/scripts/profile_restful_api.py"
+INFRA_SKILLS_HOME="${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}"
+PROFILE_RESTFUL_API="${PROFILE_RESTFUL_API:-${INFRA_SKILLS_HOME}/skills/e2e-efficiency-benchmark/scripts/profile_restful_api.py}"
 API_BACKEND_LABEL="lmdeploy"
 DATASET_NAME="sharegpt"
-DATASET_PATH="/nvme1/shared/ShareGPT_V3_unfiltered_cleaned_split.json"
+DATASET_PATH="${DATASET_PATH:-}"
 BENCH_EXTRA_ARGS=()
 BENCH_STREAM_LOGS="${BENCH_STREAM_LOGS:-0}"
 
