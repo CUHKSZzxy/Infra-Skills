@@ -244,3 +244,13 @@ When a backend or quant policy changes, answer these before editing kernels:
 
 If any answer is uncertain, inspect that exact call chain first; do not tune
 the kernel yet.
+
+## 10. Runtime Lifecycle State
+
+When a KV-cache or attention change adds module-owned state such as quant
+scales, registered buffers, or optional metadata tensors, include a serving
+lifecycle check if that feature is reachable in serve mode.
+
+After resource release, reload, or wakeup flows, run a small generation that
+exercises the changed KV path. Confirm the owner of each tensor restores the
+expected device, dtype, and metadata contract before it is passed to kernels.

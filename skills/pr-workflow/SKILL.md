@@ -62,6 +62,10 @@ git commit -m "<type>: <summary>"
 git push -u origin <branch>
 ```
 
+Use the existing conventional commit style for PR work: `<type>: <summary>`,
+for example `fix: ...`, `docs: ...`, `test: ...`, or `chore: ...`. Keep the
+summary lowercase and imperative where possible.
+
 When the user explicitly asks to publish/open a PR, create it only after
 confirming base/head branches and committed contents:
 

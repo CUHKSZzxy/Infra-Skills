@@ -73,6 +73,9 @@ When changing skills:
 
 - update `README.md` if the visible skill list or one-line index changes
 - stage only intended skill files
+- commit skill-repo changes with the existing conventional style, such as
+  `docs: <summary>` or `chore: <summary>`; keep the summary lowercase and
+  imperative where possible
 - expose repo skills by symlink, not copy, when applying locally
 - run the linker after adding/removing a skill or changing local symlink targets:
 
