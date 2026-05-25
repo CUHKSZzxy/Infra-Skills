@@ -6,7 +6,8 @@ defaults, not general LMDeploy project facts.
 ## Paths
 
 - Home: `/home/zhouxinyu`
-- LMDeploy source checkout: `/home/zhouxinyu/lmdeploy_dev`
+- LMDeploy dev checkout: `/home/zhouxinyu/lmdeploy_dev`
+- LMDeploy multimodal checkout: `/home/zhouxinyu/lmdeploy_mm`
 - Infra skills repo: `/home/zhouxinyu/common/Infra-Skills`
 - Skill source: `/home/zhouxinyu/common/Infra-Skills/skills`
 - Codex skill home: `/home/zhouxinyu/.codex/skills`
@@ -20,7 +21,8 @@ For reusable commands, prefer these variables:
 
 ```bash
 INFRA_SKILLS_HOME=/home/zhouxinyu/common/Infra-Skills
-LMDEPLOY_SOURCE=/home/zhouxinyu/lmdeploy_dev
+LMDEPLOY_DEV_SOURCE=/home/zhouxinyu/lmdeploy_dev
+LMDEPLOY_MM_SOURCE=/home/zhouxinyu/lmdeploy_mm
 CONDA_EXE=/home/zhouxinyu/miniconda3/bin/conda
 GH_EXE=/home/zhouxinyu/.local/bin/gh
 ```
@@ -54,8 +56,11 @@ paths explicitly with `DATASET_PATH` or the script-specific `--data-path`.
 
 ## Envs
 
-- `dev`: default LMDeploy development env. Once env preparation is complete,
-  assume `/home/zhouxinyu/lmdeploy_dev` is installed from source in this env.
+- `dev`: paired with `/home/zhouxinyu/lmdeploy_dev`.
+- `mm`: paired with `/home/zhouxinyu/lmdeploy_mm`.
+
+Once env preparation is complete, assume each checkout is installed from source
+in its paired env.
 
 During migration the env may exist before all project dependencies are
 installed. Treat `import lmdeploy` dependency errors as env-preparation
@@ -65,13 +70,14 @@ Use the direct env interpreter for deterministic commands:
 
 ```bash
 /home/zhouxinyu/miniconda3/envs/dev/bin/python
+/home/zhouxinyu/miniconda3/envs/mm/bin/python
 ```
 
 If the shell is not initialized for conda yet:
 
 ```bash
 source /home/zhouxinyu/miniconda3/etc/profile.d/conda.sh
-conda activate dev
+conda activate <paired-env>
 ```
 
 For Infra-Skills repo validation, use this fallback even when `pre-commit` is

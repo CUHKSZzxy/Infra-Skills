@@ -23,7 +23,8 @@ git remote -v
 git branch --show-current
 git status --short
 command -v gh && gh auth status
-source /home/zhouxinyu/miniconda3/etc/profile.d/conda.sh && conda activate dev
+# Use dev for /home/zhouxinyu/lmdeploy_dev, or mm for /home/zhouxinyu/lmdeploy_mm.
+source /home/zhouxinyu/miniconda3/etc/profile.d/conda.sh && conda activate <paired-env>
 ```
 
 Confirm:
@@ -32,7 +33,8 @@ Confirm:
 - unrelated local changes are understood and left unstaged,
 - the base branch and push remote are known,
 - the available PR tool is known: `gh`, GitHub API via git credential, or browser URL,
-- the right env is available (`dev` for `/home/zhouxinyu/lmdeploy_dev`).
+- the right env is available (`dev` for `/home/zhouxinyu/lmdeploy_dev`, `mm`
+  for `/home/zhouxinyu/lmdeploy_mm`).
 
 On this machine, `gh` is installed at `/home/zhouxinyu/.local/bin/gh`, not in
 the conda env. Prefer HTTPS GitHub remotes plus `gh auth setup-git`; SSH to
@@ -161,7 +163,7 @@ pre-commit run --files <changed-files>
 pytest <targeted-tests>
 ```
 
-If `pre-commit` is not installed in `dev`, run the narrowest meaningful
+If `pre-commit` is not installed in the paired env, run the narrowest meaningful
 available checks first, such as `python -m unittest discover -s tests` for this
 skills repo or targeted pytest in LMDeploy. Use `pre-commit run --all-files`
 when the checkout is clean enough to interpret and the tool is installed.

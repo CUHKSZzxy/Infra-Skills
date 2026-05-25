@@ -7,19 +7,18 @@ description: Use when an LMDeploy command fails with wrong Python, wrong `lmdepl
 
 ## 1. Identify the current repo and env target
 
-First determine whether the current repo is the local LMDeploy checkout and
-which ready-made env should back it.
+First determine which local LMDeploy checkout you are in and which ready-made
+env should back it.
 
 Local defaults:
 
-- LMDeploy checkout: `/home/zhouxinyu/lmdeploy_dev`
-- conda env: `dev`
+- `/home/zhouxinyu/lmdeploy_dev` -> conda env `dev`
+- `/home/zhouxinyu/lmdeploy_mm` -> conda env `mm`
 - conda binary: `/home/zhouxinyu/miniconda3/bin/conda`
 - GitHub CLI: `/home/zhouxinyu/.local/bin/gh`
 
 Treat these as local conventions, not universal truth. Once env preparation is
-complete, assume `/home/zhouxinyu/lmdeploy_dev` is installed from source in
-`dev`.
+complete, assume each checkout is installed from source in its paired env.
 
 ## 2. Check Python and repo wiring
 
@@ -33,19 +32,19 @@ python -c "import sys, lmdeploy; print(sys.executable); print(lmdeploy.__file__)
 
 Healthy state:
 
-- `python` points to the intended conda env
-- `lmdeploy.__file__` points into `/home/zhouxinyu/lmdeploy_dev`
+- `python` points to the paired conda env
+- `lmdeploy.__file__` points into the current checkout
 
-If `import lmdeploy` points elsewhere, switch to `dev` first, then retry. If it
-fails with a missing dependency while `dev` is still being prepared, report the
-missing package as env-preparation work instead of changing the checkout
-assumption.
+If `import lmdeploy` points elsewhere, switch to the paired env first, then
+retry. If it fails with a missing dependency while the env is still being
+prepared, report the missing package as env-preparation work instead of
+changing the checkout assumption.
 
 ## 3. Activate or recover the right env
 
 ```bash
 conda env list
-conda activate dev
+conda activate <paired-env>
 ```
 
 If `conda` is not initialized:
@@ -57,7 +56,7 @@ source /home/zhouxinyu/miniconda3/etc/profile.d/conda.sh
 Or invoke conda directly:
 
 ```bash
-/home/zhouxinyu/miniconda3/bin/conda run -n dev python -c "import sys; print(sys.executable)"
+/home/zhouxinyu/miniconda3/bin/conda run -n <paired-env> python -c "import sys; print(sys.executable)"
 ```
 
 Do env activation before concluding a Python package is missing. `gh` is not a
@@ -84,11 +83,12 @@ On this machine, `conda run -n <env> python` may resolve to the wrong Python. If
 Local defaults:
 
 - `/home/zhouxinyu/miniconda3/envs/dev/bin/python`
+- `/home/zhouxinyu/miniconda3/envs/mm/bin/python`
 
 Example:
 
 ```bash
-CUDA_VISIBLE_DEVICES=X /home/zhouxinyu/miniconda3/envs/dev/bin/python -m pytest ...
+CUDA_VISIBLE_DEVICES=X /home/zhouxinyu/miniconda3/envs/<paired-env>/bin/python -m pytest ...
 ```
 
 ## 6. Common diagnosis patterns
