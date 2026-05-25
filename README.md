@@ -18,10 +18,10 @@ boundaries and update loop.
 | `/lmdeploy-attention-dataflow` | Attention, KV cache, quant policy, and backend dispatch tracing |
 | `/lmdeploy-runtime-debugging` | Serve/generation stalls, slow endpoints, and runtime symptoms |
 | `/pr-workflow` | LMDeploy PR creation, review fixes, validation, and push |
-| `/session-log-maintenance` | Durable project logs for long sessions and handoffs |
-| `/session-skill-maintenance` | End-of-session compression into skills, refs, scripts, or history |
 | `/support-new-model` | New LLM/VLM PyTorch backend support |
 | `/triton-kernel-performance` | CUDA/Triton correctness, benchmarking, and performance work |
+| `/update-session-log` | Durable project logs for long sessions and handoffs |
+| `/update-session-skill` | End-of-session compression into skills, refs, scripts, or history |
 
 ## Heuristic learning framework
 

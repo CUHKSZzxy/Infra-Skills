@@ -1,9 +1,9 @@
 ---
-name: session-log-maintenance
+name: update-session-log
 description: Use when a project session may span many conversation turns, risks context loss, or the user asks for a durable Markdown or HTML record of objectives, requests, changes, validation, commits, or handoff state.
 ---
 
-# Session Log Maintenance
+# Update Session Log
 
 Keep a small project-local record so long agent sessions can survive context
 loss without forcing the user to reconstruct history.

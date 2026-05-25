@@ -53,7 +53,7 @@ class SkillDocsTest(unittest.TestCase):
 
     def test_new_skill_guidance_points_to_local_conventions(self):
         session_skill = read_text(
-            SKILLS_ROOT / "session-skill-maintenance" / "SKILL.md"
+            SKILLS_ROOT / "update-session-skill" / "SKILL.md"
         )
         normalized = " ".join(session_skill.split())
 

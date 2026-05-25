@@ -1,9 +1,9 @@
 ---
-name: session-skill-maintenance
+name: update-session-skill
 description: Use when a task, debug session, PR fix, or study session has just completed and the user asks whether reusable skills, workflow guidance, or skill repo updates should be summarized or applied.
 ---
 
-# Session Skill Maintenance
+# Update Session Skill
 
 Use this at the end of a meaningful work session to decide whether the lesson
 should become reusable skill guidance. Optimize for the user's preference:
