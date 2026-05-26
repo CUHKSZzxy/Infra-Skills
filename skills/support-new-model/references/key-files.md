@@ -8,7 +8,11 @@ Study the closest existing model thoroughly before writing any code.
 | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | LLM (dense)                   | `lmdeploy/pytorch/models/qwen3.py`                                                                                                        |
 | LLM (MoE)                     | `lmdeploy/pytorch/models/qwen3_moe.py`                                                                                                    |
+| Qwen3.5 / GDN / MoE           | `lmdeploy/pytorch/models/qwen3_5.py` + `lmdeploy/pytorch/models/qwen3_5_moe.py` + `lmdeploy/pytorch/configurations/qwen3_5.py`            |
+| VLM text/vision tower         | `lmdeploy/pytorch/models/qwen3_vl.py` + `lmdeploy/pytorch/configurations/qwen3_vl.py` + `lmdeploy/vl/model/qwen3.py`                      |
+| VLM-MoE                       | `lmdeploy/pytorch/models/qwen3_vl_moe.py` + `lmdeploy/pytorch/models/qwen3_moe.py` + `lmdeploy/vl/model/qwen3.py`                         |
 | VLM preprocessor              | `lmdeploy/vl/model/qwen3.py`                                                                                                              |
+| Time-series side encoder      | `lmdeploy/pytorch/models/interns1_pro_time_series.py`                                                                                     |
 | VLM (composite/nested config) | `lmdeploy/pytorch/models/qwen3_omni_moe_thinker.py` + `lmdeploy/pytorch/configurations/qwen3_omni.py` + `lmdeploy/vl/model/qwen3_omni.py` |
 
 Also read the HF model's `config.json` to identify: `model_type`, `architectures`, layer counts, hidden dims, number of attention heads, MoE parameters (if applicable).

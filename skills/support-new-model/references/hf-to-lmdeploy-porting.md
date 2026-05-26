@@ -124,6 +124,27 @@ with LMDeploy runtime primitives.
   projections, but keep simple checkpoint-compatible ops such as `Conv1d`,
   positional buffers, and local transformer/Whisper blocks when no backend
   replacement exists.
+- When weights or full LLM integration are not available yet, first land the
+  side encoder as a standalone module with a focused parity test against the HF
+  or research reference. Validate each checkpointed submodule plus end-to-end
+  output on GPU when possible, and report both max absolute diff and shape or
+  length equality. Treat large relative diff near zero-valued reference outputs
+  as secondary to the absolute tolerance.
+- Port inference-only modules, not training APIs. Drop `freeze` flags,
+  `self.training` branches, dropout, output-attention/hidden-state flags,
+  `return_dict` variants, and dead modes such as unused self-attention or
+  index-return branches unless the target runtime path actually consumes them.
+- Prefer explicit constructor `dtype` and `device` arguments, then store them on
+  `self.dtype` and `self.device` when later submodules need consistent tensor
+  creation. Do not invent helper factories such as `_resolve_factory_kwargs`
+  unless the local LMDeploy model files already use that pattern.
+- If a side encoder depends on a common HF block such as BERT, replace it with
+  a local LMDeploy inference implementation when practical instead of keeping a
+  runtime dependency on `transformers.BertModel`. Keep names aligned with the
+  HF checkpoint contract, and remove project-specific prefixes that are not in
+  the real HF state dict.
+- Order standalone encoder files bottom-up: small helpers first, composite
+  encoders next, and the top-level chunk/model wrapper at the bottom.
 - In `prepare_inputs_for_generation`, collect side-modality `MultiModalData`
   by modality, concatenate feature tensors and metadata such as lengths or
   sampling rates, and build one multimodal mask from the side token id.
