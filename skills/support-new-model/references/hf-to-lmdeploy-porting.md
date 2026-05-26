@@ -34,6 +34,8 @@ with LMDeploy runtime primitives.
 | Python expert loop with `index_add_` | `build_fused_moe(...)` with routed top-k ids and weights |
 | router `softmax` plus `topk` | `SoftmaxTopK` or a model-specific router helper such as `NoauxTCRouter` |
 | `experts.<id>.gate_proj/up_proj/down_proj` | `experts.gate_up` and `experts.down` with expert id and shard id loaders |
+| HF side encoder for a non-text modality | separate LMDeploy module plus `MultiModalData` and masked scatter into `inputs_embeds` |
+| HF placeholder expansion for side features | `VisionModel.preprocess(...)` or a custom modality processor that emits exact token spans |
 
 ## Dense LLM Checklist
 
@@ -101,6 +103,40 @@ with LMDeploy runtime primitives.
   then pass only the resulting `inputs_embeds` plus compact metadata to the
   language model.
 
+## Side Encoder / Time-Series Checklist
+
+- Read the side-module config first, such as `ts_config`, token ids,
+  start/end tokens, input feature dimensions, downsampling strides, projector
+  output size, and any sampling-rate dependent formulas.
+- Keep transport, preprocessing, embedding, and language-model scatter as
+  separate steps. Media IO decodes raw payloads; the VLM preprocessor
+  normalizes/truncates and expands placeholders; the PyTorch side module
+  produces embeddings; the main model scatters them into `inputs_embeds`.
+- If the modality is new to LMDeploy, add it consistently to `Modality`,
+  `VisionModel.ATTR_NAME_TO_MODALITY`, `VisionModel.FEATURE_NAMES`,
+  `MultimodalSpecialTokens`, the serve multimodal parser, and the PyTorch
+  input processor's `MultiModalData` conversion.
+- Preserve the HF token-count formula exactly. For time-series modules this
+  often combines sampling rate, patch size, stride, and later subsampling; the
+  number of placeholder tokens must equal the number of embeddings scattered.
+- Build reusable side encoders as separate modules, for example
+  `<model>_time_series.py`. Use LMDeploy linear/norm helpers for checkpointed
+  projections, but keep simple checkpoint-compatible ops such as `Conv1d`,
+  positional buffers, and local transformer/Whisper blocks when no backend
+  replacement exists.
+- In `prepare_inputs_for_generation`, collect side-modality `MultiModalData`
+  by modality, concatenate feature tensors and metadata such as lengths or
+  sampling rates, and build one multimodal mask from the side token id.
+- In model `forward`, compute side embeddings only when raw side inputs are
+  present, then scatter into token embeddings with the multimodal mask before
+  calling the language model.
+- For models that use M-RoPE for image/video, explicitly decide whether the
+  side modality participates. InternS1-Pro-style time-series inputs use normal
+  text positions while image/video still use M-RoPE.
+- Store the original nested HF config on `cfg.hf_config` when the runtime
+  wrapper needs non-text configs such as `vision_config` or `ts_config` after
+  the model config builder derives text-engine fields.
+
 ## Registration And Config
 
 - `module_map.py` maps the exact HF architecture class name to the LMDeploy
@@ -123,6 +159,11 @@ with LMDeploy runtime primitives.
   Qwen3-VL-MoE loaders support different fused expert layouts.
 - Do not duplicate VLM code for VLM-MoE when the text tower can inherit MoE and
   the VLM wrapper can be reused.
+- Do not let side-modality placeholder count drift from side-encoder output
+  length. A mismatch may only surface as a masked-scatter shape error during
+  prefill.
+- Do not assume image/video M-RoPE handling also applies to scientific side
+  modalities. Check scheduler position-id logic for each modality.
 - For videos, check whether HF expands one placeholder per video or per frame;
   Qwen3-VL-style timestamp prompts may require per-frame multimodal items.
 - For M-RoPE, verify both prefill and decode position ids. Decode usually

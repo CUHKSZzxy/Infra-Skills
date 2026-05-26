@@ -42,6 +42,30 @@ class MyModelVLModel(VisionModel):
 
 ______________________________________________________________________
 
+## Non-Image Modalities
+
+For modalities such as time series, keep the same new-style flow but add the
+modality contract explicitly.
+
+- Add a `Modality` value and map processor output names in
+  `VisionModel.ATTR_NAME_TO_MODALITY`.
+- Add the main feature tensor name to `VisionModel.FEATURE_NAMES`.
+- Add token ids to `MultimodalSpecialTokens`.
+- Add a custom processor method when HF `AutoProcessor` cannot expand the
+  placeholder correctly for runtime serving.
+- Return processor outputs with `input_ids`, the feature tensor, feature
+  metadata, and the modality token id.
+- Convert those outputs to `MultiModalData` in the PyTorch input processor.
+
+For InternS1-Pro-style time series, the custom processor normalizes and
+truncates the raw signal, derives the number of placeholder tokens from
+sampling rate plus patch/subsample lengths, and returns `ts_values`, `ts_lens`,
+`ts_sr`, and `ts_token_id`. The PyTorch model then concatenates these fields in
+`prepare_inputs_for_generation` and scatters the time-series encoder output into
+`inputs_embeds` using the modality token mask.
+
+______________________________________________________________________
+
 ## Old-Style (backward compat / no mixed-modality needed)
 
 Override `preprocess(self, messages)` directly. Called before `wrap_for_pytorch`.
