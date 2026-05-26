@@ -22,6 +22,8 @@ Then inspect nearby LMDeploy models and, for VLM/audio/video behavior, compare
 HF plus one runtime such as vLLM or SGLang.
 
 Load `references/key-files.md` when unsure which existing model to mirror.
+Load `references/hf-to-lmdeploy-porting.md` when translating HF Transformers
+inference code into LMDeploy PyTorch model code.
 
 ## 2. LLM PyTorch Path
 
