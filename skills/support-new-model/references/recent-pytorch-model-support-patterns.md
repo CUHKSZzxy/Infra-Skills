@@ -6,18 +6,35 @@ patterns come from LMDeploy PyTorch model-support PRs merged in the year before
 
 ## Recent PR Map
 
-- New or large model families: Qwen3.5 `#4351`, InternS1-Pro `#4318`,
-  InternS2 Preview `#4575`, Qwen3-VL `#4093`, Qwen3-Next `#4039`,
-  DeepSeek-v3.2 `#4026`, SDAR `#3922`, InternVL3.5-Flash `#3952`,
-  GLM-4.5 `#3863`, GLM-4.1V `#3846`, GPT-OSS `#3820`, InternVL3-HF
-  `#3633`/`#3765`.
-- Model variants and maintenance: Qwen3.5 MTP `#4437`, GLM4.7 MTP `#4346`,
-  GLM5 `#4355`, GLM4.7-Flash `#4320`, Qwen3 MoE EPLB `#3582`, Qwen3 fused
-  MoE weights `#3672`, Qwen3 MoE YaRN/hf-overrides `#3757`, Kimi-K2 builder
-  `#4069`.
-- Compatibility follow-ups matter: Transformers 5 changes, chat-template
-  fixes, long-context fixes, and hardware-specific checks often land after the
-  first model PR.
+| PR | Area | Main pattern |
+| --- | --- | --- |
+| `#4575` | InternS2 Preview | Compose Qwen3.5 plus InternS1-Pro paths; keep nested configs and side modules |
+| `#4485` | Qwen3.5 35B-A3B Ascend | Backend, check-env, and config adaptation for a specific model |
+| `#4437` | Qwen3.5 MTP | Separate `*_mtp.py`, spec config, recurrent state handling |
+| `#4351` | Qwen3.5 | GatedDelta/linear-attn state shapes, VLM, MoE, config builder |
+| `#4355` | GLM5 | Reuse DeepSeek-v3.2-style model/config mapping |
+| `#4346` | GLM4.7 MTP | Reuse DeepSeek MTP path plus GLM config/model map |
+| `#4320` | GLM-4.7-Flash | Reuse DeepSeek/Qwen-style PyTorch components |
+| `#4318` | InternS1-Pro | Qwen3-MoE text plus Qwen3-VL vision plus time-series side encoder |
+| `#4093` | Qwen3-VL / VL-MoE | New-style VLM preprocess, M-RoPE, vision scatter |
+| `#4039` | Qwen3-Next | GatedDelta/recurrent cache model support |
+| `#4026` | DeepSeek-v3.2 | MLA/NSA/backend kernels plus model/config registration |
+| `#3922` | SDAR / SDAR-MoE | New PyTorch strategy/model family |
+| `#3952` | InternVL3.5-Flash | VLM model-agent and preprocessor adaptation |
+| `#3863` | GLM-4.5 | MoE model file and module map |
+| `#3846` | GLM-4-0414 / GLM-4.1V | Text plus VLM model/preprocessor registration |
+| `#3820` | GPT-OSS bf16 | MoE/attention backend plus model/config |
+| `#3765` | InternVL PyTorch | InternVL3 HF config/model/VLM path |
+| `#3633` | InternVL3-8B-HF | Initial InternVL3 HF PyTorch support |
+| `#3582` | Qwen3-MoE EPLB | Expert load-balance metadata in model path |
+| `#3672` | Qwen3 fused MoE weights | Checkpoint layout support in loader |
+| `#3757` | Qwen3-MoE YaRN / VLM overrides | Config and HF override compatibility |
+
+Compatibility follow-ups matter. Check later PRs for Transformers 5 changes,
+chat-template fixes, long-context fixes, hardware-specific checks, and model
+variant fixes. Useful examples include Qwen3.5 `#4430`, `#4405`, `#4470`,
+Qwen3-VL `#4348`, `#4457`, InternS1-Pro `#4435`, `#4334`, Kimi-K2 `#4069`,
+Gemma3 `#3772`, and Mixtral `#3580`.
 
 ## Implementation Patterns
 
