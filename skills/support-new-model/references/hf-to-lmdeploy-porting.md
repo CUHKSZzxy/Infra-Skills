@@ -31,6 +31,9 @@ with LMDeploy runtime primitives.
 | HF rotary helper functions | `build_rotary_embedding_from_config(...)` and `ApplyRotaryEmb` when supported |
 | HF cache update and attention mask | `Attention(..., k_cache, v_cache, attn_metadata)` |
 | HF `GenerationMixin.prepare_inputs_for_generation` | model `prepare_inputs_for_generation(..., context=StepContext)` |
+| Python expert loop with `index_add_` | `build_fused_moe(...)` with routed top-k ids and weights |
+| router `softmax` plus `topk` | `SoftmaxTopK` or a model-specific router helper such as `NoauxTCRouter` |
+| `experts.<id>.gate_proj/up_proj/down_proj` | `experts.gate_up` and `experts.down` with expert id and shard id loaders |
 
 ## Dense LLM Checklist
 
@@ -46,6 +49,36 @@ with LMDeploy runtime primitives.
 - In `load_weights()`, skip rotary cache tensors and tied `lm_head.weight`
   when appropriate, then map each HF shard to the packed parameter with the
   correct shard id.
+
+## MoE Checklist
+
+- Read MoE config fields: `decoder_sparse_step`, `mlp_only_layers`,
+  `moe_intermediate_size`, `num_experts`, `num_experts_per_tok`,
+  `norm_topk_prob`, router grouping/scoring fields, shared expert fields, and
+  EP/EPLB flags.
+- Mirror HF sparse-vs-dense layer predicates exactly; dense layers should keep
+  the dense MLP path while sparse layers use fused MoE.
+- For Qwen-style softmax routers, build the gate as non-TP linear from hidden
+  dim to number of experts, call `SoftmaxTopK`, and pass `norm_topk_prob` as
+  `renormalize` to `build_fused_moe`.
+- For other router families, use the matching router helper such as
+  `NoauxTCRouter` instead of assuming softmax top-k.
+- Replace HF expert Python loops with
+  `build_fused_moe(hidden_dim, moe_intermediate_size, num_experts, top_k, ...)`.
+- Add expert loader mapping for every expert id: gate/up load into
+  `experts.gate_up` with shard ids `gate`/`up`; down loads into
+  `experts.down` with shard id `down`.
+- Handle both checkpoint layouts when present: per-expert
+  `experts.<id>.*_proj` and fused tensors such as `fused_w1w3`/`fused_w2` or
+  `experts.gate_up_proj`/`experts.down_proj`; check transpose and chunk order
+  before loading.
+- If router replay or expert tracing is enabled, only sparse blocks should
+  write routed experts; dense MLP paths must ignore replay metadata or avoid
+  receiving it.
+- For VLM-MoE, reuse VLM preprocessing and vision code when only the text tower
+  is MoE; swap the language model and keep M-RoPE/deepstack handling.
+- For EP/EPLB, confirm logical-to-physical expert id mapping and per-rank
+  expert-list loaders before blaming kernel output.
 
 ## VLM Checklist
 
@@ -84,6 +117,12 @@ with LMDeploy runtime primitives.
   forward. Check `StepContext` and backend attention metadata instead.
 - Do not leave HF q/k/v or gate/up parameter names in `named_parameters()` after
   packing unless `load_weights()` intentionally renames them.
+- Do not normalize top-k weights twice. Qwen-style router returns top-k probs,
+  and LMDeploy fused MoE can renormalize based on `norm_topk_prob`.
+- Do not assume one checkpoint layout for MoE expert weights. Qwen3-MoE and
+  Qwen3-VL-MoE loaders support different fused expert layouts.
+- Do not duplicate VLM code for VLM-MoE when the text tower can inherit MoE and
+  the VLM wrapper can be reused.
 - For videos, check whether HF expands one placeholder per video or per frame;
   Qwen3-VL-style timestamp prompts may require per-frame multimodal items.
 - For M-RoPE, verify both prefill and decode position ids. Decode usually
