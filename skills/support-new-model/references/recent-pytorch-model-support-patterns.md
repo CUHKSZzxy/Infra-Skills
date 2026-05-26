@@ -6,10 +6,13 @@ patterns come from LMDeploy PyTorch model-support PRs merged in the year before
 
 ## Recent PR Map
 
+This table intentionally excludes Ascend-only work, Turbomind-only work, bug
+fixes, and small compatibility/variant PRs. Use it for substantial PyTorch
+model-adaptation examples.
+
 | PR | Area | Main pattern |
 | --- | --- | --- |
 | `#4575` | InternS2 Preview | Compose Qwen3.5 plus InternS1-Pro paths; keep nested configs and side modules |
-| `#4485` | Qwen3.5 35B-A3B Ascend | Backend, check-env, and config adaptation for a specific model |
 | `#4437` | Qwen3.5 MTP | Separate `*_mtp.py`, spec config, recurrent state handling |
 | `#4351` | Qwen3.5 | GatedDelta/linear-attn state shapes, VLM, MoE, config builder |
 | `#4355` | GLM5 | Reuse DeepSeek-v3.2-style model/config mapping |
@@ -26,15 +29,9 @@ patterns come from LMDeploy PyTorch model-support PRs merged in the year before
 | `#3820` | GPT-OSS bf16 | MoE/attention backend plus model/config |
 | `#3765` | InternVL PyTorch | InternVL3 HF config/model/VLM path |
 | `#3633` | InternVL3-8B-HF | Initial InternVL3 HF PyTorch support |
-| `#3582` | Qwen3-MoE EPLB | Expert load-balance metadata in model path |
-| `#3672` | Qwen3 fused MoE weights | Checkpoint layout support in loader |
-| `#3757` | Qwen3-MoE YaRN / VLM overrides | Config and HF override compatibility |
 
-Compatibility follow-ups matter. Check later PRs for Transformers 5 changes,
-chat-template fixes, long-context fixes, hardware-specific checks, and model
-variant fixes. Useful examples include Qwen3.5 `#4430`, `#4405`, `#4470`,
-Qwen3-VL `#4348`, `#4457`, InternS1-Pro `#4435`, `#4334`, Kimi-K2 `#4069`,
-Gemma3 `#3772`, and Mixtral `#3580`.
+Compatibility follow-ups still matter, but keep them out of the model-support
+map unless they introduce a substantial reusable architecture pattern.
 
 ## Implementation Patterns
 
