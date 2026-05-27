@@ -44,6 +44,18 @@ Implementation checklist:
 - make `stacked_params_mapping` shard indices match `load_weights()`,
 - verify weights load without missing/unexpected keys.
 
+Style defaults for LMDeploy model code:
+
+- keep inference code concise; omit training-only flags, dropout branches,
+  freeze switches, and optional output flags unless nearby LMDeploy models need
+  them,
+- pass `dtype` and `device` explicitly like adjacent model files; avoid adding
+  local factory helpers for simple module construction,
+- remove reference-only branches and unused args after parity is established,
+- keep comments sparse and useful; do not explain obvious assignments,
+- after simplification or op replacement, rerun module-level and end-to-end
+  numeric parity checks against the reference.
+
 Load `references/llm-code-skeleton.md` only when writing the model/config code.
 
 ## 3. VLM Additional Path
