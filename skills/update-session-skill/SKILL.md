@@ -1,6 +1,6 @@
 ---
 name: update-session-skill
-description: Use when a task, debug session, PR fix, or study session has just completed and the user asks whether reusable skills, workflow guidance, or skill repo updates should be summarized or applied.
+description: Use when a completed session should be compressed into reusable skill guidance, repo conventions, references, scripts, or no promoted lesson.
 ---
 
 # Update Session Skill

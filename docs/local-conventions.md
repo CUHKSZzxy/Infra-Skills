@@ -59,12 +59,10 @@ paths explicitly with `DATASET_PATH` or the script-specific `--data-path`.
 - `dev`: paired with `/home/zhouxinyu/lmdeploy_dev`.
 - `mm`: paired with `/home/zhouxinyu/lmdeploy_mm`.
 
-Once env preparation is complete, assume each checkout is installed from source
-in its paired env.
+Assume each checkout is installed from source in its paired env.
 
-During migration the env may exist before all project dependencies are
-installed. Treat `import lmdeploy` dependency errors as env-preparation
-evidence, not as proof that the source checkout convention is wrong.
+If `import lmdeploy` raises dependency errors, report env preparation or
+package drift instead of changing the source checkout convention.
 
 Use the direct env interpreter for deterministic commands:
 

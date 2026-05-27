@@ -10,15 +10,15 @@ description: Use when an LMDeploy command fails with wrong Python, wrong `lmdepl
 First determine which local LMDeploy checkout you are in and which ready-made
 env should back it.
 
-Local defaults:
+Use `../../docs/local-conventions.md` as the source of truth for exact local
+paths, conda binaries, GitHub CLI location, and remote protocol preference.
+Current repo/env pairings:
 
 - `/home/zhouxinyu/lmdeploy_dev` -> conda env `dev`
 - `/home/zhouxinyu/lmdeploy_mm` -> conda env `mm`
-- conda binary: `/home/zhouxinyu/miniconda3/bin/conda`
-- GitHub CLI: `/home/zhouxinyu/.local/bin/gh`
 
-Treat these as local conventions, not universal truth. Once env preparation is
-complete, assume each checkout is installed from source in its paired env.
+Treat these as local conventions, not universal truth. Assume each checkout is
+installed from source in its paired env.
 
 ## 2. Check Python and repo wiring
 
@@ -36,9 +36,8 @@ Healthy state:
 - `lmdeploy.__file__` points into the current checkout
 
 If `import lmdeploy` points elsewhere, switch to the paired env first, then
-retry. If it fails with a missing dependency while the env is still being
-prepared, report the missing package as env-preparation work instead of
-changing the checkout assumption.
+retry. If it fails with a missing dependency, report env preparation or package
+drift instead of changing the checkout assumption.
 
 ## 3. Activate or recover the right env
 
@@ -60,8 +59,7 @@ Or invoke conda directly:
 ```
 
 Do env activation before concluding a Python package is missing. `gh` is not a
-conda-env tool on this machine; it is installed at `/home/zhouxinyu/.local/bin/gh`.
-If `command -v gh` fails, check that `~/.local/bin` is on `PATH`.
+conda-env tool; if `command -v gh` fails, check the path in local conventions.
 
 ## 4. Check CUDA visibility
 
@@ -78,7 +76,8 @@ export CUDA_VISIBLE_DEVICES=<gpu_id>
 
 ## 5. Prefer direct env Python when wrappers are unreliable
 
-On this machine, `conda run -n <env> python` may resolve to the wrong Python. If that happens, use the env's interpreter directly for tests and scripts.
+If `conda run -n <env> python` resolves unexpectedly, use the env's interpreter
+directly for tests and scripts.
 
 Local defaults:
 
@@ -97,12 +96,10 @@ CUDA_VISIBLE_DEVICES=X /home/zhouxinyu/miniconda3/envs/<paired-env>/bin/python -
 - `lmdeploy.__file__` points outside the repo: wrong env or wrong install is winning
 - `which python` shows system Python: env activation failed
 - Torch imports but sees zero GPUs: CUDA visibility, driver, or container issue
-- `which gh` fails: ensure `~/.local/bin` is on `PATH`, or use
-  `/home/zhouxinyu/.local/bin/gh`
+- `which gh` fails: check the GitHub CLI path in local conventions
 - `conda run` uses the wrong Python: switch to the direct env interpreter
-- `git push` over HTTPS cannot read a username: run `gh auth setup-git`
-- `ssh -T git@github.com` hangs: prefer an HTTPS remote with the `gh`
-  credential helper
+- GitHub HTTPS auth or hanging SSH: follow the GitHub section in local
+  conventions before debugging git itself
 - pytest fails on DNS, HF metadata, or proxy access: rerun the same command with
   network access before treating it as a code failure
 - async tests that use executor threads hang only in the sandbox: rerun outside

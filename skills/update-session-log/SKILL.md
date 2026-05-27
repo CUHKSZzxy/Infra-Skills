@@ -1,6 +1,6 @@
 ---
 name: update-session-log
-description: Use when a project session may span many conversation turns, risks context loss, or the user asks for a durable Markdown or HTML record of objectives, requests, changes, validation, commits, or handoff state.
+description: Use when the user asks to create or update a durable project/session log, handoff note, checkpoint, or Markdown/HTML progress record.
 ---
 
 # Update Session Log
