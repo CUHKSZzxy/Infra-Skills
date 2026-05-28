@@ -51,6 +51,8 @@ Style defaults for LMDeploy model code:
   them,
 - pass `dtype` and `device` explicitly like adjacent model files; avoid adding
   local factory helpers for simple module construction,
+- when replacing HF modules with LMDeploy builders, spell feature dimensions as
+  keyword args such as `in_features=` and `out_features=`,
 - remove reference-only branches and unused args after parity is established,
 - keep comments sparse and useful; do not explain obvious assignments,
 - after simplification or op replacement, rerun module-level and end-to-end
