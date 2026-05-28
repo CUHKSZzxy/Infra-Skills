@@ -87,8 +87,8 @@ Avoid:
    remote, and status.
 6. Before stopping, add a `Current State` and `Next Actions` section.
 
-Use `templates/session-log.md` when creating a new Markdown log. Trim sections
-that do not apply.
+Use `assets/session-log.md` when creating a structured Markdown log. Trim
+sections that do not apply.
 
 ## HTML Notes
 

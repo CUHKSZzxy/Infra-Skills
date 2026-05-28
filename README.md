@@ -28,8 +28,6 @@ boundaries and update loop.
 - `docs/heuristic-learning.md`: repo boundaries, promotion choices, compression
   checks, and validation expectations.
 - `docs/local-conventions.md`: local paths, env names, and symlink conventions.
-- `templates/lesson-candidate.md`: scratchpad for deciding whether a session
-  lesson should become a skill, reference, script, or nothing.
 
 ______________________________________________________________________
 

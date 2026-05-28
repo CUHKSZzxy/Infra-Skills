@@ -33,8 +33,6 @@ Use the smallest durable home:
   retyping commands or benchmark snippets.
 - `docs/local-conventions.md`: machine-specific paths, env names, and local
   linking rules.
-- `templates/lesson-candidate.md`: five-field scratchpad for deciding whether a
-  new lesson belongs in the repo.
 - rollout summaries and memory: raw session history, exact logs, private paths,
   and facts that are useful but not worth loading as skills.
 
@@ -60,6 +58,10 @@ When a lesson candidate is useful, choose one:
 
 Prefer updating existing files over creating new skills. A new skill needs a
 distinct trigger, repeated value, and low context cost.
+
+If the decision is unclear, use a temporary five-field scratchpad: symptom,
+root cause, reusable rule, target home, and validation. Do not keep the
+scratchpad after the lesson is promoted, deferred, or rejected.
 
 ## Compression Checks
 

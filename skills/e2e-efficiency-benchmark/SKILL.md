@@ -13,7 +13,7 @@ kernel. Use `e2e-accuracy-benchmark` for dataset correctness checks.
 ## Workflow
 
 1. Create the run folder under the current source checkout's `benchmark/`
-   directory. Follow `docs/local-conventions.md` for naming, summary, and
+   directory. Follow `../../docs/local-conventions.md` for naming, summary, and
    artifact subfolder layout. If the user names a desired destination or run
    folder, put the benchmark folder there and state that path before long runs.
 2. Record the exact matrix before running:

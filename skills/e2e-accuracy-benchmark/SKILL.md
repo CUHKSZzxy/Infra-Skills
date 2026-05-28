@@ -12,7 +12,7 @@ only when you also need serving speed logs for the same model/config.
 ## Workflow
 
 1. Create the run folder under the current source checkout's `benchmark/`
-   directory. Follow `docs/local-conventions.md` for naming, summary, and
+   directory. Follow `../../docs/local-conventions.md` for naming, summary, and
    artifact subfolder layout. If the user names a desired destination or run
    folder, put the benchmark folder there and state that path before long runs.
 2. Record the model alias, server URL, backend, quantization/KV-cache settings,

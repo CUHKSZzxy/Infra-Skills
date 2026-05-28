@@ -10,8 +10,7 @@ should become reusable skill guidance. Optimize for the user's preference:
 concise, operational, repo-aware, and easy to remove if it stops being useful.
 
 This skill is the compression gate for the repo's heuristic-learning loop. Use
-`docs/heuristic-learning.md` as the canonical policy. Use
-`templates/lesson-candidate.md` only when the promotion decision is not obvious.
+`../../docs/heuristic-learning.md` as the canonical policy.
 
 ## 1. Decide Whether Anything Belongs
 
@@ -36,9 +35,18 @@ Poor candidates:
 
 ## 2. Choose The Smallest Home
 
-Use the promotion choices in `docs/heuristic-learning.md`. Prefer updating an
-existing file over adding a new skill. If the lesson might consume context
-without clear value, say so and skip it.
+Use the promotion choices in `../../docs/heuristic-learning.md`. Prefer
+updating an existing file over adding a new skill. If the lesson might consume
+context without clear value, say so and skip it.
+
+When the promotion decision is not obvious, use this scratchpad in chat or a
+temporary note, then discard it:
+
+- Symptom:
+- Root cause:
+- Reusable rule:
+- Target home: skill / reference / script / defer / reject
+- Validation:
 
 ## 3. Write Trigger-First Skills When Needed
 
@@ -67,7 +75,7 @@ Body style:
 
 ## 4. Keep The Repo Aligned
 
-Use local paths and envs from `docs/local-conventions.md`.
+Use local paths and envs from `../../docs/local-conventions.md`.
 
 When changing skills:
 
@@ -90,7 +98,7 @@ rather than leaving a partial link.
 
 ## 5. Validate And Report
 
-Run the narrow validation command from `docs/local-conventions.md`.
+Run the narrow validation command from `../../docs/local-conventions.md`.
 
 Report:
 
