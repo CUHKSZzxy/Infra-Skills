@@ -15,6 +15,9 @@ changes over clever or expansive ones.
 - Ask or investigate when the task is ambiguous enough to change the design.
 - Build the minimum requested behavior; skip speculative flags, aliases,
   abstractions, and compatibility paths.
+- When local invariants already guarantee a value or type is valid, use the
+  value directly; do not add extra guard helpers or normalization utilities
+  merely to appear safer.
 - Keep public API surface smaller than the experimental branch surface until
   semantics, tests, backend support, and users are clear.
 - Touch only files and lines needed for the task. Match local style.
