@@ -65,12 +65,30 @@ Use the existing conventional commit style for PR work: `<type>: <summary>`,
 for example `fix: ...`, `docs: ...`, `test: ...`, or `chore: ...`. Keep the
 summary lowercase and imperative where possible.
 
+Use `<type>/<short-description>` for PR branch names, for example
+`refactor/unify-interleaved-mrope`. If a pushed branch is renamed locally, push
+the renamed branch with `git push -u origin <new-branch>` first, verify it
+tracks the matching remote branch, then delete the old remote branch only when
+the user asks for that cleanup.
+
 When the user explicitly asks to publish/open a PR, create it only after
 confirming base/head branches and committed contents:
 
 ```bash
 gh pr create --repo InternLM/lmdeploy --base <base> --head <fork>:<branch> --title "<type>: <summary>" --body-file <body.md>
 ```
+
+Inspect PR contents with the three-dot base diff, not the two-dot range:
+
+```bash
+git log --oneline <base>..HEAD
+git diff --stat <base>...HEAD
+git diff --name-only <base>...HEAD
+```
+
+The two-dot diff (`<base>..HEAD`) can include base-side drift when the feature
+branch is behind the latest base branch, making the PR look much larger than
+the actual merge-base diff.
 
 Before creating or updating the PR body, keep reviewer-facing text portable:
 
@@ -94,6 +112,9 @@ If the user explicitly asked to publish and `gh` is unavailable, use the
 fallback that matches the machine:
 
 - If `git push` prints a GitHub "new pull request" URL, report that URL.
+- If `gh auth status` reports an invalid stored token but the git credential
+  helper has a GitHub token, run `gh` with `GH_TOKEN` from the credential helper
+  without printing the token.
 - If a git credential helper can provide a GitHub token, create the PR through
   the GitHub API without printing the token.
 - If neither exists, report the pushed branch, intended base/head, and PR body
