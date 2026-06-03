@@ -103,10 +103,16 @@ Before creating or updating the PR body, keep reviewer-facing text portable:
   machine details.
 - Include exact commands in the PR body only when they are public, portable,
   and likely to work from a normal checkout.
-- When the user wants Codex assistance disclosed, append a final
-  `## Assistance` section to the PR body. Use the exact Codex/model/reasoning
-  label the user provides, for example `Assisted with Codex + GPT-5.5 xHigh`;
-  do not invent or normalize the model/reasoning label.
+- When opening a PR for this user, always append this final section exactly:
+
+  ```md
+  ## Assistance
+
+  Assisted with Codex + GPT-5.5 xHigh Fast
+  ```
+
+  When updating an existing PR body, preserve the existing body and replace any
+  trailing `## Assistance` section with this exact section.
 
 If the user explicitly asked to publish and `gh` is unavailable, use the
 fallback that matches the machine:
