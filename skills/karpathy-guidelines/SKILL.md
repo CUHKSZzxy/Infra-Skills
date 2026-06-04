@@ -18,11 +18,16 @@ changes over clever or expansive ones.
 - When local invariants already guarantee a value or type is valid, use the
   value directly; do not add extra guard helpers or normalization utilities
   merely to appear safer.
+- Do not write over-defensive code. Preserve existing defensive checks unless
+  they are proven redundant, unreachable, or harmful; do not add new guards
+  without a concrete failure mode.
 - Keep public API surface smaller than the experimental branch surface until
   semantics, tests, backend support, and users are clear.
 - Touch only files and lines needed for the task. Match local style.
 - Do not refactor or clean unrelated code unless explicitly asked.
 - Remove only dead code introduced by your own change.
+- Do not add dummy or low-signal unit tests. A test should fail on a plausible
+  regression, assert observable behavior, or protect a real contract.
 - Define success as concrete checks: targeted tests, smoke tests, lint, or a
   reproducible command.
 - If validation cannot run, say exactly what was not run and why.
