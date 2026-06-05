@@ -16,6 +16,7 @@ boundaries and update loop.
 | `/e2e-efficiency-benchmark` | End-to-end serving efficiency matrices, logs, and summaries |
 | `/karpathy-guidelines` | Surgical coding and review guardrails |
 | `/lmdeploy-attention-dataflow` | Attention, KV cache, quant policy, and backend dispatch tracing |
+| `/lmdeploy-prod-incident-triage` | Replay-first production serving incident triage |
 | `/lmdeploy-runtime-debugging` | Serve/generation stalls, slow endpoints, and runtime symptoms |
 | `/pr-workflow` | LMDeploy PR creation, review fixes, validation, and push |
 | `/project-decomposition` | Manual plan decomposition into parallel-ready task packets |

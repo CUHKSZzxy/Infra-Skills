@@ -10,6 +10,8 @@ attention-dataflow, or kernel-tuning problem.
 
 Prefer the adjacent skills when the symptom is already classified:
 
+- Live or recent production incident needing bundle/replay triage:
+  `lmdeploy-prod-incident-triage`
 - Env/Python/CUDA mismatch: `check-env`
 - Attention, KV cache, quant policy, backend dispatch: `lmdeploy-attention-dataflow`
 - CUDA/Triton correctness or speed: `triton-kernel-performance`
