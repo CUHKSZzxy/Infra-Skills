@@ -1,6 +1,6 @@
 ---
 name: lmdeploy-humanize-review
-description: "Perform LMDeploy code review in the style of human maintainers by consulting the 2026 human PR review corpus, excluding Copilot, bots, and coding-agent comments. Use when reviewing LMDeploy PRs, diffs, patches, or local changes for correctness, backend behavior, serving/API compatibility, tests, performance, docs, GPU/runtime risk, and maintainability."
+description: "Use when reviewing LMDeploy PRs, diffs, patches, or local changes in the style of human maintainers by consulting the 2026 human PR review corpus, excluding Copilot, bots, and coding-agent comments."
 ---
 
 # LMDeploy Humanize Review
