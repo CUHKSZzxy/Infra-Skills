@@ -26,6 +26,8 @@ Load `references/hf-to-lmdeploy-porting.md` when translating HF Transformers
 inference code into LMDeploy PyTorch model code.
 Load `references/recent-pytorch-model-support-patterns.md` when choosing a
 modern implementation pattern from recent LMDeploy PyTorch model-support PRs.
+Load `references/parity-triage.md` when a ported model runs but its output
+differs from the reference and the cause is not yet localized.
 
 ## 2. LLM PyTorch Path
 
