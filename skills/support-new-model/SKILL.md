@@ -55,6 +55,12 @@ Style defaults for LMDeploy model code:
   local factory helpers for simple module construction,
 - when replacing HF modules with LMDeploy builders, spell feature dimensions as
   keyword args such as `in_features=` and `out_features=`,
+- for auxiliary encoders, projectors, and heads, verify checkpoint parameter
+  names, loader behavior, tensor layout, mask semantics, and backend metadata
+  contracts before replacing reference modules with LMDeploy ops; similar math
+  is not enough to make an op a drop-in replacement,
+- when an auxiliary module is shared with an already-supported public model,
+  run a focused regression on that model as well as parity on the new one,
 - remove reference-only branches and unused args after parity is established,
 - keep comments sparse and useful; do not explain obvious assignments,
 - after simplification or op replacement, rerun module-level and end-to-end
