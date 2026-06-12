@@ -1,6 +1,6 @@
 ---
 name: e2e-accuracy-benchmark
-description: Use when running or creating quick local LMDeploy end-to-end accuracy checks, especially GSM8K-style numeric-answer checks, OCRBench checks, or small real-dataset accuracy passes.
+description: Use when running or creating quick local LMDeploy end-to-end accuracy checks, especially GSM8K-style numeric-answer checks, MMLU-Pro multiple-choice checks, OCRBench checks, or small real-dataset accuracy passes.
 ---
 
 # E2E Accuracy Benchmark
@@ -44,6 +44,13 @@ Copy or invoke scripts from `scripts/`:
   OpenAI-compatible server. By default it downloads/caches the full GSM8K test
   JSONL; pass `--mini` only for a tiny route check, or `--data-path` for a
   local GSM8K-format JSONL file with `question` and `answer` fields.
+- `mmlu_pro_acc.py`: MMLU-Pro text multiple-choice accuracy test against an
+  OpenAI-compatible server. By default it loads `TIGER-Lab/MMLU-Pro` through
+  Hugging Face `datasets`; pass `--mini` for a tiny route check, or
+  `--data-path` for local JSONL/JSON records with `question`, `options`,
+  `answer`, and optional `category` fields. It asks for a final
+  `ANSWER: <LETTER>` line and scores by deterministic letter extraction plus
+  exact match. It does not require an LLM judge.
 - `ocrbench_acc.py`: OCRBench visual accuracy test against an
   OpenAI-compatible VLM server. It reads VLMEvalKit-style OCRBench TSV files
   with `index`, `image`, `question`, `answer`, and `category` fields, sends
@@ -66,6 +73,25 @@ python "$SKILL_DIR/scripts/gsm8k_acc.py" \
   --num-shots 5 \
   --dump-json "$RUN_DIR/0_accuracy/gsm8k_acc.json"
 ```
+
+```bash
+INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
+SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-accuracy-benchmark"
+RUN_DIR="./benchmark/e2e_${MODEL_ABBR}_mmlu_pro"
+mkdir -p "$RUN_DIR/0_accuracy"
+
+python "$SKILL_DIR/scripts/mmlu_pro_acc.py" \
+  --base-url http://127.0.0.1:23334/v1 \
+  --model "$MODEL_ABBR" \
+  --num-examples 200 \
+  --dump-json "$RUN_DIR/0_accuracy/mmlu_pro_acc.json" \
+  2>&1 | tee "$RUN_DIR/0_accuracy/mmlu_pro_acc.client.log"
+```
+
+MMLU-Pro is multiple-choice and normally does not need a judge. OpenCompass also
+contains an optional `GenericLLMEvaluator` MMLU-Pro config for judge-based
+grading, but prefer deterministic letter extraction for local regression checks
+unless you are intentionally comparing that OpenCompass judge path.
 
 ```bash
 INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
