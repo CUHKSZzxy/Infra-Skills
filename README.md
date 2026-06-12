@@ -24,7 +24,7 @@ boundaries and update loop.
 | `/support-new-model` | New LLM/VLM PyTorch backend support |
 | `/triton-kernel-performance` | CUDA/Triton correctness, benchmarking, and performance work |
 | `/update-session-log` | Durable project/session logs, checkpoints, and handoffs |
-| `/update-session-skill` | End-of-session compression into reusable skill guidance |
+| `/update-session-skill` | End-of-session or retrospective compression into reusable skill guidance |
 
 ## Heuristic learning framework
 
