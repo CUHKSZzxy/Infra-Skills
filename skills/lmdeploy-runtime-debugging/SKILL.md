@@ -101,6 +101,15 @@ write-tool check, then a multi-step tool-output-continuation check with exact
 file checks. This separates protocol bugs from model prompt variance and local
 sandbox issues.
 
+When replaying OpenAI-compatible chat/completions failures, do not treat HTTP
+`200` alone as success. LMDeploy may wrap prompt-processing failures in a
+normal-looking response with `finish_reason: "error"`, zero prompt/completion
+tokens, or content such as `in prompt processing error`. Record those fields
+alongside the HTTP status. For before/after checks, replay the exact same
+payload against an isolated baseline checkout or archive, verify the imported
+`lmdeploy` path, and avoid reverting a dirty working tree just to compare old
+behavior.
+
 ## 4. Probe At Boundaries
 
 Add temporary logs only around component boundaries, then remove them before the
