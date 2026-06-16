@@ -110,6 +110,16 @@ payload against an isolated baseline checkout or archive, verify the imported
 `lmdeploy` path, and avoid reverting a dirty working tree just to compare old
 behavior.
 
+For multimodal prompt-processing crashes, keep protocol compliance separate
+from engine robustness. First decide whether the payload follows the target API
+schema, then still prove whether LMDeploy can tolerate the payload without
+crashing. When the crash involves chat templates, tool messages, reasoning
+fields, or text/image ordering, compare the post-template prompt rather than
+only the JSON request. Prefer built-in request logging when available; otherwise
+add temporary prints immediately around `messages2prompt` or
+`apply_chat_template`, replay the same payload on LMDeploy and a reference
+runtime such as vLLM or SGLang, and remove the prints before committing.
+
 ## 4. Probe At Boundaries
 
 Add temporary logs only around component boundaries, then remove them before the
