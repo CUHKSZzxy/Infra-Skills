@@ -12,9 +12,9 @@ feedback that resembles LMDeploy maintainers instead of generic linting.
 
 The bundled corpus was collected from `InternLM/lmdeploy` PRs created since
 2026-01-01, excluding PRs or review comments from GitHub bots, Copilot, and
-obvious coding-agent accounts. It contains 421 inline review threads and 533
-human reviewer comments. The collector saw and filtered 1,115 agent reviewer
-comments on the target PRs.
+obvious coding-agent accounts. Keep source-window, reviewer, and comment-count
+details in the corpus summary instead of duplicating them here, so the skill
+body does not go stale after a corpus refresh.
 
 Read [references/corpus-summary.md](references/corpus-summary.md) first for
 coverage, counts, top paths, reviewers, and category distribution. Do not load

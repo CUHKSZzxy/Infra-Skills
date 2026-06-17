@@ -2,7 +2,7 @@
 
 Use this after reading the target HF config and before writing model code. These
 patterns come from LMDeploy PyTorch model-support PRs merged in the year before
-2026-05-26, after the engine and multimodal paths changed substantially.
+2026-06-16, after the engine and multimodal paths changed substantially.
 
 ## Recent PR Map
 
@@ -12,6 +12,9 @@ model-adaptation examples.
 
 | PR | Area | Main pattern |
 | --- | --- | --- |
+| `#4652` | Qwen3.5 MTP | Keep MTP fixes coordinated across config, cudagraph, paging state, spec agent, and graph runner |
+| `#4411` | Qwen3 Omni | Add audio/multimodal plumbing end-to-end: config, model map, media IO, processor, PyTorch model, VLM wrapper, and tests |
+| `#4611` | Qwen3.5 MTP DP | Make speculative/MTP support DP-aware across token dispatch, model-agent inputs, graph runner, and spec strategy state |
 | `#4575` | InternS2 Preview | Compose Qwen3.5 plus InternS1-Pro paths; keep nested configs and side modules |
 | `#4437` | Qwen3.5 MTP | Separate `*_mtp.py`, spec config, recurrent state handling |
 | `#4351` | Qwen3.5 | GatedDelta/linear-attn state shapes, VLM, MoE, config builder |
@@ -52,6 +55,8 @@ map unless they introduce a substantial reusable architecture pattern.
 - For VLMs, use new-style `VisionModel.preprocess(...)` and pass compact
   `MultiModalData` into the PyTorch input processor. Avoid legacy preprocess
   overrides unless the target checkout requires them.
+- For multimodal models, prefer shared placeholder-expansion and media-merge
+  utilities over duplicating prompt expansion in each model wrapper.
 - For side modalities, add the whole plumbing path: media IO, modality enum,
   special token ids, placeholder expansion, `MultiModalData`, `prepare_inputs`,
   side encoder module, and masked scatter into `inputs_embeds`.
@@ -81,3 +86,6 @@ map unless they introduce a substantial reusable architecture pattern.
   mapping, and router replay shape when enabled.
 - For recurrent or MTP models, test both prefill and decode; many failures only
   appear after the first generated token.
+- For DP plus speculative/MTP paths, include at least one state/dispatch test
+  that proves model-agent inputs, token dispatch, and spec-agent bookkeeping
+  agree on batch and rank layout.

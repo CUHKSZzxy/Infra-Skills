@@ -1,7 +1,6 @@
 ---
 name: karpathy-guidelines
 description: Use when non-trivial or risky code changes and reviews could suffer from scope creep, speculative abstractions, hidden assumptions, or missing validation.
-license: MIT
 ---
 
 # Karpathy Guidelines
