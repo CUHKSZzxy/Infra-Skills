@@ -109,7 +109,7 @@ Before creating or updating the PR body, keep reviewer-facing text portable:
   ```md
   ## Assistance
 
-  Assisted with Codex + GPT-5.5 High, reviewed manually
+  Assisted with Codex + GPT-5.5 xHigh Fast, reviewed manually
   ```
 
   When updating an existing PR body, preserve the existing body and replace any
