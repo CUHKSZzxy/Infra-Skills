@@ -66,10 +66,14 @@ for example `fix: ...`, `docs: ...`, `test: ...`, or `chore: ...`. Keep the
 summary lowercase and imperative where possible.
 
 Use `<type>/<short-description>` for PR branch names, for example
-`refactor/unify-interleaved-mrope`. If a pushed branch is renamed locally, push
-the renamed branch with `git push -u origin <new-branch>` first, verify it
-tracks the matching remote branch, then delete the old remote branch only when
-the user asks for that cleanup.
+`fix/mm-preprocess-concurrency` or `refactor/unify-interleaved-mrope`. For new
+PR branches, prefer typed prefixes such as `fix/`, `feat/`, `refactor/`,
+`docs/`, `test/`, or `chore/`; avoid bare topic names like
+`mm-preprocess-flow-control` unless the user explicitly asks for that exact
+branch name. If a pushed branch is renamed locally, push the renamed branch
+with `git push -u origin <new-branch>` first, verify it tracks the matching
+remote branch, then delete the old remote branch only when the user asks for
+that cleanup.
 
 When the user explicitly asks to publish/open a PR, create it only after
 confirming base/head branches and committed contents:
