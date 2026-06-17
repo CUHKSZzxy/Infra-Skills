@@ -103,12 +103,13 @@ Before creating or updating the PR body, keep reviewer-facing text portable:
   machine details.
 - Include exact commands in the PR body only when they are public, portable,
   and likely to work from a normal checkout.
-- When opening a PR for this user, always append this final section exactly:
+- When opening a PR for this user after manual review, or when the user
+  explicitly asks for the reviewed note, append this final section exactly:
 
   ```md
   ## Assistance
 
-  Assisted with Codex + GPT-5.5 xHigh Fast
+  Assisted with Codex + GPT-5.5 High, reviewed manually
   ```
 
   When updating an existing PR body, preserve the existing body and replace any
