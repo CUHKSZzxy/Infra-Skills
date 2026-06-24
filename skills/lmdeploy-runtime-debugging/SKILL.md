@@ -188,6 +188,20 @@ Common LMDeploy runtime fixes:
 - keep health/metrics on the normal server port unless a separate port is proven necessary
 - preserve engine and GPU decode behavior when the bottleneck is request prep
 
+For DP/proxy startup hangs where the proxy stays alive but backends never
+register:
+
+- map the parent, child, engine, and distributed-runtime process tree before
+  changing code
+- collect per-process logs and stack dumps, then identify the first missing
+  readiness or registration boundary
+- check whether one failed, exited, or wedged child is being hidden behind
+  another healthy long-running process
+- prefer explicit child readiness/error reporting, exit-code or sentinel
+  monitoring, and bounded terminate-then-kill cleanup over unbounded joins
+- when a child fails, clean up the failed child's process group as well as
+  sibling groups because descendants may outlive their process leader
+
 Before finishing:
 
 - remove temporary debug logs and local benchmark files
