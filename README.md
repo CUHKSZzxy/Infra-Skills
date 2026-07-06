@@ -19,6 +19,7 @@ boundaries and update loop.
 | `/lmdeploy-humanize-review` | Corpus-backed LMDeploy human-style PR/code review |
 | `/lmdeploy-prod-incident-triage` | Replay-first production serving incident triage |
 | `/lmdeploy-runtime-debugging` | Serve/generation stalls, slow endpoints, and runtime symptoms |
+| `/make-plan` | Context-aware implementation planning before code changes |
 | `/pr-workflow` | LMDeploy PR creation, review fixes, validation, and push |
 | `/project-decomposition` | Manual plan decomposition into parallel-ready task packets |
 | `/support-new-model` | New LLM/VLM PyTorch backend support |

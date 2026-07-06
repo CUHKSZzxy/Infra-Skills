@@ -92,6 +92,10 @@ Choose an execution order that reduces uncertainty:
 Keep refactors local to the module that proves they are needed. If a boundary
 changes mid-task, update the decomposition before continuing.
 
+For important dataflow, control flow, or interface details that would be
+ambiguous in prose, include short pseudocode in the affected module's
+implementation notes. Keep it minimal and non-speculative.
+
 ## 5. Define Verification
 
 For every module, specify:
