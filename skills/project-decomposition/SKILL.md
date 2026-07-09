@@ -11,7 +11,7 @@ The goal is to produce small modules that can be built, reviewed, tested, and
 rolled back independently.
 
 Do not use this for a tiny one-file change. For normal coding discipline, pair
-with `karpathy-guidelines`; this skill is for shaping the work before execution.
+with `engineering-guardrails`; this skill is for shaping the work before execution.
 
 ## Manual Trigger Workflow
 

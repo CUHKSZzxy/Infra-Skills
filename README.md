@@ -14,7 +14,7 @@ boundaries and update loop.
 | `/check-env` | Local LMDeploy env, Python, CUDA, and tool wiring |
 | `/e2e-accuracy-benchmark` | Quick local accuracy checks and small dataset passes |
 | `/e2e-efficiency-benchmark` | End-to-end serving efficiency matrices, logs, and summaries |
-| `/karpathy-guidelines` | Surgical coding and review guardrails |
+| `/engineering-guardrails` | Scope, style, and validation guardrails |
 | `/lmdeploy-attention-dataflow` | Attention, KV cache, quant policy, and backend dispatch tracing |
 | `/lmdeploy-humanize-review` | Corpus-backed LMDeploy human-style PR/code review |
 | `/lmdeploy-prod-incident-triage` | Replay-first production serving incident triage |

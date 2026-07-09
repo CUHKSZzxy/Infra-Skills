@@ -57,8 +57,9 @@ Lock down:
 - public API, data, model, benchmark, or runtime contracts affected
 - what should not be touched
 
-Use `karpathy-guidelines` for risky implementation plans where scope creep,
-over-defensive code, speculative abstractions, or dummy tests are likely.
+Use `engineering-guardrails` by default when shaping implementation plans. It
+keeps scope, local coding style, API decisions, and validation concrete, and it
+helps avoid over-defensive code, speculative abstractions, and dummy tests.
 
 ## 4. Write Verifiable Tasks
 
