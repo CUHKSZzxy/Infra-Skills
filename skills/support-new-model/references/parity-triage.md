@@ -34,6 +34,34 @@ code.
 - exact caveat when logs or metrics prove queued concurrency but not actual
   batched model-forward execution
 
+## vLLM Tensor Parity
+
+When using vLLM as the reference runtime for tensor dumps:
+
+- Save rendered prompt text and token ids once, then feed the same token ids to
+  both engines. For vLLM, prefer token-id prompts such as `TokensPrompt` instead
+  of relying on a second chat-template render.
+- Use a real script file for vLLM experiments. Inline stdin scripts can fail
+  when vLLM or Python multiprocessing spawn tries to re-import `__main__`.
+- For vLLM V1 hooks, set `VLLM_ENABLE_V1_MULTIPROCESSING=0` before importing
+  vLLM; otherwise the model forward may run in an engine-core subprocess and
+  parent-process hooks will not fire.
+- Keep the first pass deterministic and small: TP=1, one prompt, one generated
+  token, `temperature=0` or greedy-equivalent sampling, short max model length,
+  and constrained batch/token budgets.
+- Hook comparable semantic boundaries, not necessarily identical module names:
+  embeddings, each decoder layer, attention, sparse/indexer top-k output, final
+  norm, and logits. Record shape, dtype, max/mean absolute error, relative
+  error, cosine similarity, and generated token ids.
+- Normalize expected runtime layout differences before judging drift. LMDeploy
+  may keep a leading batch dimension while vLLM flattens tokens; vLLM sparse
+  indexer buffers may be padded to `max_num_batched_tokens`; sparse top-k lists
+  may differ in order while having identical per-row sets.
+- If the vLLM recipe path cannot initialize because of backend, KV-cache, or
+  kernel availability, document the exact failing configuration and use the
+  closest runnable reference only as a scoped signal. Do not claim parity for an
+  intended recipe path that did not run.
+
 ## Decision Rules
 
 - Prompt or token mismatch means an input pipeline bug until proven otherwise.
