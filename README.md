@@ -22,6 +22,7 @@ boundaries and update loop.
 | `/make-plan` | Context-aware implementation planning before code changes |
 | `/pr-workflow` | LMDeploy PR creation, review fixes, validation, and push |
 | `/project-decomposition` | Manual plan decomposition into parallel-ready task packets |
+| `/serving-timeline-profiling` | Short LMDeploy/vLLM PyTorch timelines and bottleneck attribution |
 | `/support-new-model` | New LLM/VLM PyTorch backend support |
 | `/triton-kernel-performance` | CUDA/Triton correctness, benchmarking, and performance work |
 | `/update-session-log` | Durable project/session logs, checkpoints, and handoffs |

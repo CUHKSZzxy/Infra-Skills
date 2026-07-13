@@ -1,0 +1,4 @@
+interface:
+  display_name: "Serving Timeline Profiling"
+  short_description: "Profile LMDeploy and vLLM GPU timelines"
+  default_prompt: "Use $serving-timeline-profiling to capture and analyze a short steady-state LMDeploy or vLLM serving trace."

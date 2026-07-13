@@ -8,7 +8,9 @@ description: Use when benchmarking LMDeploy end-to-end serving efficiency, espec
 Use this when the question is user-visible serving efficiency: throughput, TTFT,
 TPOT/ITL, memory capacity, concurrency, or latency under a real API/server flow.
 Pair with `triton-kernel-performance` only after the slow stage is known to be a
-kernel. Use `e2e-accuracy-benchmark` for dataset correctness checks.
+kernel. Use `serving-timeline-profiling` for short LMDeploy/vLLM PyTorch traces
+and bottleneck attribution, then return here for the profiler-free benchmark.
+Use `e2e-accuracy-benchmark` for dataset correctness checks.
 
 ## Workflow
 
