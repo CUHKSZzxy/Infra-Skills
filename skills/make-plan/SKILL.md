@@ -36,10 +36,10 @@ Before writing the plan, gather enough evidence to avoid generic steps:
 - user-provided success criteria and non-goals
 
 For LMDeploy development plans, inspect comparable vLLM and SGLang behavior
-before designing when the topic has a likely equivalent there. Prefer local
-repos at `/home/zhouxinyu/vllm_dev` and `/home/zhouxinyu/sglang_dev`; if they
-are unavailable, use upstream sources when network access is allowed. Summarize
-what was checked, what design signal it gives, and why any repo was skipped.
+before designing when the topic has a likely equivalent there. Prefer the local
+source checkouts in `../../docs/local-conventions.md`; if they are unavailable,
+use upstream sources when network access is allowed. Summarize what was checked,
+what design signal it gives, and why any repo was skipped.
 
 Prefer exact paths and commands over abstract advice. If a path or command is
 unknown, mark how to discover it instead of inventing it.

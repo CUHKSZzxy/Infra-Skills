@@ -84,9 +84,10 @@ for hardware, dtype, backend, quant policy, and unsupported model shapes.
 
 Profile before changing heuristics. Useful references:
 
-- `references/hopper-triton-heuristics.md`: H100/H800/SM90 tuning and Nsight.
 - `references/lmdeploy-kernel-patterns.md`: attention/KV-cache optimization
   patterns such as split-K, flatten/dequant bypass, and fusion choices.
+- [KernelWiki](https://github.com/mit-han-lab/KernelWiki): external GPU kernel
+  optimization references and examples.
 
 Treat concurrent GPU runs as suspect. Rerun baseline and candidate serially on
 an idle GPU before claiming a speedup. Treat small deltas under about 3-5% as

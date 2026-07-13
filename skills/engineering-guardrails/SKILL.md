@@ -1,12 +1,12 @@
 ---
 name: engineering-guardrails
-description: Use when non-trivial or risky code changes and reviews need scope control, clear decisions, local coding style, and concrete validation.
+description: Use when planning, implementing, or reviewing code; apply by default for scope control, local style, simple design, and concrete validation without over-defensive code or dummy tests.
 ---
 
 # Engineering Guardrails
 
-Small guardrails for non-trivial coding work. Bias toward simple, verified
-changes over clever or expansive ones.
+Apply these guardrails by default to code planning, implementation, and review.
+Bias toward simple, verified changes over clever or expansive ones.
 
 ## Planning And Decision Guardrails
 

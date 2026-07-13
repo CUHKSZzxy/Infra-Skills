@@ -1,23 +1,12 @@
 ---
 name: update-session-log
-description: Use when the user asks to create or update a durable project/session log, handoff note, checkpoint, or Markdown/HTML progress record.
+description: Use when the user asks for a durable session log, handoff, checkpoint, or Markdown/HTML progress record, or when a long task needs durable state across context loss or agent handoff.
 ---
 
 # Update Session Log
 
 Keep a small project-local record so long agent sessions can survive context
 loss without forcing the user to reconstruct history.
-
-## When To Start Or Update
-
-Use this when:
-
-- the user asks for a project/session log, journal, handoff, checkpoint, or
-  durable record
-- the task spans many turns, repos, commits, experiments, or decisions
-- context compaction or a future agent handoff would lose useful state
-- the user asks to preserve objectives, requests, changes, validation, commits,
-  or next steps in a file
 
 Do not turn every short task into paperwork. If the work is small and already
 finished, summarize in chat unless the user asks for a file.

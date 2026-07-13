@@ -1,4 +1,4 @@
 interface:
   display_name: "Make Plan"
   short_description: "Create concise, verifiable implementation plans."
-  default_prompt: "Create an implementation plan for this task."
+  default_prompt: "Use $make-plan to create a concise, verifiable implementation plan for this task."

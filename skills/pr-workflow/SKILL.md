@@ -1,12 +1,13 @@
 ---
 name: pr-workflow
-description: Use when committing, pushing, opening or updating an LMDeploy PR, resolving PR review feedback, or diagnosing branch, remote, `gh`, or non-fast-forward push issues.
+description: Use when committing or pushing changes in a workspace repo, opening or updating an LMDeploy PR, resolving PR review feedback, or diagnosing branch, remote, `gh`, or non-fast-forward push issues.
 ---
 
-# LMDeploy PR Workflow
+# Git And LMDeploy PR Workflow
 
-Use this for both new PRs and existing PR review fixes. Keep the loop small:
-understand the branch, change only intended files, validate, then commit.
+Use this for workspace commits and pushes as well as new or existing LMDeploy
+PRs. Keep the loop small: understand the branch, change only intended files,
+validate, then commit.
 
 Never run `git push`, `gh pr create`, or any other command that publishes local
 commits/branches unless the user explicitly asks for that publish action in the
@@ -22,19 +23,22 @@ publish step:
 git remote -v
 git branch --show-current
 git status --short
-command -v gh && gh auth status
+command -v gh
+# If gh is available:
+gh auth status
 ```
 
-Then activate the env paired with this checkout using the conda path in
-`../../docs/local-conventions.md`.
+Use the validation environment for the target checkout. For LMDeploy, activate
+the paired env; for Infra-Skills, use its validation fallback. Both are listed
+in `../../docs/local-conventions.md`.
 
 Confirm:
 
-- this is the intended LMDeploy checkout and branch,
+- this is the intended repo and branch,
 - unrelated local changes are understood and left unstaged,
 - the base branch and push remote are known,
 - the available PR tool is known: `gh`, GitHub API via git credential, or browser URL,
-- the right paired env is available.
+- the relevant validation env is available.
 
 Use `../../docs/local-conventions.md` for machine-local env names, conda paths,
 GitHub CLI location, and SSH-vs-HTTPS preference. Do not duplicate those values

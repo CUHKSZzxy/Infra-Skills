@@ -1,13 +1,15 @@
 # Local Conventions
 
 Machine-specific paths and env names for this workspace. Treat these as local
-defaults, not general LMDeploy project facts.
+defaults, not general project facts.
 
 ## Paths
 
 - Home: `/home/zhouxinyu`
 - LMDeploy dev checkout: `/home/zhouxinyu/lmdeploy_dev`
 - LMDeploy multimodal checkout: `/home/zhouxinyu/lmdeploy_mm`
+- vLLM source checkout: `/home/zhouxinyu/vllm_dev`
+- SGLang source checkout: `/home/zhouxinyu/sglang_dev`
 - Infra skills repo: `/home/zhouxinyu/common/Infra-Skills`
 - Skill source: `/home/zhouxinyu/common/Infra-Skills/skills`
 - Codex skill home: `/home/zhouxinyu/.codex/skills`
@@ -23,7 +25,10 @@ For reusable commands, prefer these variables:
 INFRA_SKILLS_HOME=/home/zhouxinyu/common/Infra-Skills
 LMDEPLOY_DEV_SOURCE=/home/zhouxinyu/lmdeploy_dev
 LMDEPLOY_MM_SOURCE=/home/zhouxinyu/lmdeploy_mm
+VLLM_DEV_SOURCE=/home/zhouxinyu/vllm_dev
+SGLANG_DEV_SOURCE=/home/zhouxinyu/sglang_dev
 CONDA_EXE=/home/zhouxinyu/miniconda3/bin/conda
+CONDA_PROFILE=/home/zhouxinyu/miniconda3/etc/profile.d/conda.sh
 GH_EXE=/home/zhouxinyu/.local/bin/gh
 ```
 
@@ -60,6 +65,8 @@ paths explicitly with `DATASET_PATH` or the script-specific `--data-path`.
 - `mm`: paired with `/home/zhouxinyu/lmdeploy_mm`.
 
 Assume each checkout is installed from source in its paired env.
+The vLLM and SGLang checkouts are source references for comparison; no paired
+conda env is declared here for them.
 
 If `import lmdeploy` raises dependency errors, report env preparation or
 package drift instead of changing the source checkout convention.

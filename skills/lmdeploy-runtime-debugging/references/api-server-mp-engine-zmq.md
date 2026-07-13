@@ -36,6 +36,11 @@ The real PyTorch `Engine` lives in the child process. `AsyncRPCServer`
 dispatches to `EngineWorkerBase`, whose instance methods call the real engine
 and stream `EngineOutput` chunks back over RPC.
 
+For multimodal requests, current main drops duplicate references from wrapper
+kwargs and prompt inputs after the downstream generator, task, or RPC payload
+has captured them. This shortens the lifetime of large tensors without changing
+which process owns inference.
+
 ## Request Flow
 
 ```text
@@ -84,6 +89,9 @@ to stream or aggregate for the client.
 - Slow before `AsyncEngine.generate` logs: route validation or request shaping.
 - Slow after prompt preprocessing but before engine work: RPC serialization,
   large payload transfer, or child process receive/deserialize.
+- Multimodal memory retained after MP handoff: trace which generator, task, or
+  RPC frame owns the payload and verify wrapper-level references are released;
+  distinguish duplicate Python references from serialization and transfer cost.
 - Slow after `ADD_MESSAGE`: scheduler queueing, prefill/decode, executor, or
   GPU kernels.
 - Client disconnects and aborts must travel back through session handle,

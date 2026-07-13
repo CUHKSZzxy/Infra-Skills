@@ -14,13 +14,13 @@ boundaries and update loop.
 | `/check-env` | Local LMDeploy env, Python, CUDA, and tool wiring |
 | `/e2e-accuracy-benchmark` | Quick local accuracy checks and small dataset passes |
 | `/e2e-efficiency-benchmark` | End-to-end serving efficiency matrices, logs, and summaries |
-| `/engineering-guardrails` | Scope, style, and validation guardrails |
+| `/engineering-guardrails` | Default scope, style, and validation guardrails |
 | `/lmdeploy-attention-dataflow` | Attention, KV cache, quant policy, and backend dispatch tracing |
 | `/lmdeploy-humanize-review` | Corpus-backed LMDeploy human-style PR/code review |
 | `/lmdeploy-prod-incident-triage` | Replay-first production serving incident triage |
 | `/lmdeploy-runtime-debugging` | Serve/generation stalls, slow endpoints, and runtime symptoms |
 | `/make-plan` | Context-aware implementation planning before code changes |
-| `/pr-workflow` | LMDeploy PR creation, review fixes, validation, and push |
+| `/pr-workflow` | Workspace commit/push and LMDeploy PR workflow |
 | `/project-decomposition` | Manual plan decomposition into parallel-ready task packets |
 | `/serving-timeline-profiling` | Short LMDeploy/vLLM PyTorch timelines and bottleneck attribution |
 | `/support-new-model` | New LLM/VLM PyTorch backend support |

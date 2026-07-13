@@ -12,12 +12,8 @@ env should back it.
 
 Use `../../docs/local-conventions.md` as the source of truth for exact local
 paths, conda binaries, GitHub CLI location, and remote protocol preference.
-Current repo/env pairings:
-
-- `/home/zhouxinyu/lmdeploy_dev` -> conda env `dev`
-- `/home/zhouxinyu/lmdeploy_mm` -> conda env `mm`
-
-Treat these as local conventions, not universal truth. Assume each checkout is
+Match the current checkout to the repo/env pairing listed there. Treat that
+pairing as a local convention, not universal truth, and assume the checkout is
 installed from source in its paired env.
 
 ## 2. Check Python and repo wiring
@@ -41,6 +37,9 @@ drift instead of changing the checkout assumption.
 
 ## 3. Activate or recover the right env
 
+Set `CONDA_EXE` and `CONDA_PROFILE` from local conventions before using the
+commands below.
+
 ```bash
 conda env list
 conda activate <paired-env>
@@ -49,13 +48,13 @@ conda activate <paired-env>
 If `conda` is not initialized:
 
 ```bash
-source /home/zhouxinyu/miniconda3/etc/profile.d/conda.sh
+source "$CONDA_PROFILE"
 ```
 
 Or invoke conda directly:
 
 ```bash
-/home/zhouxinyu/miniconda3/bin/conda run -n <paired-env> python -c "import sys; print(sys.executable)"
+"$CONDA_EXE" run -n <paired-env> python -c "import sys; print(sys.executable)"
 ```
 
 Do env activation before concluding a Python package is missing. `gh` is not a
@@ -79,15 +78,12 @@ export CUDA_VISIBLE_DEVICES=<gpu_id>
 If `conda run -n <env> python` resolves unexpectedly, use the env's interpreter
 directly for tests and scripts.
 
-Local defaults:
-
-- `/home/zhouxinyu/miniconda3/envs/dev/bin/python`
-- `/home/zhouxinyu/miniconda3/envs/mm/bin/python`
+Use the paired interpreter listed in the `Envs` section of local conventions.
 
 Example:
 
 ```bash
-CUDA_VISIBLE_DEVICES=X /home/zhouxinyu/miniconda3/envs/<paired-env>/bin/python -m pytest ...
+CUDA_VISIBLE_DEVICES=X /path/to/paired-env/bin/python -m pytest ...
 ```
 
 ## 6. Common diagnosis patterns
