@@ -88,11 +88,6 @@ python "$SKILL_DIR/scripts/mmlu_pro_acc.py" \
   2>&1 | tee "$RUN_DIR/0_accuracy/mmlu_pro_acc.client.log"
 ```
 
-MMLU-Pro is multiple-choice and normally does not need a judge. OpenCompass also
-contains an optional `GenericLLMEvaluator` MMLU-Pro config for judge-based
-grading, but prefer deterministic letter extraction for local regression checks
-unless you are intentionally comparing that OpenCompass judge path.
-
 ```bash
 INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
 SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-accuracy-benchmark"

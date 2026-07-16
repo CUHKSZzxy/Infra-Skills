@@ -51,7 +51,7 @@ ANALYZER="$INFRA_SKILLS_HOME/skills/serving-timeline-profiling/scripts/summarize
 
 python "$ANALYZER" \
   --step-regex 'forward_cudagraph' \
-  ./benchmark/e2e_<run>/0_profiles/lmdeploy_rank*.json
+  ./benchmark/e2e_<run>/0_profiles/lmdeploy_rank*.json.gz
 
 python "$ANALYZER" \
   --step-regex 'execute_context_.*generation' \

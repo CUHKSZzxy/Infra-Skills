@@ -17,6 +17,7 @@ export LMDEPLOY_PROFILE_CUDA=1
 export LMDEPLOY_PROFILE_DELAY=30
 export LMDEPLOY_PROFILE_DURATION=1
 export LMDEPLOY_PROFILE_OUT_PREFIX="$RUN_DIR/0_profiles/lmdeploy_rank"
+export LMDEPLOY_PROFILE_USE_GZIP=1
 
 export PYTHONPATH=/path/to/lmdeploy/source
 export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
@@ -39,7 +40,9 @@ cache, graph, or eager overrides.
   profiler, before the delay. It confirms profiler enablement, not the actual
   capture timestamp. Current code emits no separate delayed-start log.
 - A positive `LMDEPLOY_PROFILE_DURATION` automatically stops and exports
-  `<prefix><rank>.json`. Graceful shutdown also dumps an active profiler.
+  `<prefix><rank>.json.gz` by default. Set `LMDEPLOY_PROFILE_USE_GZIP=0` only
+  when an uncompressed `.json` trace is required. Graceful shutdown also dumps
+  an active profiler.
 - Use a positive finite duration; duration `<=0` is unsupported for DP greater
   than one and makes accidental giant traces easier.
 - Create the output directory first and use a fresh, absolute prefix. TP8
@@ -54,14 +57,14 @@ decode.
 ## Validation and pitfalls
 
 - Use `Profiler start on rank[...]` only as enablement evidence; require
-  `dump to ...rankN.json` for every expected rank.
+  `dump to ...rankN.json.gz` for every expected rank with the default settings.
 - Check every expected rank parses and contains the intended annotation, such
   as `forward_cudagraph`. Validate the phase from trace contents rather than
   inferring it from the enablement warning.
 - Exclude the first captured iteration and any collective crossing the trace
   boundary before computing steady medians.
-- Raw multi-rank JSON can exceed a gigabyte even for a one-second full-model
-  capture; check free disk first.
+- Multi-rank traces can still be large even when compressed; check free disk
+  first, especially before disabling gzip.
 - Stop the server only after all rank dumps finish.
 
 Use `LMDEPLOY_RAY_NSYS_ENABLE`, `LMDEPLOY_RAY_NSYS_OUT_PREFIX`, or the Ray

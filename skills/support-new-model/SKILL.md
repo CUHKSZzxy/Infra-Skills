@@ -43,7 +43,7 @@ Implementation checklist:
 - create `Attention`, `MLP`, `DecoderLayer`, `Model`, `ForCausalLM`,
 - register the exact HF architecture class name from `config.json`,
 - make `packed_modules_mapping` match HF parameter names,
-- make `stacked_params_mapping` shard indices match `load_weights()`,
+- make `stacked_params_mapping` shard IDs match `load_weights()`,
 - verify weights load without missing/unexpected keys.
 
 Style defaults for LMDeploy model code:
@@ -53,8 +53,9 @@ Style defaults for LMDeploy model code:
   them,
 - pass `dtype` and `device` explicitly like adjacent model files; avoid adding
   local factory helpers for simple module construction,
-- when replacing HF modules with LMDeploy builders, spell feature dimensions as
-  keyword args such as `in_features=` and `out_features=`,
+- mirror adjacent LMDeploy builder calls; use keyword arguments for non-obvious
+  options, but do not impose keyword-only dimensions where nearby models use
+  positional dimensions,
 - for auxiliary encoders, projectors, and heads, verify checkpoint parameter
   names, loader behavior, tensor layout, mask semantics, and backend metadata
   contracts before replacing reference modules with LMDeploy ops; similar math
@@ -66,7 +67,9 @@ Style defaults for LMDeploy model code:
 - after simplification or op replacement, rerun module-level and end-to-end
   numeric parity checks against the reference.
 
-Load `references/llm-code-skeleton.md` only when writing the model/config code.
+Load `references/llm-porting-shape.md` only when writing dense model/config
+code. For a new side modality or auxiliary encoder, load
+`references/side-encoder-porting.md` instead of expanding the general path.
 
 ## 3. VLM Additional Path
 
