@@ -59,7 +59,7 @@ for the reviewed note, append this exact final section:
 ```md
 ## Assistance
 
-Assisted with Codex + GPT-5.5 xHigh Fast, reviewed manually
+Assisted with Codex + GPT-5.6-Sol xHigh, reviewed manually
 ```
 
 When updating an existing body, preserve its content and replace any trailing
