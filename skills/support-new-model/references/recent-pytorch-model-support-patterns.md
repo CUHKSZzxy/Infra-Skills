@@ -42,10 +42,10 @@ map unless they introduce a substantial reusable architecture pattern.
   composes existing pieces: InternS1-Pro reuses Qwen3-MoE text, Qwen3-VL
   vision, and a side time-series encoder; InternS2 Preview builds on Qwen3.5
   and InternS1-Pro; GLM variants reuse DeepSeek/Qwen-style MoE and MTP pieces.
-- Treat `configuration/<model>.py` as first-class model support. Nested configs
-  usually need quantization propagation into `text_config`, `cfg.hf_config`,
-  `use_mrope`, recurrent/state shapes, check-env hooks, and draft/spec decoding
-  mutations.
+- Treat `lmdeploy/pytorch/configurations/<model>.py` as first-class model
+  support. Nested configs usually need quantization propagation into
+  `text_config`, `cfg.hf_config`, `use_mrope`, recurrent/state shapes,
+  check-env hooks, and draft/spec decoding mutations.
 - Keep model registration exact and minimal: update `module_map.py` for
   architecture class names, `archs.py` for VLM support routing, and
   `vl/model/builder.py` only when a VLM preprocessor class is added.

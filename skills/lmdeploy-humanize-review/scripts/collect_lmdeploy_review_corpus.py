@@ -790,8 +790,11 @@ def main() -> int:
     args = parse_args()
     token = args.token or gh_token_from_cli()
     if not token:
-        print("error: provide GITHUB_TOKEN or authenticate gh", file=sys.stderr)
-        return 2
+        print(
+            "warning: collecting through the rate-limited public GitHub API; "
+            "set GITHUB_TOKEN or authenticate gh for higher limits",
+            file=sys.stderr,
+        )
 
     start_dt = dt.datetime.fromisoformat(args.start_date).replace(
         tzinfo=dt.timezone.utc

@@ -62,6 +62,24 @@ Even non-streaming HTTP routes commonly use `stream_response=True` internally
 so the engine can batch and schedule incrementally; the route decides whether
 to stream or aggregate for the client.
 
+## Request Replay Checks
+
+- For OpenAI-compatible agent endpoints, grow validation in layers: raw text
+  curl, streaming/tool curl, agent no-tool, agent read-tool, agent write-tool,
+  then multi-step tool-output continuation with exact file checks. This
+  separates protocol bugs from model prompt variance and sandbox issues.
+- Do not treat HTTP `200` alone as success. Record `finish_reason`, token usage,
+  and error content because LMDeploy can report prompt-processing failure in a
+  normal-looking response. Replay the exact payload against an isolated
+  baseline, verify the imported `lmdeploy` path, and do not revert a dirty
+  working tree merely to compare old behavior.
+- For multimodal prompt-processing crashes, check API compliance and engine
+  robustness separately. Compare the post-template prompt when chat templates,
+  tool messages, reasoning fields, or media ordering are involved. Prefer
+  built-in request logging; otherwise add temporary probes around
+  `messages2prompt` or `apply_chat_template`, compare LMDeploy with vLLM or
+  SGLang, and remove the probes before committing.
+
 ## Code Anchors
 
 - `lmdeploy/serve/openai/api_server.py`: FastAPI routes, `serve()`, and

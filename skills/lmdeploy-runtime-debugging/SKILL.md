@@ -95,30 +95,9 @@ sandbox probe also fails or server logs show request handling errors. For local
 Codex compatibility checks, unset proxy variables in the script and keep runtime
 writes under a guarded scratch directory.
 
-For OpenAI-compatible agent endpoints, grow validation in layers: raw text curl,
-streaming/tool curl, agent no-tool check, agent read-tool check, agent
-write-tool check, then a multi-step tool-output-continuation check with exact
-file checks. This separates protocol bugs from model prompt variance and local
-sandbox issues.
-
-When replaying OpenAI-compatible chat/completions failures, do not treat HTTP
-`200` alone as success. LMDeploy may wrap prompt-processing failures in a
-normal-looking response with `finish_reason: "error"`, zero prompt/completion
-tokens, or content such as `in prompt processing error`. Record those fields
-alongside the HTTP status. For before/after checks, replay the exact same
-payload against an isolated baseline checkout or archive, verify the imported
-`lmdeploy` path, and avoid reverting a dirty working tree just to compare old
-behavior.
-
-For multimodal prompt-processing crashes, keep protocol compliance separate
-from engine robustness. First decide whether the payload follows the target API
-schema, then still prove whether LMDeploy can tolerate the payload without
-crashing. When the crash involves chat templates, tool messages, reasoning
-fields, or text/image ordering, compare the post-template prompt rather than
-only the JSON request. Prefer built-in request logging when available; otherwise
-add temporary prints immediately around `messages2prompt` or
-`apply_chat_template`, replay the same payload on LMDeploy and a reference
-runtime such as vLLM or SGLang, and remove the prints before committing.
+For OpenAI-compatible protocol checks, prompt-processing error responses, or
+multimodal template replay, use the
+[request-replay checks](references/api-server-mp-engine-zmq.md#request-replay-checks).
 
 ## 4. Probe At Boundaries
 

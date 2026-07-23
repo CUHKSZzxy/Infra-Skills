@@ -3,31 +3,43 @@
   "code_languages": [
     [
       "python",
-      310
+      362
     ],
     [
       "yaml",
-      63
-    ],
-    [
-      "cpp",
-      16
+      66
     ],
     [
       "markdown",
-      15
+      21
+    ],
+    [
+      "cpp",
+      20
     ],
     [
       "text",
-      8
+      9
+    ],
+    [
+      "shell",
+      7
     ],
     [
       "cuda",
       6
     ],
     [
-      "shell",
-      3
+      "jetson",
+      2
+    ],
+    [
+      "extensionless",
+      1
+    ],
+    [
+      "ps1",
+      1
     ]
   ],
   "collection_policy": {
@@ -36,104 +48,108 @@
     "pull_requests": "PR created_at within inclusive date window; bot and coding-agent PR authors excluded.",
     "review_comments": "GitHub pull review comments grouped by in_reply_to_id thread."
   },
-  "comment_count": 533,
+  "comment_count": 620,
   "comment_language_hints": [
     [
       "en_or_ascii",
-      445
+      524
     ],
     [
       "non_ascii_other",
-      88
+      95
+    ],
+    [
+      "zh_or_cjk",
+      1
     ]
   ],
   "comment_stats": {
-    "agent_reviewer_comments_on_target_prs": 1115,
-    "all_review_comments_seen": 1746,
-    "human_reviewer_comments_on_target_prs": 533,
-    "threads": 421
+    "agent_reviewer_comments_on_target_prs": 1273,
+    "all_review_comments_seen": 1991,
+    "human_reviewer_comments_on_target_prs": 620,
+    "threads": 495
   },
-  "generated_at": "2026-06-11T04:07:24+00:00",
-  "human_reviewer_comment_count": 533,
+  "generated_at": "2026-07-17T12:31:38+00:00",
+  "human_reviewer_comment_count": 620,
   "max_comments_per_thread": 5,
   "pull_request_stats": {
-    "excluded_agent_prs": 6,
-    "included_human_prs": 318,
-    "included_human_prs_2026": 318,
-    "search_result_items_seen": 324,
-    "search_total_count_sum": 324,
-    "window_prs": 324
+    "excluded_agent_prs": 8,
+    "included_human_prs": 397,
+    "included_human_prs_2026": 397,
+    "search_result_items_seen": 405,
+    "search_total_count_sum": 405,
+    "window_prs": 405
   },
   "repo": "InternLM/lmdeploy",
   "schema_version": 1,
   "source_date_window": [
     "2026-01-01T00:00:00+00:00",
-    "2026-06-11T04:06:41+00:00"
+    "2026-07-17T12:30:47+00:00"
   ],
-  "thread_count": 421,
+  "thread_count": 495,
   "threads_by_pr_year": {
-    "2026": 421
+    "2026": 495
   },
   "top_categories": [
     [
-      "models-quant",
-      225
+      "api-compat",
+      257
     ],
     [
-      "api-compat",
-      223
+      "models-quant",
+      254
     ],
     [
       "pytorch-backend",
-      200
+      231
     ],
     [
       "correctness",
-      161
+      188
     ],
     [
       "turbomind-backend",
-      132
-    ],
-    [
-      "style-maintainability",
-      124
+      154
     ],
     [
       "docs-examples",
-      124
+      144
     ],
     [
       "memory-cache",
-      124
+      142
+    ],
+    [
+      "style-maintainability",
+      136
     ],
     [
       "tests-ci",
-      114
+      131
     ],
     [
       "distributed-concurrency",
-      92
+      102
     ],
     [
       "gpu-kernel",
-      84
-    ],
-    [
-      "build-deps",
-      79
-    ],
-    [
-      "performance",
-      74
-    ],
-    [
-      "observability",
-      69
+      97
     ],
     [
       "multimodal",
-      67
+      88
+    ],
+    [
+      "build-deps",
+      86
+    ],
+    [
+      "performance",
+      80
+    ],
+    [
+      "observability",
+      75
     ],
     [
       "general-review",
@@ -143,7 +159,7 @@
   "top_human_reviewers": [
     [
       "lvhan028",
-      259
+      292
     ],
     [
       "windreamer",
@@ -151,23 +167,23 @@
     ],
     [
       "RunningLeon",
-      46
+      64
     ],
     [
       "grimoire",
-      42
+      51
     ],
     [
       "CUHKSZzxy",
-      38
+      50
+    ],
+    [
+      "irexyc",
+      16
     ],
     [
       "lzhangzz",
       13
-    ],
-    [
-      "irexyc",
-      11
     ],
     [
       "lapy",
@@ -184,6 +200,10 @@
     [
       "hd9568",
       5
+    ],
+    [
+      "yimdev",
+      4
     ],
     [
       "jinminxi104",
@@ -210,18 +230,34 @@
       2
     ],
     [
+      "waynehacking8",
+      2
+    ],
+    [
+      "chuenchen309",
+      2
+    ],
+    [
       "43758726",
       1
     ],
     [
       "SuperMarioYL",
       1
+    ],
+    [
+      "Shylin26",
+      1
+    ],
+    [
+      "littlegy",
+      1
     ]
   ],
   "top_paths": [
     [
       "lmdeploy/serve/openai/api_server.py",
-      17
+      18
     ],
     [
       "lmdeploy/pytorch/spec_decode/spec_agent.py",
@@ -233,6 +269,10 @@
     ],
     [
       "lmdeploy/serve/core/async_engine.py",
+      12
+    ],
+    [
+      "lmdeploy/serve/processors/multimodal.py",
       10
     ],
     [
@@ -240,7 +280,7 @@
       10
     ],
     [
-      "lmdeploy/serve/processors/multimodal.py",
+      "lmdeploy/pytorch/engine/model_agent/agent.py",
       9
     ],
     [
@@ -256,7 +296,15 @@
       7
     ],
     [
-      "lmdeploy/pytorch/engine/model_agent/agent.py",
+      "lmdeploy/vl/model/base.py",
+      7
+    ],
+    [
+      "src/turbomind/generation/guided_decoding.cc",
+      7
+    ],
+    [
+      "lmdeploy/pytorch/engine/executor/base.py",
       6
     ],
     [
@@ -265,10 +313,6 @@
     ],
     [
       "lmdeploy/pytorch/backends/cuda/graph_runner.py",
-      6
-    ],
-    [
-      "src/turbomind/generation/guided_decoding.cc",
       6
     ],
     [
@@ -284,7 +328,7 @@
       5
     ],
     [
-      "lmdeploy/vl/model/base.py",
+      "lmdeploy/serve/openai/protocol.py",
       5
     ],
     [
@@ -296,15 +340,15 @@
       5
     ],
     [
+      "lmdeploy/cli/utils.py",
+      4
+    ],
+    [
       ".github/workflows/benchmark_legacy.yml",
       4
     ],
     [
       ".github/workflows/daily_ete_test_legacy.yml",
-      4
-    ],
-    [
-      "lmdeploy/pytorch/engine/executor/base.py",
       4
     ],
     [
@@ -328,15 +372,7 @@
       3
     ],
     [
-      "lmdeploy/cli/utils.py",
-      3
-    ],
-    [
-      "lmdeploy/cli/lite.py",
-      3
-    ],
-    [
-      "lmdeploy/model.py",
+      "lmdeploy/pipeline.py",
       3
     ]
   ]

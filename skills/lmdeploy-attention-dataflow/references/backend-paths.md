@@ -134,6 +134,32 @@ Code anchors:
 - `lmdeploy/pytorch/backends/cuda/attention/fa3.py`
 - `lmdeploy/pytorch/third_party/flash_attn_interface.py`
 
+## DSA Indexer Flow
+
+```text
+Indexer.forward()
+        |
+        |-- prepare current Q and its per-head gate/quant scale
+        |-- prepare current K and append it to the paged indexer K cache
+        |-- score history with sum_h gate_h * relu(Q_h @ K)
+        `-- top-k token positions -> nsa_indices -> sparse MLA attention
+```
+
+The indexer cache is separate from the main MLA KV cache. The indexer has no V
+path because it ranks tokens without aggregating values; V participates only
+afterward in sparse MLA attention. Q is current-step state and is not cached,
+while historical K must be cached for future queries. Verify callers before
+judging helper ownership: a standalone K-preparation wrapper may exist only as
+a reference for testing while the runtime fused path writes K directly into
+the indexer cache.
+
+Code anchors:
+
+- `lmdeploy/pytorch/models/deepseek_v32.py`: `Indexer.forward`
+- `lmdeploy/pytorch/backends/cuda/nsa.py`: `TritonNSAIndexFP8`
+- `lmdeploy/pytorch/kernels/cuda/dsa_indexer_preprocess.py`
+- `lmdeploy/pytorch/kernels/cuda/ds_index.py`
+
 ## FlashMLA Flow
 
 ```text
