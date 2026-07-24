@@ -61,6 +61,7 @@ CLAUDE_HOME="$WORKSPACE_ROOT/.claude"
 CONDA_ROOT="$WORKSPACE_ROOT/miniconda3"
 CONDA_EXE="$CONDA_ROOT/bin/conda"
 CONDA_PROFILE="$CONDA_ROOT/etc/profile.d/conda.sh"
+GH_EXE="$CONDA_ROOT/bin/gh"
 TMUX_EXE=/usr/bin/tmux
 ```
 
@@ -75,7 +76,7 @@ No multimodal LMDeploy checkout, `mm` env, or SGLang checkout is declared on
 this machine. Set `LMDEPLOY_MM_SOURCE` or `SGLANG_DEV_SOURCE` only after
 confirming the path exists.
 
-`gh` is not on `PATH` in the current container; verify before use. `sudo` is
+`gh` lives at `$GH_EXE` and is on `PATH` in the current container. `sudo` is
 not usable, so prefer workspace-local or conda installs over `apt`.
 
 Shared-storage checkouts may be owned by `nobody:nogroup`. If Git reports
