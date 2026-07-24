@@ -19,13 +19,10 @@ boundaries and update loop.
 | `/lmdeploy-humanize-review` | Corpus-backed LMDeploy human-style PR/code review |
 | `/lmdeploy-prod-incident-triage` | Replay-first production serving incident triage |
 | `/lmdeploy-runtime-debugging` | Serve/generation stalls, slow endpoints, and runtime symptoms |
-| `/make-plan` | Context-aware implementation planning before code changes |
 | `/pr-workflow` | Workspace commit/push and LMDeploy PR workflow |
-| `/project-decomposition` | Manual plan decomposition into parallel-ready task packets |
 | `/serving-timeline-profiling` | Short LMDeploy/vLLM PyTorch timelines and bottleneck attribution |
 | `/support-new-model` | New LLM/VLM PyTorch backend support |
 | `/triton-kernel-performance` | CUDA/Triton correctness, benchmarking, and performance work |
-| `/update-session-log` | Durable project/session logs, checkpoints, and handoffs |
 | `/update-session-skill` | End-of-session or retrospective compression into reusable skill guidance |
 
 ## Heuristic learning framework
