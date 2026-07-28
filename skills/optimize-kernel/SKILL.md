@@ -1,9 +1,9 @@
 ---
-name: triton-kernel-performance
-description: Use when an LMDeploy CUDA/Triton kernel change needs correctness or performance validation, especially attention, KV cache, quantization, FP8 KV cache, or Qwen-family workloads.
+name: optimize-kernel
+description: Use when optimizing or validating an identified LMDeploy CUDA/Triton kernel or GPU dispatch path for correctness and speed, especially attention, KV cache, quantization, or FP8; do not use for unresolved serving or model-wiring bugs.
 ---
 
-# Triton Kernel Performance For LMDeploy
+# Optimize Kernel For LMDeploy
 
 Use this for kernel work where correctness and speed both matter. Do not use it
 for ordinary model wiring or serving bugs unless the failing boundary is already

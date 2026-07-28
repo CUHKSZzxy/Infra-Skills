@@ -14,7 +14,7 @@ Prefer the adjacent skills when the symptom is already classified:
   `lmdeploy-prod-incident-triage`
 - Env/Python/CUDA mismatch: `check-env`
 - Attention, KV cache, quant policy, backend dispatch: `lmdeploy-attention-dataflow`
-- CUDA/Triton correctness or speed: `triton-kernel-performance`
+- CUDA/Triton correctness or speed: `optimize-kernel`
 - New architecture or VLM implementation work: `support-new-model`
 
 ## Output Contract

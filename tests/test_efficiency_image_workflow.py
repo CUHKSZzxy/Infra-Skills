@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-SCRIPT_DIR = REPO_ROOT / "skills" / "e2e-efficiency-benchmark" / "scripts"
+SCRIPT_DIR = REPO_ROOT / "skills" / "benchmark-efficiency" / "scripts"
 
 
 class EfficiencyImageWorkflowTest(unittest.TestCase):

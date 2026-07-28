@@ -9,7 +9,7 @@ from pathlib import Path
 SCRIPT_PATH = (
     Path(__file__).resolve().parents[1]
     / "skills"
-    / "e2e-accuracy-benchmark"
+    / "benchmark-accuracy"
     / "scripts"
     / "ocrbench_acc.py"
 )

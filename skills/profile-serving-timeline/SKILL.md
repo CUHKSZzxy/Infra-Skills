@@ -1,11 +1,11 @@
 ---
-name: serving-timeline-profiling
-description: Use when capturing or comparing short PyTorch/CUDA serving timelines for LMDeploy or vLLM, identifying inference bottlenecks, checking multi-GPU rank balance, or re-profiling an optimization before an unprofiled throughput benchmark.
+name: profile-serving-timeline
+description: Use when capturing or comparing short LMDeploy or vLLM PyTorch/CUDA serving traces to diagnose prefill/decode bottlenecks or rank imbalance; do not use trace-implied cadence as final throughput evidence.
 ---
 
-# Serving Timeline Profiling
+# Profile Serving Timeline
 
-Use this skill for trace-based diagnosis. Use `e2e-efficiency-benchmark` for the
+Use this skill for trace-based diagnosis. Use `benchmark-efficiency` for the
 separate, profiler-free throughput/latency measurement that follows.
 
 ## Workflow
@@ -47,7 +47,7 @@ separate, profiler-free throughput/latency measurement that follows.
    container, or GPU compute process remains.
 8. Analyze and re-profile the candidate with the identical payload. After the
    timeline explains the change, run a separate profiler-free benchmark with
-   `e2e-efficiency-benchmark`.
+   `benchmark-efficiency`.
 9. Monitor GPU memory, utilization, power, and clocks during each capture.
    Reject runs contaminated by another process or a one-rank collective stall.
    If an external sweep rotates work across GPUs, wait for its controller to
@@ -59,7 +59,7 @@ Start with the bundled dependency-free summarizer:
 
 ```bash
 INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
-ANALYZER="$INFRA_SKILLS_HOME/skills/serving-timeline-profiling/scripts/summarize_torch_trace.py"
+ANALYZER="$INFRA_SKILLS_HOME/skills/profile-serving-timeline/scripts/summarize_torch_trace.py"
 RUN_DIR=/absolute/path/to/benchmark/YYYYMMDD_model_system_profile
 
 python "$ANALYZER" \

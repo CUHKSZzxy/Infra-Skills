@@ -18,9 +18,9 @@ Pair with:
 - `lmdeploy-runtime-debugging` after the issue is narrowed to API server,
   request preparation, AsyncEngine, MP engine, ZMQ, streaming, or sandbox
   reachability.
-- `e2e-efficiency-benchmark` when the reproducer is a serving speed or capacity
+- `benchmark-efficiency` when the reproducer is a serving speed or capacity
   comparison.
-- `lmdeploy-attention-dataflow` or `triton-kernel-performance` when replay
+- `lmdeploy-attention-dataflow` or `optimize-kernel` when replay
   points to attention, KV cache, kernels, or backend dispatch.
 - `support-new-model` when wrong output or crashes are tied to model/VLM
   architecture support.
@@ -145,11 +145,11 @@ Switch only after bundle plus replay classify the likely owner:
 - API/routing/preprocessing/AsyncEngine/MP/ZMQ/streaming:
   `lmdeploy-runtime-debugging`
 - speed/capacity comparison:
-  `e2e-efficiency-benchmark`
+  `benchmark-efficiency`
 - attention, KV cache, quant policy, FA3, FlashMLA, backend dispatch:
   `lmdeploy-attention-dataflow`
 - CUDA/Triton kernel correctness or performance:
-  `triton-kernel-performance`
+  `optimize-kernel`
 - model/VLM architecture, preprocessing, or weight-loading support:
   `support-new-model`
 

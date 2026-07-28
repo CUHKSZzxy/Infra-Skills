@@ -12,17 +12,17 @@ boundaries and update loop.
 | Skill | Area |
 | --- | --- |
 | `/check-env` | Local LMDeploy env, Python, CUDA, and tool wiring |
-| `/e2e-accuracy-benchmark` | Quick local accuracy checks and small dataset passes |
-| `/e2e-efficiency-benchmark` | End-to-end serving efficiency matrices, logs, and summaries |
+| `/benchmark-accuracy` | Deterministic model/API correctness checks and dataset passes |
+| `/benchmark-efficiency` | Profiler-free end-to-end serving efficiency comparisons |
 | `/engineering-guardrails` | Default scope, style, and validation guardrails |
 | `/lmdeploy-attention-dataflow` | Attention, KV cache, quant policy, and backend dispatch tracing |
 | `/lmdeploy-humanize-review` | Corpus-backed LMDeploy human-style PR/code review |
 | `/lmdeploy-prod-incident-triage` | Replay-first production serving incident triage |
 | `/lmdeploy-runtime-debugging` | Serve/generation stalls, slow endpoints, and runtime symptoms |
 | `/pr-workflow` | Workspace commit/push and LMDeploy PR workflow |
-| `/serving-timeline-profiling` | Short LMDeploy/vLLM PyTorch timelines and bottleneck attribution |
+| `/profile-serving-timeline` | Short LMDeploy/vLLM trace capture and bottleneck diagnosis |
 | `/support-new-model` | New LLM/VLM PyTorch backend support |
-| `/triton-kernel-performance` | CUDA/Triton correctness, benchmarking, and performance work |
+| `/optimize-kernel` | Identified CUDA/Triton kernel correctness and optimization |
 | `/update-session-skill` | End-of-session or retrospective compression into reusable skill guidance |
 
 ## Heuristic learning framework

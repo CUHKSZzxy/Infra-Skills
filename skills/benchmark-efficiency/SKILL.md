@@ -1,16 +1,16 @@
 ---
-name: e2e-efficiency-benchmark
-description: Use when benchmarking LMDeploy end-to-end serving efficiency, especially throughput, TTFT, TPOT/ITL, memory capacity, concurrency, KV-cache settings, or feature-flag speed comparisons.
+name: benchmark-efficiency
+description: Use when measuring profiler-free LMDeploy API or server efficiency, including throughput, TTFT, TPOT/ITL, memory capacity, concurrency, KV-cache settings, or feature comparisons; use profile-serving-timeline for trace diagnosis and optimize-kernel for isolated kernels.
 ---
 
-# E2E Efficiency Benchmark
+# Benchmark Efficiency
 
 Use this when the question is user-visible serving efficiency: throughput, TTFT,
 TPOT/ITL, memory capacity, concurrency, or latency under a real API/server flow.
-Pair with `triton-kernel-performance` only after the slow stage is known to be a
-kernel. Use `serving-timeline-profiling` for short LMDeploy/vLLM PyTorch traces
+Pair with `optimize-kernel` only after the slow stage is known to be a
+kernel. Use `profile-serving-timeline` for short LMDeploy/vLLM PyTorch traces
 and bottleneck attribution, then return here for the profiler-free benchmark.
-Use `e2e-accuracy-benchmark` for dataset correctness checks.
+Use `benchmark-accuracy` for dataset correctness checks.
 
 ## Workflow
 
@@ -96,7 +96,7 @@ Typical layout:
 
 ```bash
 INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
-SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-efficiency-benchmark"
+SKILL_DIR="$INFRA_SKILLS_HOME/skills/benchmark-efficiency"
 MODEL_LABEL=qwen35_35b
 RUN_DATE=${RUN_DATE:-$(date +%Y%m%d)}
 RUN_DIR="./benchmark/${RUN_DATE}_${MODEL_LABEL}_sharegpt_kvfp8"
@@ -124,7 +124,7 @@ Image quick-check layout:
 
 ```bash
 INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
-SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-efficiency-benchmark"
+SKILL_DIR="$INFRA_SKILLS_HOME/skills/benchmark-efficiency"
 MODEL_LABEL=qwen35_35b_a3b
 RUN_DATE=${RUN_DATE:-$(date +%Y%m%d)}
 RUN_DIR="./benchmark/${RUN_DATE}_${MODEL_LABEL}_image_quick"
@@ -144,7 +144,7 @@ Local defaults on this machine:
 - ShareGPT dataset: set `DATASET_PATH` in the copied config; no machine-local
   dataset path is assumed.
 - Benchmark client:
-  `$INFRA_SKILLS_HOME/skills/e2e-efficiency-benchmark/scripts/profile_restful_api.py`
+  `$INFRA_SKILLS_HOME/skills/benchmark-efficiency/scripts/profile_restful_api.py`
 - Fast matrix: `OUT_LENS=(None 2048)` and
   `NUM_PROMPTS=(1000 1000)`
 - Medium matrix: `OUT_LENS=(None 2048 4096 8192)` and

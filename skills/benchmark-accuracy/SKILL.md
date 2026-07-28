@@ -1,12 +1,12 @@
 ---
-name: e2e-accuracy-benchmark
-description: Use when running or creating quick local LMDeploy end-to-end accuracy checks, especially GSM8K-style numeric-answer checks, MMLU-Pro multiple-choice checks, OCRBench checks, or small real-dataset accuracy passes.
+name: benchmark-accuracy
+description: Use when measuring local LMDeploy model or API correctness with deterministic requests, GSM8K, MMLU-Pro, OCRBench, or another small real-dataset pass; use benchmark-efficiency instead when serving speed is the primary result.
 ---
 
-# E2E Accuracy Benchmark
+# Benchmark Accuracy
 
 Use this for model/API quality checks where the main result is correctness, not
-throughput, TTFT, TPOT, or concurrency. Pair with `e2e-efficiency-benchmark`
+throughput, TTFT, TPOT, or concurrency. Pair with `benchmark-efficiency`
 only when you also need serving speed logs for the same model/config.
 
 ## Workflow
@@ -63,7 +63,7 @@ Example:
 
 ```bash
 INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
-SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-accuracy-benchmark"
+SKILL_DIR="$INFRA_SKILLS_HOME/skills/benchmark-accuracy"
 RUN_DATE=${RUN_DATE:-$(date +%Y%m%d)}
 RUN_DIR="./benchmark/${RUN_DATE}_${MODEL_ABBR}_gsm8k"
 mkdir -p "$RUN_DIR/accuracy"
@@ -77,7 +77,7 @@ python "$SKILL_DIR/scripts/gsm8k_acc.py" \
 
 ```bash
 INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
-SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-accuracy-benchmark"
+SKILL_DIR="$INFRA_SKILLS_HOME/skills/benchmark-accuracy"
 RUN_DATE=${RUN_DATE:-$(date +%Y%m%d)}
 RUN_DIR="./benchmark/${RUN_DATE}_${MODEL_ABBR}_mmlu_pro"
 mkdir -p "$RUN_DIR/accuracy"
@@ -92,7 +92,7 @@ python "$SKILL_DIR/scripts/mmlu_pro_acc.py" \
 
 ```bash
 INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
-SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-accuracy-benchmark"
+SKILL_DIR="$INFRA_SKILLS_HOME/skills/benchmark-accuracy"
 RUN_DATE=${RUN_DATE:-$(date +%Y%m%d)}
 RUN_DIR="./benchmark/${RUN_DATE}_${MODEL_ABBR}_ocrbench"
 mkdir -p "$RUN_DIR/accuracy"

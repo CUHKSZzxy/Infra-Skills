@@ -10,7 +10,7 @@ dispatch. Start from the runtime path in the target checkout, then verify the
 exact backend gates in code because availability flags can change by branch,
 GPU, CUDA, and installed third-party kernels.
 
-Pair with `triton-kernel-performance` when the goal is kernel speed or
+Pair with `optimize-kernel` when the goal is kernel speed or
 correctness validation.
 
 Do not scan every optional backend by default. If the task excludes FA3,

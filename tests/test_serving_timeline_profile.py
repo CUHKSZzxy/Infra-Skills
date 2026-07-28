@@ -13,7 +13,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 SCRIPT = (
     REPO_ROOT
     / "skills"
-    / "serving-timeline-profiling"
+    / "profile-serving-timeline"
     / "scripts"
     / "summarize_torch_trace.py"
 )
