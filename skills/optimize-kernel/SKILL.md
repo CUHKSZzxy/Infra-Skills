@@ -37,13 +37,19 @@ Common anchors:
 Do not tune unclear semantics.
 
 - Compare against a simple PyTorch reference or existing unquantized path.
+- Use exact equality for indexing, copies, and layout transforms. For floating
+  point outputs, state why the chosen `atol` and `rtol` fit the dtype and math.
 - Test boundary shapes: partial blocks, uneven context lengths, empty-ish inputs,
   page table indirection, and non-contiguous strides if callers can produce them.
+- Test dispatch selection and the unsupported-hardware fallback. Cover eager and
+  CUDA Graph execution when the changed path supports both.
 - For quantized KV cache, verify both payload and metadata. Unsupported readers
   must be rejected near dispatch, not allowed to run silently.
 - Keep K and V dimensions separate unless the model contract proves otherwise.
 - For FP8, check saturation/range behavior, scale shape and lifetime, and
   dequantized-value tolerances against the no-quant baseline.
+- Run a model-level accuracy check only when changed arithmetic can affect model
+  output; it does not replace focused kernel correctness tests.
 
 ## 3. Benchmark With Metadata
 
@@ -55,8 +61,9 @@ python/torch/triton/cuda:
 gpu:
 model:
 command:
-workload:
-metric before:
+workload/shape sweep:
+warmup/repetitions/statistic:
+metric before/after:
 ```
 
 Use the bundled helpers instead of rewriting timing loops:
@@ -77,6 +84,11 @@ CUDA_VISIBLE_DEVICES=X PYTHONPATH=/path/to/lmdeploy-checkout \
 Check benchmark output includes `lmdeploy.__file__`; otherwise the wrong
 checkout may be imported.
 
+Warm JIT compilation, allocations, and graph capture before timing. Use CUDA
+events or the helper's synchronized timing, run baseline and candidate
+serially, and report median plus spread or quantiles. Sweep representative
+prefill/decode shapes and include neutral or regressing cases.
+
 ## 4. Patch Narrowly
 
 Change one kernel, dispatch choice, or heuristic at a time. Keep guards explicit
@@ -93,6 +105,16 @@ Treat concurrent GPU runs as suspect. Rerun baseline and candidate serially on
 an idle GPU before claiming a speedup. Treat small deltas under about 3-5% as
 noise unless variance is measured lower.
 
+Match the claim to the evidence:
+
+- A microbenchmark supports only a kernel-level speed claim.
+- Use a short profile to prove the intended kernel, copy, launch, or
+  synchronization changed.
+- Add an end-to-end benchmark when claiming throughput, TTFT, TPOT/ITL, memory
+  capacity, or serving latency. A faster kernel need not improve serving.
+- Do not claim a universal win from one GPU or one favorable shape. State the
+  hardware and operating envelope where the change helps.
+
 ## 5. Report Contract
 
 Before calling the work done, report:
@@ -100,6 +122,8 @@ Before calling the work done, report:
 - changed files,
 - correctness command and tolerance,
 - benchmark command,
-- before/after table,
+- before/after table with shape coverage and observed spread,
 - profiler evidence if claiming a kernel-level win,
-- residual risk: untested GPU, backend, FA/speculative path, or macrobench.
+- end-to-end evidence for serving-level claims,
+- residual risk: untested GPU, backend, fallback, graph mode, FA/speculative
+  path, or macrobench.
