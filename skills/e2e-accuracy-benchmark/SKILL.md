@@ -23,9 +23,9 @@ only when you also need serving speed logs for the same model/config.
 4. Run the smallest route check first. Move to a real dataset file only after the
    server route and answer extraction are working.
 5. For local server benchmarks, save the server stdout/stderr under
-   `0_serve_logs/`, usually with `2>&1 | tee 0_serve_logs/<label>_serve.log`,
+   `serve_logs/`, usually with `2>&1 | tee serve_logs/<label>_serve.log`,
    before running clients. Keep client stdout/stderr and JSON results under
-   `0_accuracy/` or `0_eval_logs/` when comparing variants.
+   `accuracy/` or `eval_logs/` when comparing variants.
 6. Treat tiny quick-check accuracy as a regression signal only. For conclusions,
    run enough real examples for the model and dataset.
 7. Finish by writing `summary.md` in the benchmark folder. Keep it short, but
@@ -64,42 +64,45 @@ Example:
 ```bash
 INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
 SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-accuracy-benchmark"
-RUN_DIR="./benchmark/e2e_${MODEL_ABBR}_gsm8k"
-mkdir -p "$RUN_DIR/0_accuracy"
+RUN_DATE=${RUN_DATE:-$(date +%Y%m%d)}
+RUN_DIR="./benchmark/${RUN_DATE}_${MODEL_ABBR}_gsm8k"
+mkdir -p "$RUN_DIR/accuracy"
 
 python "$SKILL_DIR/scripts/gsm8k_acc.py" \
   --base-url http://127.0.0.1:23334/v1 \
   --model "$MODEL_ABBR" \
   --num-shots 5 \
-  --dump-json "$RUN_DIR/0_accuracy/gsm8k_acc.json"
+  --dump-json "$RUN_DIR/accuracy/gsm8k_acc.json"
 ```
 
 ```bash
 INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
 SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-accuracy-benchmark"
-RUN_DIR="./benchmark/e2e_${MODEL_ABBR}_mmlu_pro"
-mkdir -p "$RUN_DIR/0_accuracy"
+RUN_DATE=${RUN_DATE:-$(date +%Y%m%d)}
+RUN_DIR="./benchmark/${RUN_DATE}_${MODEL_ABBR}_mmlu_pro"
+mkdir -p "$RUN_DIR/accuracy"
 
 python "$SKILL_DIR/scripts/mmlu_pro_acc.py" \
   --base-url http://127.0.0.1:23334/v1 \
   --model "$MODEL_ABBR" \
   --num-examples 200 \
-  --dump-json "$RUN_DIR/0_accuracy/mmlu_pro_acc.json" \
-  2>&1 | tee "$RUN_DIR/0_accuracy/mmlu_pro_acc.client.log"
+  --dump-json "$RUN_DIR/accuracy/mmlu_pro_acc.json" \
+  2>&1 | tee "$RUN_DIR/accuracy/mmlu_pro_acc.client.log"
 ```
 
 ```bash
 INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
 SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-accuracy-benchmark"
-RUN_DIR="./benchmark/e2e_${MODEL_ABBR}_ocrbench"
-mkdir -p "$RUN_DIR/0_accuracy"
+RUN_DATE=${RUN_DATE:-$(date +%Y%m%d)}
+RUN_DIR="./benchmark/${RUN_DATE}_${MODEL_ABBR}_ocrbench"
+mkdir -p "$RUN_DIR/accuracy"
 
 python "$SKILL_DIR/scripts/ocrbench_acc.py" \
   --base-url http://127.0.0.1:23333/v1 \
   --model "$MODEL_ABBR" \
   --data-path /path/to/OCRBench.tsv \
-  --dump-json "$RUN_DIR/0_accuracy/ocrbench_acc.json" \
-  2>&1 | tee "$RUN_DIR/0_accuracy/ocrbench_acc.client.log"
+  --dump-json "$RUN_DIR/accuracy/ocrbench_acc.json" \
+  2>&1 | tee "$RUN_DIR/accuracy/ocrbench_acc.client.log"
 ```
 
 ## Acceptance

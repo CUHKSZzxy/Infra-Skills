@@ -17,10 +17,10 @@ separate, profiler-free throughput/latency measurement that follows.
 2. Record invariants: exact checkpoint, repo/image commit, import path, GPUs,
    TP/DP/EP, graph/eager mode, quantization, kernel backends, memory settings,
    and every non-default serve flag. Compare one intentional change at a time.
-3. Create `benchmark/e2e_<model>_<system>_profile[_<feature>]/` under the
-   measured checkout, following `../../docs/local-conventions.md`. Keep
-   `0_profiles/`, `0_profile_workload/`, `0_serve_logs/`, `0_analysis/`, and a
-   root `summary.md`.
+3. Create `benchmark/<YYYYMMDD>_<model>_<system>_profile[_<feature>]/`
+   under the measured checkout, following `../../docs/local-conventions.md`.
+   Keep `profiles/`, `profile_workload/`, `serve_logs/`, `analysis/`, and a root
+   `summary.md`.
 4. Read only the serving-system reference needed for launch:
    - LMDeploy: [references/lmdeploy.md](references/lmdeploy.md)
    - vLLM: [references/vllm.md](references/vllm.md)
@@ -60,14 +60,15 @@ Start with the bundled dependency-free summarizer:
 ```bash
 INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
 ANALYZER="$INFRA_SKILLS_HOME/skills/serving-timeline-profiling/scripts/summarize_torch_trace.py"
+RUN_DIR=/absolute/path/to/benchmark/YYYYMMDD_model_system_profile
 
 python "$ANALYZER" \
   --step-regex 'forward_cudagraph' \
-  ./benchmark/e2e_<run>/0_profiles/lmdeploy_rank*.json.gz
+  "$RUN_DIR"/profiles/lmdeploy_rank*.json.gz
 
 python "$ANALYZER" \
   --step-regex 'execute_context_.*generation' \
-  ./benchmark/e2e_<run>/0_profiles/*.pt.trace.json.gz
+  "$RUN_DIR"/profiles/*.pt.trace.json.gz
 ```
 
 Use repeated `--group NAME=REGEX` arguments for strict, auditable kernel

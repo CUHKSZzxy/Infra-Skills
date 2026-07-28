@@ -101,5 +101,5 @@ case "${IMAGE_WORKLOAD_PRESET}" in
 esac
 
 # Logs are created relative to the directory containing this config file.
-SERVE_LOG_DIR="0_serve_logs"
-BENCH_LOG_DIR="0_bench_logs"
+SERVE_LOG_DIR="serve_logs"
+BENCH_LOG_DIR="bench_logs"

@@ -9,14 +9,14 @@ canonical upstream page is
 Set the profiler variables before starting the PyTorch API server:
 
 ```bash
-RUN_DIR=/absolute/path/to/benchmark/e2e_<run>
-mkdir -p "$RUN_DIR/0_profiles" "$RUN_DIR/0_serve_logs"
+RUN_DIR=/absolute/path/to/benchmark/YYYYMMDD_model_system_profile
+mkdir -p "$RUN_DIR/profiles" "$RUN_DIR/serve_logs"
 
 export LMDEPLOY_PROFILE_CPU=1
 export LMDEPLOY_PROFILE_CUDA=1
 export LMDEPLOY_PROFILE_DELAY=30
 export LMDEPLOY_PROFILE_DURATION=1
-export LMDEPLOY_PROFILE_OUT_PREFIX="$RUN_DIR/0_profiles/lmdeploy_rank"
+export LMDEPLOY_PROFILE_OUT_PREFIX="$RUN_DIR/profiles/lmdeploy_rank"
 export LMDEPLOY_PROFILE_USE_GZIP=1
 
 export PYTHONPATH=/path/to/lmdeploy/source

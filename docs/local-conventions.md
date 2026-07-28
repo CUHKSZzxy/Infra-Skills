@@ -135,18 +135,21 @@ require relinking.
 Keep local end-to-end accuracy and speed outputs inside the measured checkout:
 
 ```text
-<source-checkout>/benchmark/e2e_<model>_<dataset-or-workload>[_<feature>]/
+<source-checkout>/benchmark/<YYYYMMDD>_<model>_<dataset-or-workload>[_<feature>]/
 ```
 
 Honor a user-provided destination. Otherwise use lowercase, shell-friendly
-labels under `benchmark/`, not ad hoc top-level `bench_*` folders. State the
-assumed checkout before a long run when the destination is ambiguous.
+labels under `benchmark/`, not ad hoc top-level `bench_*` folders. Prefix the
+folder with the local run-start date as `YYYYMMDD_`; never append the date as a
+suffix, and do not add an `e2e_` marker. Keep that prefix when a run is resumed
+or crosses midnight. State the assumed checkout before a long run when the
+destination is ambiguous.
 
-Put `summary.md` at the run root. Keep artifacts in small numbered folders such
-as `0_accuracy/`, `0_eval_logs/`, `0_bench_logs/`, `0_analysis/`, and
-`0_serve_logs/`. Store server and client logs with the run so comparisons remain
-auditable. Final reports must include the run folder and exact `summary.md`
-path.
+Put `summary.md` at the run root. Keep artifacts in small descriptive folders
+such as `accuracy/`, `eval_logs/`, `bench_logs/`, `analysis/`, and
+`serve_logs/`; do not add numeric prefixes. Store server and client logs with
+the run so comparisons remain auditable. Final reports must include the run
+folder and exact `summary.md` path.
 
 Do not assume datasets exist on a fresh machine. Pass paths explicitly with
 `DATASET_PATH` or the script-specific `--data-path`.

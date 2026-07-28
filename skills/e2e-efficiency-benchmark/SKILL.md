@@ -98,23 +98,24 @@ Typical layout:
 INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
 SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-efficiency-benchmark"
 MODEL_LABEL=qwen35_35b
-RUN_DIR="./benchmark/e2e_${MODEL_LABEL}_sharegpt_kvfp8"
+RUN_DATE=${RUN_DATE:-$(date +%Y%m%d)}
+RUN_DIR="./benchmark/${RUN_DATE}_${MODEL_LABEL}_sharegpt_kvfp8"
 mkdir -p "$RUN_DIR"
 cp "$SKILL_DIR/scripts/lmdeploy_config.sh" "$RUN_DIR/config.sh"
 cd "$RUN_DIR"
 # edit MODEL_PATH, MODEL_ABBR, TP, BACKEND, QUANT_POLICY
 source ./config.sh
-mkdir -p ./0_analysis
+mkdir -p ./analysis
 
 bash "$SKILL_DIR/scripts/lmdeploy_serve.sh" ./config.sh baseline
 bash "$SKILL_DIR/scripts/wait_server.sh" ./config.sh
 python "$SKILL_DIR/scripts/api_smoke.py" \
   --base-url http://127.0.0.1:23334/v1 --model "$MODEL_ABBR" \
-  --out ./0_analysis/baseline_response_check.jsonl
+  --out ./analysis/baseline_response_check.jsonl
 bash "$SKILL_DIR/scripts/bench_sharegpt.sh" ./config.sh baseline
 
 python "$SKILL_DIR/scripts/collect_bench.py" \
-  --log-dir ./0_bench_logs --out-dir ./0_analysis \
+  --log-dir ./bench_logs --out-dir ./analysis \
   --baseline-group baseline --candidate-group kvfp8 \
   --baseline-label "BF16 KV" --candidate-label "FP8 KV"
 ```
@@ -125,7 +126,8 @@ Image quick-check layout:
 INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
 SKILL_DIR="$INFRA_SKILLS_HOME/skills/e2e-efficiency-benchmark"
 MODEL_LABEL=qwen35_35b_a3b
-RUN_DIR="./benchmark/e2e_${MODEL_LABEL}_image_quick"
+RUN_DATE=${RUN_DATE:-$(date +%Y%m%d)}
+RUN_DIR="./benchmark/${RUN_DATE}_${MODEL_LABEL}_image_quick"
 mkdir -p "$RUN_DIR"
 cp "$SKILL_DIR/scripts/lmdeploy_config.sh" "$RUN_DIR/config.sh"
 cd "$RUN_DIR"

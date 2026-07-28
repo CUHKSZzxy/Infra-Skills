@@ -19,6 +19,7 @@ class EfficiencyImageWorkflowTest(unittest.TestCase):
             config_path.write_text(
                 "\n".join(
                     [
+                        "source " + str(SCRIPT_DIR / "lmdeploy_config.sh"),
                         "MODEL_PATH=/models/qwen35-35b-a3b",
                         "MODEL_ABBR=qwen35_35b_a3b",
                         "PORT=18035",
@@ -27,7 +28,6 @@ class EfficiencyImageWorkflowTest(unittest.TestCase):
                         "QUANT_POLICY=0",
                         "PROFILE_RESTFUL_API=" + str(profile_path),
                         "PYTHON_BIN=python3",
-                        "BENCH_LOG_DIR=0_bench_logs",
                         "IMAGE_WORKLOAD_PRESET=custom",
                         "IMAGE_INPUT_LENS=(64)",
                         "IMAGE_OUTPUT_LENS=(32)",
@@ -58,6 +58,7 @@ class EfficiencyImageWorkflowTest(unittest.TestCase):
         self.assertIn("--image-resolution 360p", result.stdout)
         self.assertIn("--image-count 1", result.stdout)
         self.assertNotIn("--dataset-path", result.stdout)
+        self.assertIn("/bench_logs/", result.stdout)
 
 
 if __name__ == "__main__":

@@ -50,9 +50,9 @@ Required shape:
   "server_command": "lmdeploy serve api_server ...",
   "benchmark_command": "python profile_restful_api.py ...",
   "artifacts": {
-    "server_log": "0_serve_logs/tp2_kvfp8.log",
-    "benchmark_log": "0_bench_logs/tp2_kvfp8_sharegpt_out_2048_prompts_1000.log",
-    "raw_result": "0_analysis/results.jsonl"
+    "server_log": "serve_logs/tp2_kvfp8.log",
+    "benchmark_log": "bench_logs/tp2_kvfp8_sharegpt_out_2048_prompts_1000.log",
+    "raw_result": "analysis/results.jsonl"
   }
 }
 ```
