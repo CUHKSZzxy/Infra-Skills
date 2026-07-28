@@ -20,14 +20,20 @@ export LMDEPLOY_PROFILE_OUT_PREFIX="$RUN_DIR/0_profiles/lmdeploy_rank"
 export LMDEPLOY_PROFILE_USE_GZIP=1
 
 export PYTHONPATH=/path/to/lmdeploy/source
-export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
+GPU_IDS=0
+TP=1
+export CUDA_VISIBLE_DEVICES="$GPU_IDS"
 
 /path/to/python -m lmdeploy serve api_server /path/to/model \
   --backend pytorch \
-  --tp 8 \
+  --tp "$TP" \
   --server-name 127.0.0.1 \
   --server-port 28888
 ```
+
+Set `GPU_IDS` and `TP` to the minimum required by the model or comparison. Do
+not allocate every available GPU unless the user explicitly requests an
+all-GPU run.
 
 Append the real serving flags under test. Do not add profiling-only model,
 cache, graph, or eager overrides.
@@ -45,24 +51,31 @@ cache, graph, or eager overrides.
   an active profiler.
 - Use a positive finite duration; duration `<=0` is unsupported for DP greater
   than one and makes accidental giant traces easier.
-- Create the output directory first and use a fresh, absolute prefix. TP8
-  should produce rank 0 through rank 7.
+- Create the output directory first and use a fresh, absolute prefix. TP `N`
+  should produce rank 0 through rank `N-1`.
 
 Launch long concurrent requests as soon as the API is ready and ensure the
 configured delay leaves time to reach the desired phase. A retrying client may
-start before readiness. Because there is no HTTP start/stop control, verify the
-trace annotations afterward instead of assuming the timer caught steady
-decode.
+start before readiness. Client-side tokenizer or dataset initialization can
+consume several seconds after the health check succeeds, so compare server,
+client, and dump timestamps when choosing the delay. Because there is no HTTP
+start/stop control, verify the trace annotations afterward instead of assuming
+the timer caught steady decode.
 
 ## Validation and pitfalls
 
 - Use `Profiler start on rank[...]` only as enablement evidence; require
   `dump to ...rankN.json.gz` for every expected rank with the default settings.
 - Check every expected rank parses and contains the intended annotation, such
-  as `forward_cudagraph`. Validate the phase from trace contents rather than
-  inferring it from the enablement warning.
+  as multiple complete `forward_cudagraph` cycles. Validate the phase and
+  expected feature kernel from trace contents rather than inferring them from
+  the enablement warning.
+- Use a fresh output prefix for every retry. A previous nonempty rank file can
+  otherwise make a failed recapture look successful.
 - Exclude the first captured iteration and any collective crossing the trace
   boundary before computing steady medians.
+- Inspect all expected ranks for mismatched windows and isolated NCCL stalls.
+  Recapture a contaminated rank set instead of averaging the outlier away.
 - Multi-rank traces can still be large even when compressed; check free disk
   first, especially before disabling gzip.
 - Stop the server only after all rank dumps finish.

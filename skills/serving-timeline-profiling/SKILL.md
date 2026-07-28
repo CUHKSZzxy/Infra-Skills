@@ -27,19 +27,31 @@ separate, profiler-free throughput/latency measurement that follows.
    Read both when comparing the systems.
 5. Prove the same command works once without the profiler. Warm model loading,
    JIT/autotuning, CUDA-graph capture, and library shape caches before the
-   measured window. Do not enable eager mode or skip DeepGEMM/library warmup
+   measured window. Warm the exact measured batch/graph key and runtime branch;
+   a smaller warmup can leave lazy graph capture or feature-specific setup in
+   the first sample. Do not enable eager mode or skip DeepGEMM/library warmup
    merely to simplify profiling; those change the workload being diagnosed.
 6. Drive a small, deterministic workload. For steady decode, use a few
    concurrent long requests with `ignore_eos=true`, wait until every request is
-   running and tokens are advancing, then capture only 0.5-2 seconds. For
-   prefill, start capture immediately before submitting requests.
+   running and tokens are advancing, then capture only 0.5-2 seconds. Account
+   for client tokenizer/dataset setup when using timer-based profilers; their
+   delay is not necessarily tied to the first request. For prefill, start
+   capture immediately before submitting requests.
 7. Stop and flush the profiler before cancelling clients or killing the
    server. Trace flushing can take much longer than capture. Validate every TP
-   rank file as nonempty JSON or JSON gzip, then stop clients/server and verify
-   no matching process, container, or GPU compute process remains.
+   rank file parses, contains the intended annotation and enough complete
+   cycles for the intended analysis, and exercises the expected kernel branch;
+   steady-state decode normally requires multiple cycles. File existence or
+   size is insufficient. Use fresh output labels so stale traces cannot satisfy
+   the harness. Then stop clients/server and verify no matching process,
+   container, or GPU compute process remains.
 8. Analyze and re-profile the candidate with the identical payload. After the
    timeline explains the change, run a separate profiler-free benchmark with
    `e2e-efficiency-benchmark`.
+9. Monitor GPU memory, utilization, power, and clocks during each capture.
+   Reject runs contaminated by another process or a one-rank collective stall.
+   If an external sweep rotates work across GPUs, wait for its controller to
+   exit instead of racing a momentarily idle sample.
 
 ## Analyze Traces
 
@@ -75,6 +87,9 @@ Interpret results in this order:
 Summed kernel duration may exceed wall time when streams overlap. A single host
 CUDA-graph launch can contain thousands of child kernels. Label reciprocal
 cycle rate as timeline-implied cadence, never benchmark throughput.
+Inspect median, mean, p95, and max together. If one rank has an
+orders-of-magnitude outlier while the other ranks are stable, recapture rather
+than hiding it in a rank-average.
 
 ## Acceptance
 
@@ -86,6 +101,7 @@ Write `summary.md` with:
 - top strict kernel families with explicit category boundaries;
 - baseline/candidate deltas and remaining bottlenecks;
 - profiler perturbation and cross-system comparability caveats;
+- excluded or recaptured traces with concrete reasons;
 - server/client/GPU cleanup status;
 - the planned or completed profiler-free benchmark.
 

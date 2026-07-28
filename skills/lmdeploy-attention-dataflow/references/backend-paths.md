@@ -160,6 +160,28 @@ Code anchors:
 - `lmdeploy/pytorch/kernels/cuda/dsa_indexer_preprocess.py`
 - `lmdeploy/pytorch/kernels/cuda/ds_index.py`
 
+### DSA Dense-Boundary Shortcut
+
+During decode, when the largest KV sequence in the active batch is no longer
+than `index_topk`, top-k must select every causally visible token. A safe
+shortcut may therefore emit identity logical indices and skip Q preparation,
+score computation, and sorting. It must still:
+
+- project, normalize, rotate, quantize, and append the current K to the indexer
+  cache;
+- emit one causal row for every query token, including speculative multi-token
+  decode rows, with invalid positions padded by the normal sentinel;
+- use the batch maximum KV length so a mixed batch containing any longer
+  sequence falls back to the sparse path;
+- preserve the original path above the boundary and for unsupported backends;
+- separate dense and sparse CUDA graph variants, while normalizing the key
+  when another path reuses saved indices and the choice is irrelevant.
+
+Validate the shortcut with exact-index tests, forced-old-path output parity, a
+batch-size sweep, and a timeline showing that the skipped indexer kernels
+actually disappear. A truncated model is suitable for parity and performance
+checks, but not for claiming full-model task accuracy.
+
 ## FlashMLA Flow
 
 ```text

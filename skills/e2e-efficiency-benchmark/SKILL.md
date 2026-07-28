@@ -29,24 +29,43 @@ Use `e2e-accuracy-benchmark` for dataset correctness checks.
    For request admission, concurrency, queue, or multimodal flow-control knobs,
    include a disabled/default or high-limit variant; low limits can cap
    effective batching and make TTFT mostly queue wait.
-4. Keep serving logs and benchmark logs under the same run directory. The log
+   When several independent changes are under review, predefine an auditable
+   matrix: Baseline, each isolated change (`A`, `B`, ...), then a cumulative
+   chain (`A+B`, `A+B+C`, ...). Use immutable source snapshots and verify
+   unrelated dirty files are identical across variants.
+4. Warm the exact measured batch size, CUDA-graph key, and feature branch
+   before trial 1. A small warmup may not initialize the graph or lazy path used
+   by a large-batch measurement.
+5. Keep serving logs and benchmark logs under the same run directory. The log
    filename must encode model, parallelism, feature label, dataset, output
    length, and prompt count.
-5. Summarize logs into CSV before drawing conclusions. Treat under 3-5%
-   throughput deltas as noise unless reruns show lower variance.
-6. If end-to-end performance regresses, split the problem:
+6. Record GPU memory, utilization, power, and clocks beside every variant.
+   Reject a run when another process changes occupancy or clocks. If an
+   external sweep rotates jobs across devices, wait for its controller to exit
+   rather than trusting a transient idle sample.
+7. Summarize logs into CSV before drawing conclusions. Use at least three
+   post-warmup trials and report variance for optimization claims. Treat under
+   3-5% throughput deltas as noise unless reruns show lower variance.
+   For shape- or threshold-dependent dispatch, measure the target load and at
+   least one small or boundary case instead of extrapolating one shape.
+8. If end-to-end performance regresses, split the problem:
    - server startup/model load,
    - prefill throughput and TTFT,
    - decode throughput and TPOT/ITL,
    - request scheduling/concurrency,
    - kernel-level cache fill/decode/attention.
-7. Finish by writing `summary.md` in the benchmark folder. Keep it short, but
+9. Truncated checkpoints are useful for kernel and control-flow comparisons,
+   but not for speculative-decoding throughput when their acceptance is
+   unrepresentative. Disable MTP for the main efficiency comparison or report
+   acceptance separately; do not attribute rejected-draft overhead to the
+   optimization under test.
+10. Finish by writing `summary.md` in the benchmark folder. Keep it short, but
    include the model/config, workload, commands, key metrics, artifact paths,
    whether server errors occurred, fixes made, and caveats. Put key output
    data in Markdown tables near the top, before config and command details, so
    baseline/candidate deltas are easy to compare at a glance. The final
    response must include the run folder and exact `summary.md` path.
-8. When comparing several LMDeploy candidates or feature variants, keep failed
+11. When comparing several LMDeploy candidates or feature variants, keep failed
    and skipped candidates in the same result set with concrete reasons. A readable
    "what we tried but did not select" table prevents later reruns from
    rediscovering the same bad command.
@@ -173,7 +192,9 @@ Before reporting a win, provide:
 - Markdown tables for key output metrics at the top of `summary.md`,
 - failed, skipped, or SLA-failing candidates when a matrix tried more than the
   selected baseline/candidate pair,
-- one short response-shape check if changing output-affecting behavior,
+- deterministic output parity or a targeted numerical/correctness check when
+  the optimization changes model math, indexing, cache layout, or dispatch,
+- one short response-shape check for serving-layer changes,
 - whether the run measured only API macrobenchmarks or also kernel/profiler
   evidence,
 - for admission/concurrency limit changes, evidence that the configured limit
