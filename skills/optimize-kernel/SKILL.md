@@ -1,6 +1,6 @@
 ---
 name: optimize-kernel
-description: Use when optimizing or validating an identified LMDeploy CUDA/Triton kernel or GPU dispatch path for correctness and speed, especially attention, KV cache, quantization, or FP8; do not use for unresolved serving or model-wiring bugs.
+description: Use when optimizing or validating an identified LMDeploy CUDA/Triton kernel or GPU dispatch path with correctness, timing, KernelWiki, or Nsight Compute evidence; do not use for unresolved serving or model-wiring bugs.
 ---
 
 # Optimize Kernel For LMDeploy
@@ -13,6 +13,8 @@ Pair with:
 
 - `lmdeploy-attention-dataflow` when the active attention/KV path is uncertain.
 - `check-env` when Python, CUDA, GPU visibility, or import path is uncertain.
+- `profile-serving-timeline` when the kernel hotspot is not yet proven.
+- `benchmark-efficiency` when the claim extends to serving performance.
 
 ## 1. Scope First
 
@@ -68,11 +70,14 @@ metric before/after:
 
 Use the bundled helpers instead of rewriting timing loops:
 
-- `scripts/kernel_microbench.py`: generic CUDA-event microbench runner.
-- `scripts/microbench_case_template.py`: copyable case-file template.
+- `scripts/kernel_campaign.py`: bounded, resumable paired benchmark campaign.
+- `scripts/kernel_microbench.py`: paired or single-case CUDA-event runner.
+- `scripts/microbench_case_template.py`: copyable paired-case template.
 - `scripts/summarize_kernel_bench.py`: table view for JSONL artifacts.
-- `scripts/compare_kernel_bench.py`: baseline/candidate comparison.
+- `scripts/compare_kernel_bench.py`: comparison for separate legacy artifacts.
 - `scripts/qwen_pytorch_smoke.py`: small Qwen pipeline quick check.
+- `references/external-kernel-evidence.md`: KernelWiki lookup and optional NCU
+  collection, analysis, and report workflow.
 
 Pin the imported checkout when comparing branches:
 
@@ -85,11 +90,69 @@ Check benchmark output includes `lmdeploy.__file__`; otherwise the wrong
 checkout may be imported.
 
 Warm JIT compilation, allocations, and graph capture before timing. Use CUDA
-events or the helper's synchronized timing, run baseline and candidate
-serially, and report median plus spread or quantiles. Sweep representative
-prefill/decode shapes and include neutral or regressing cases.
+events or the helper's synchronized timing. Interleave baseline and candidate
+samples on the same idle GPU, and report median plus spread or quantiles. Sweep
+representative prefill/decode shapes and include neutral or regressing cases.
 
-## 4. Patch Narrowly
+## 4. Run A Bounded Campaign
+
+Use a campaign when iterating through multiple optimization hypotheses. Use the
+single runner for one-off validation. Start from
+`scripts/microbench_case_template.py`; each `BenchmarkPair` must expose
+equivalent baseline and candidate callables for one production-relevant shape.
+Record correctness tolerances and path-affecting knobs in pair metadata.
+When the target and benchmark contract are clear, drive the edit-run-inspect
+loop without waiting for confirmation between rounds; stop for unclear
+correctness, changed scope, or exhausted budget.
+
+```bash
+SKILL_DIR=/home/zhouxinyu/common/Infra-Skills/skills/optimize-kernel
+RUN_DIR="$LMDEPLOY_DEV_SOURCE/benchmark/kernel_<target>"
+
+/home/zhouxinyu/miniconda3/envs/dev/bin/python \
+  "$SKILL_DIR/scripts/kernel_campaign.py" init "$RUN_DIR" \
+  --case-file /path/to/kernel_cases.py \
+  --source-checkout "$LMDEPLOY_DEV_SOURCE" \
+  --python /home/zhouxinyu/miniconda3/envs/dev/bin/python \
+  --gpu 0 --max-rounds 5
+
+/home/zhouxinyu/miniconda3/envs/dev/bin/python \
+  "$SKILL_DIR/scripts/kernel_campaign.py" run "$RUN_DIR" \
+  --hypothesis "Coalesce cache payload loads for long decode contexts"
+```
+
+Initialization freezes the case-file hash, and the first run freezes
+`workloads.json`. Do not change shapes, tolerances, required cases, or headline
+cases between rounds; create a new campaign when the contract changes. Each
+round records its hypothesis, exact command, raw samples, decision, and
+comparison report. `status` reports the resumable checkpoint.
+
+For each round:
+
+1. Make one narrow edit tied to the recorded hypothesis.
+2. Run focused correctness before timing; any required failure rejects the
+   candidate.
+3. Let the paired runner interleave A/B samples and evaluate the geometric-mean
+   headline gain plus per-case regression limits.
+4. Keep an accepted candidate only after dispatch and integration validation.
+   Treat an inconclusive result as evidence to refine or abandon the hypothesis.
+5. Stop at the configured round budget and report a no-go result when no
+   candidate is accepted.
+
+The wrapper checkpoints evidence but does not edit, commit, or push source; the
+agent owns the bounded optimization loop. It defaults to one GPU and must not be
+expanded to all available cards unless the user explicitly asks. Use NCU or a
+serving trace only when the evidence would choose the next edit; profiling every
+round adds noise and cost without improving the decision.
+
+When a hardware-specific technique or bottleneck is unclear, read
+`references/external-kernel-evidence.md`. Query the pinned KernelWiki before
+inventing a new design. Collect an NCU report only for a representative frozen
+case and only after normal correctness and timing are stable. NCU explains why
+a kernel behaves as measured; it does not replace paired timing or end-to-end
+validation.
+
+## 5. Patch Narrowly
 
 Change one kernel, dispatch choice, or heuristic at a time. Keep guards explicit
 for hardware, dtype, backend, quant policy, and unsupported model shapes.
@@ -99,11 +162,11 @@ Profile before changing heuristics. Useful references:
 - `references/lmdeploy-kernel-patterns.md`: attention/KV-cache optimization
   patterns such as split-K, flatten/dequant bypass, and fusion choices.
 - [KernelWiki](https://github.com/mit-han-lab/KernelWiki): external GPU kernel
-  optimization references and examples.
+  optimization references and examples; prefer the pinned local submodule.
 
-Treat concurrent GPU runs as suspect. Rerun baseline and candidate serially on
-an idle GPU before claiming a speedup. Treat small deltas under about 3-5% as
-noise unless variance is measured lower.
+Treat concurrent GPU runs as suspect. Rerun baseline and candidate in one
+exclusive paired A/B session on an idle GPU before claiming a speedup. Treat
+small deltas under about 3-5% as noise unless variance is measured lower.
 
 Match the claim to the evidence:
 
@@ -115,7 +178,7 @@ Match the claim to the evidence:
 - Do not claim a universal win from one GPU or one favorable shape. State the
   hardware and operating envelope where the change helps.
 
-## 5. Report Contract
+## 6. Report Contract
 
 Before calling the work done, report:
 
@@ -123,6 +186,7 @@ Before calling the work done, report:
 - correctness command and tolerance,
 - benchmark command,
 - before/after table with shape coverage and observed spread,
+- KernelWiki page IDs and NCU `REPORT.md` path with cited metrics when used,
 - profiler evidence if claiming a kernel-level win,
 - end-to-end evidence for serving-level claims,
 - residual risk: untested GPU, backend, fallback, graph mode, FA/speculative

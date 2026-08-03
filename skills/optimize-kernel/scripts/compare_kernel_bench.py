@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """Compare two JSONL kernel benchmark result files.
 
-Rows should contain at least `name`, `shape`, and `mean_ms`. This accepts the
-output schema produced by `kernel_bench_utils.BenchStats`.
+Rows should contain `name`, `shape`, and `median_ms` or `mean_ms`. Repeated rows
+are aggregated by their median instead of selecting the fastest observation.
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import statistics
 from pathlib import Path
 from typing import Any
 
@@ -38,19 +39,38 @@ def key(row: dict[str, Any]) -> tuple[str, str, str]:
     )
 
 
-def best_by_key(
+def aggregate_by_key(
     rows: list[dict[str, Any]],
 ) -> dict[tuple[str, str, str], dict[str, Any]]:
-    best: dict[tuple[str, str, str], dict[str, Any]] = {}
+    grouped: dict[tuple[str, str, str], list[dict[str, Any]]] = {}
     for row in rows:
         try:
-            mean_ms = float(row["mean_ms"])
+            _timing_value(row)
         except (KeyError, TypeError, ValueError):
             continue
-        item_key = key(row)
-        if item_key not in best or mean_ms < float(best[item_key]["mean_ms"]):
-            best[item_key] = row
-    return best
+        grouped.setdefault(key(row), []).append(row)
+
+    aggregated: dict[tuple[str, str, str], dict[str, Any]] = {}
+    for item_key, items in grouped.items():
+        result = dict(items[-1])
+        result["median_ms"] = statistics.median(_timing_value(row) for row in items)
+        correctness = [row.get("correct") for row in items]
+        if any(value is False for value in correctness):
+            result["correct"] = False
+        elif correctness and all(value is True for value in correctness):
+            result["correct"] = True
+        else:
+            result["correct"] = None
+        result["run_count"] = len(items)
+        aggregated[item_key] = result
+    return aggregated
+
+
+def _timing_value(row: dict[str, Any]) -> float:
+    value = row.get("median_ms", row.get("mean_ms"))
+    if value is None:
+        raise KeyError("median_ms")
+    return float(value)
 
 
 def fmt(value: Any, digits: int = 3) -> str:
@@ -77,8 +97,8 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    baseline = best_by_key(load_jsonl(args.baseline))
-    candidate = best_by_key(load_jsonl(args.candidate))
+    baseline = aggregate_by_key(load_jsonl(args.baseline))
+    candidate = aggregate_by_key(load_jsonl(args.candidate))
     all_keys = sorted(set(baseline) | set(candidate))
 
     print(
@@ -92,17 +112,17 @@ def main() -> None:
         name, shape, dtype = item_key
         if base is None:
             print(
-                f"| {cell(name)} | {cell(shape)} | {cell(dtype)} | | {cell(cand.get('mean_ms'))} | | new | |"
+                f"| {cell(name)} | {cell(shape)} | {cell(dtype)} | | {cell(cand.get('median_ms'))} | | new | |"
             )
             continue
         if cand is None:
             failures += 1
             print(
-                f"| {cell(name)} | {cell(shape)} | {cell(dtype)} | {cell(base.get('mean_ms'))} | | | missing | |"
+                f"| {cell(name)} | {cell(shape)} | {cell(dtype)} | {cell(base.get('median_ms'))} | | | missing | |"
             )
             continue
-        base_ms = float(base["mean_ms"])
-        cand_ms = float(cand["mean_ms"])
+        base_ms = float(base["median_ms"])
+        cand_ms = float(cand["median_ms"])
         delta_pct = (cand_ms / base_ms - 1.0) * 100.0 if base_ms else 0.0
         correct = cand.get("correct")
         status = "ok"
@@ -121,6 +141,8 @@ def main() -> None:
             notes.append(f"GB/s={float(cand['gbps']):.1f}")
         if cand.get("tflops") is not None:
             notes.append(f"TFLOP/s={float(cand['tflops']):.1f}")
+        if cand.get("run_count", 1) > 1:
+            notes.append(f"runs={cand['run_count']}")
         print(
             f"| {cell(name)} | {cell(shape)} | {cell(dtype)} | "
             f"{base_ms:.4f} | {cand_ms:.4f} | {delta_pct:+.2f}% | "

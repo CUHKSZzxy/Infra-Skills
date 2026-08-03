@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import json
 import platform
+import random
 import statistics
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -28,8 +29,11 @@ class BenchStats:
     warmup: int
     mean_ms: float
     median_ms: float
+    std_ms: float
+    p10_ms: float
     p20_ms: float
     p80_ms: float
+    p90_ms: float
     min_ms: float
     max_ms: float
     bytes: int | None = None
@@ -123,6 +127,96 @@ def cuda_event_bench(
     return times
 
 
+def paired_cuda_event_bench(
+    baseline: Callable[[], Any],
+    candidate: Callable[[], Any],
+    *,
+    warmup: int = 10,
+    trials: int = 7,
+    target_sample_us: float = 1000.0,
+    inner_iterations_max: int = 4096,
+    flush_l2_mb: int = 0,
+    seed: int = 123,
+    prepare_trial: Callable[[int], None] | None = None,
+    before_sample: Callable[[str, int], None] | None = None,
+) -> tuple[list[float], list[float], int, list[str]]:
+    """Measure baseline and candidate with deterministic interleaved sampling."""
+    if not torch.cuda.is_available():
+        raise RuntimeError("CUDA is not available")
+    if trials <= 0:
+        raise ValueError("trials must be positive")
+
+    for _ in range(warmup):
+        baseline()
+        candidate()
+    sync()
+
+    if prepare_trial is not None:
+        prepare_trial(seed)
+    inner_iterations = max(
+        _calibrate_inner_iterations(
+            baseline,
+            target_sample_us=target_sample_us,
+            inner_iterations_max=inner_iterations_max,
+        ),
+        _calibrate_inner_iterations(
+            candidate,
+            target_sample_us=target_sample_us,
+            inner_iterations_max=inner_iterations_max,
+        ),
+    )
+
+    baseline_times: list[float] = []
+    candidate_times: list[float] = []
+    orders: list[str] = []
+    rng = random.Random(seed)
+    for trial in range(trials):
+        if prepare_trial is not None:
+            prepare_trial(seed + trial + 1)
+        labels = ["baseline", "candidate"]
+        if rng.getrandbits(1):
+            labels.reverse()
+        orders.append("/".join(labels))
+        for label in labels:
+            if before_sample is not None:
+                before_sample(label, trial)
+            if flush_l2_mb:
+                flush_l2(flush_l2_mb)
+            fn = baseline if label == "baseline" else candidate
+            elapsed_ms = _cuda_event_sample(fn, inner_iterations)
+            per_call_ms = elapsed_ms / inner_iterations
+            if label == "baseline":
+                baseline_times.append(per_call_ms)
+            else:
+                candidate_times.append(per_call_ms)
+    return baseline_times, candidate_times, inner_iterations, orders
+
+
+def _calibrate_inner_iterations(
+    fn: Callable[[], Any],
+    *,
+    target_sample_us: float,
+    inner_iterations_max: int,
+) -> int:
+    inner_iterations = 1
+    while True:
+        elapsed_us = _cuda_event_sample(fn, inner_iterations) * 1000.0
+        if elapsed_us >= target_sample_us or inner_iterations >= inner_iterations_max:
+            return inner_iterations
+        inner_iterations = min(inner_iterations * 2, inner_iterations_max)
+
+
+def _cuda_event_sample(fn: Callable[[], Any], iterations: int) -> float:
+    start = torch.cuda.Event(enable_timing=True)
+    end = torch.cuda.Event(enable_timing=True)
+    start.record()
+    for _ in range(iterations):
+        fn()
+    end.record()
+    end.synchronize()
+    return float(start.elapsed_time(end))
+
+
 def summarize_times(
     *,
     name: str,
@@ -152,8 +246,11 @@ def summarize_times(
         warmup=warmup,
         mean_ms=mean_ms,
         median_ms=statistics.median(times),
+        std_ms=statistics.pstdev(times),
+        p10_ms=percentile(times, 0.10),
         p20_ms=percentile(times, 0.20),
         p80_ms=percentile(times, 0.80),
+        p90_ms=percentile(times, 0.90),
         min_ms=min(times),
         max_ms=max(times),
         bytes=bytes_moved,

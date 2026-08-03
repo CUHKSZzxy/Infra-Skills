@@ -21,8 +21,9 @@ boundaries and update loop.
 | `/lmdeploy-runtime-debugging` | Serve/generation stalls, slow endpoints, and runtime symptoms |
 | `/pr-workflow` | Workspace commit/push and LMDeploy PR workflow |
 | `/profile-serving-timeline` | Short LMDeploy/vLLM trace capture and bottleneck diagnosis |
+| `/review-code-smells` | Diff-focused maintainability review using the code-smell catalog |
 | `/support-new-model` | New LLM/VLM PyTorch backend support |
-| `/optimize-kernel` | Identified CUDA/Triton kernel correctness and optimization |
+| `/optimize-kernel` | CUDA/Triton kernel correctness, optimization, and NCU evidence |
 | `/update-session-skill` | End-of-session or retrospective compression into reusable skill guidance |
 
 ## Heuristic learning framework
@@ -70,3 +71,15 @@ For Claude repo-level wiring without symlinks, add this shape to
 ```
 
 See `docs/local-conventions.md` for the canonical local paths and env names.
+
+## Optional kernel evidence
+
+`optimize-kernel` can use pinned KernelWiki and Nsight Compute workflow
+references without copying their content into the local skill:
+
+```bash
+git submodule update --init external/KernelWiki external/ncu-report-skill
+```
+
+These submodules are support material for `optimize-kernel`; `link_skills.sh`
+continues to expose only the skills owned by this repository.

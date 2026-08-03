@@ -47,7 +47,9 @@ separate, profiler-free throughput/latency measurement that follows.
    container, or GPU compute process remains.
 8. Analyze and re-profile the candidate with the identical payload. After the
    timeline explains the change, run a separate profiler-free benchmark with
-   `benchmark-efficiency`.
+   `benchmark-efficiency`. If it isolates one hot kernel but not the GPU-side
+   limiting resource, switch to `optimize-kernel` for its optional NCU evidence
+   gate; do not collect NCU counters across the full serving trace.
 9. Monitor GPU memory, utilization, power, and clocks during each capture.
    Reject runs contaminated by another process or a one-rank collective stall.
    If an external sweep rotates work across GPUs, wait for its controller to

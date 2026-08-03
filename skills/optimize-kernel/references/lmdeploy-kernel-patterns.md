@@ -72,11 +72,25 @@ Make artifacts self-describing:
   quant policy, dtype, shape, block size, split/warp/stage overrides, and correctness,
 - write one JSONL row per case and keep metadata stable across runs,
 - do not mix branches or checkout imports without explicit `PYTHONPATH`,
-- mark concurrent same-GPU runs as noisy and rerun serially before accepting,
+- mark concurrent same-GPU runs as noisy and rerun in one exclusive paired A/B
+  session before accepting,
 - keep benchmark-only force hooks out of production paths.
 
 Use `scripts/summarize_kernel_bench.py` to inspect many artifacts quickly, then
 rerun only the missing or noisy slices.
+
+For iterative optimization, freeze a paired benchmark contract:
+
+- derive the shape sweep from the production path before the first round,
+- give baseline and candidate the same inputs, output allocation policy, and
+  callable boundary,
+- make timed callables repeatable because sub-millisecond kernels may run many
+  inner iterations per sample,
+- interleave baseline and candidate samples to reduce clock and thermal drift,
+- reject correctness failures and material per-shape regressions before
+  considering aggregate speedup,
+- keep the workload manifest unchanged across rounds and start a new campaign
+  when the contract changes.
 
 ## Patch Selection
 
@@ -90,3 +104,8 @@ Use profiler evidence to choose the edit:
 
 Keep the first accepted patch small enough that one before/after table explains
 why it is correct and faster.
+
+External method references:
+
+- [KDA-Pilot standalone benchmark contract](https://github.com/BBuf/KDA-Pilot/blob/main/diffusion/docs/standalone_diffusion_benchmark.md)
+- [AI-Infra-Auto-Driven-SKILLS](https://github.com/BBuf/AI-Infra-Auto-Driven-SKILLS)

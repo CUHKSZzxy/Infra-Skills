@@ -1,0 +1,8 @@
+[submodule "external/KernelWiki"]
+	path = external/KernelWiki
+	url = https://github.com/mit-han-lab/KernelWiki.git
+	branch = master
+[submodule "external/ncu-report-skill"]
+	path = external/ncu-report-skill
+	url = https://github.com/mit-han-lab/ncu-report-skill.git
+	branch = main
