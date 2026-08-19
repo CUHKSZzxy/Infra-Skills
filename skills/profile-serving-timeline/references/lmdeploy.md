@@ -15,7 +15,7 @@ mkdir -p "$RUN_DIR/profiles" "$RUN_DIR/serve_logs"
 export LMDEPLOY_PROFILE_CPU=1
 export LMDEPLOY_PROFILE_CUDA=1
 export LMDEPLOY_PROFILE_DELAY=30
-export LMDEPLOY_PROFILE_DURATION=1
+export LMDEPLOY_PROFILE_DURATION=5
 export LMDEPLOY_PROFILE_OUT_PREFIX="$RUN_DIR/profiles/lmdeploy_rank"
 export LMDEPLOY_PROFILE_USE_GZIP=1
 
@@ -42,6 +42,12 @@ cache, graph, or eager overrides.
 
 - `LMDEPLOY_PROFILE_DELAY` is counted by each model-agent profiler task after
   that agent loop starts. It is not tied to request readiness.
+- In current LMDeploy profiling, the capture timer is already after model
+  loading, warmup, and CUDA-graph capture. An unreasonably small trace file,
+  such as only a few KB, or an otherwise useless trace is usually caused by no
+  request work landing in the timer window, often because the agent or shell
+  submitted the client after thinking, tokenizing, loading a dataset, or waiting
+  through retries.
 - The `Profiler start on rank[...]` warning is emitted while constructing the
   profiler, before the delay. It confirms profiler enablement, not the actual
   capture timestamp. Current code emits no separate delayed-start log.
@@ -50,17 +56,24 @@ cache, graph, or eager overrides.
   when an uncompressed `.json` trace is required. Graceful shutdown also dumps
   an active profiler.
 - Use a positive finite duration; duration `<=0` is unsupported for DP greater
-  than one and makes accidental giant traces easier.
+  than one and makes accidental giant traces easier. Do not use a 1-second
+  duration until a dry run proves requests are already active before the timer
+  starts. Prefer 5 seconds for timer-based captures, then extend toward 10
+  seconds only when measured client-submit timing, retries, or scheduler jitter
+  need the wider window. Analyze the steady subsection and exclude
+  profiler-boundary cycles.
 - Create the output directory first and use a fresh, absolute prefix. TP `N`
   should produce rank 0 through rank `N-1`.
 
-Launch long concurrent requests as soon as the API is ready and ensure the
-configured delay leaves time to reach the desired phase. A retrying client may
-start before readiness. Client-side tokenizer or dataset initialization can
-consume several seconds after the health check succeeds, so compare server,
-client, and dump timestamps when choosing the delay. Because there is no HTTP
-start/stop control, verify the trace annotations afterward instead of assuming
-the timer caught steady decode.
+Launch long concurrent requests from a script as soon as the API is ready and
+ensure the configured delay plus duration covers the desired phase. A retrying
+client may start before readiness, while an agent-driven command may start too
+late after tool scheduling or thinking delay. Client-side tokenizer or dataset
+initialization can consume several seconds after the health check succeeds, so
+record client-submit timestamps and compare server, client, and dump timestamps
+when choosing the delay. Because there is no HTTP start/stop control, verify
+the trace annotations afterward instead of assuming the timer caught steady
+decode.
 
 ## Validation and pitfalls
 
@@ -70,6 +83,11 @@ the timer caught steady decode.
   as multiple complete `forward_cudagraph` cycles. Validate the phase and
   expected feature kernel from trace contents rather than inferring them from
   the enablement warning.
+- Treat unreasonably small traces, including files that are only a few KB,
+  traces with no expected annotation, or traces containing only idle/setup
+  activity as invalid. Recapture with a fresh prefix, a scripted client,
+  measured client-submit timestamps, and either a wider duration or
+  better-aligned delay.
 - Use a fresh output prefix for every retry. A previous nonempty rank file can
   otherwise make a failed recapture look successful.
 - Exclude the first captured iteration and any collective crossing the trace

@@ -1,6 +1,6 @@
 ---
 name: profile-serving-timeline
-description: Use when capturing or comparing short LMDeploy or vLLM PyTorch/CUDA serving traces to diagnose prefill/decode bottlenecks or rank imbalance; do not use trace-implied cadence as final throughput evidence.
+description: Use when capturing or comparing short LMDeploy, vLLM, or SGLang PyTorch/CUDA serving traces to diagnose prefill/decode bottlenecks or rank imbalance; do not use trace-implied cadence as final throughput evidence.
 ---
 
 # Profile Serving Timeline
@@ -13,7 +13,9 @@ separate, profiler-free throughput/latency measurement that follows.
 1. Define the phase and comparison before launching:
    - prefill, steady decode, or mixed traffic;
    - one baseline or baseline/candidate;
-   - request count, prompt, forced output length, and capture duration.
+   - request count, prompt, forced output length, capture delay, capture
+     duration, and how the client will submit requests without human or agent
+     think-time entering the capture window.
 2. Record invariants: exact checkpoint, repo/image commit, import path, GPUs,
    TP/DP/EP, graph/eager mode, quantization, kernel backends, memory settings,
    and every non-default serve flag. Compare one intentional change at a time.
@@ -24,27 +26,42 @@ separate, profiler-free throughput/latency measurement that follows.
 4. Read only the serving-system reference needed for launch:
    - LMDeploy: [references/lmdeploy.md](references/lmdeploy.md)
    - vLLM: [references/vllm.md](references/vllm.md)
-   Read both when comparing the systems.
+   - SGLang: [references/sglang.md](references/sglang.md)
+   Read each relevant reference when comparing systems.
 5. Prove the same command works once without the profiler. Warm model loading,
    JIT/autotuning, CUDA-graph capture, and library shape caches before the
    measured window. Warm the exact measured batch/graph key and runtime branch;
    a smaller warmup can leave lazy graph capture or feature-specific setup in
    the first sample. Do not enable eager mode or skip DeepGEMM/library warmup
    merely to simplify profiling; those change the workload being diagnosed.
-6. Drive a small, deterministic workload. For steady decode, use a few
+6. Drive a small, deterministic workload with a scripted client, not a manual
+   request typed after the profiler is armed. For steady decode, use a few
    concurrent long requests with `ignore_eos=true`, wait until every request is
-   running and tokens are advancing, then capture only 0.5-2 seconds. Account
-   for client tokenizer/dataset setup when using timer-based profilers; their
-   delay is not necessarily tied to the first request. For prefill, start
-   capture immediately before submitting requests.
+   running and tokens are advancing, then capture a long-enough window to cover
+   scheduler jitter and client launch uncertainty. Do not use a 1-second timer
+   window unless an earlier dry run proves requests are already active before
+   the profiler starts; prefer about 5 seconds for timer-based profilers, then
+   extend toward 10 seconds only when dry-run timestamps show slow client
+   startup, retries, or scheduler jitter. Trim/analyze the steady subsection.
+   Account for agent-side delay, client tokenizer/dataset setup, shell startup,
+   and health-check retries; an unreasonably small trace file, such as only a
+   few KB, or an annotation-empty trace usually means no request was processed
+   during the capture window, not that model loading or CUDA-graph capture was
+   included. For prefill, launch the client from a script immediately before
+   the capture window or choose a delay/duration from measured client-submit
+   timestamps.
 7. Stop and flush the profiler before cancelling clients or killing the
    server. Trace flushing can take much longer than capture. Validate every TP
    rank file parses, contains the intended annotation and enough complete
    cycles for the intended analysis, and exercises the expected kernel branch;
-   steady-state decode normally requires multiple cycles. File existence or
-   size is insufficient. Use fresh output labels so stale traces cannot satisfy
-   the harness. Then stop clients/server and verify no matching process,
-   container, or GPU compute process remains.
+   steady-state decode normally requires multiple cycles. File existence and
+   nonzero size are insufficient; a few-KB trace can still be useless. If a
+   trace file is unreasonably small for the expected workload,
+   annotation-empty, or only contains idle/runtime setup, recapture with a
+   fresh prefix, a scripted client, and a wider or better-aligned capture
+   window. Use fresh output labels so stale traces cannot satisfy the harness.
+   Then stop clients/server and verify no matching process, container, or GPU
+   compute process remains.
 8. Analyze and re-profile the candidate with the identical payload. After the
    timeline explains the change, run a separate profiler-free benchmark with
    `benchmark-efficiency`. If it isolates one hot kernel but not the GPU-side
@@ -71,6 +88,10 @@ python "$ANALYZER" \
 python "$ANALYZER" \
   --step-regex 'execute_context_.*generation' \
   "$RUN_DIR"/profiles/*.pt.trace.json.gz
+
+python "$ANALYZER" \
+  --step-regex 'step\[' \
+  "$RUN_DIR"/profiles/<sglang-profile-dir>/*.trace.json.gz
 ```
 
 Use repeated `--group NAME=REGEX` arguments for strict, auditable kernel
@@ -99,7 +120,8 @@ than hiding it in a rank-average.
 Write `summary.md` with:
 
 - exact launch and workload commands;
-- capture phase, duration, active/waiting request evidence, and trace count;
+- capture phase, delay, duration, client-submit timing, active/waiting request
+  evidence, and trace count;
 - median forward/cycle timing and cross-rank spread;
 - top strict kernel families with explicit category boundaries;
 - baseline/candidate deltas and remaining bottlenecks;

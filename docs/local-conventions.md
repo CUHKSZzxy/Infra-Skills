@@ -56,6 +56,7 @@ INFRA_SKILLS_HOME="$WORKSPACE_ROOT/common/Infra-Skills"
 SKILL_SOURCE="$INFRA_SKILLS_HOME/skills"
 LMDEPLOY_DEV_SOURCE="$WORKSPACE_ROOT/lmdeploy_dev"
 VLLM_DEV_SOURCE="$WORKSPACE_ROOT/vllm_dev"
+SGLANG_DEV_SOURCE="$WORKSPACE_ROOT/sglang_dev"
 CODEX_HOME="$WORKSPACE_ROOT/.codex"
 CLAUDE_HOME="$WORKSPACE_ROOT/.claude"
 CONDA_ROOT="$WORKSPACE_ROOT/miniconda3"
@@ -71,10 +72,10 @@ Env pairings:
 | --- | --- |
 | `dev` | `$LMDEPLOY_DEV_SOURCE` |
 | `vllm-dev` | `$VLLM_DEV_SOURCE` |
+| `sglang-dev` | `$SGLANG_DEV_SOURCE` |
 
-No multimodal LMDeploy checkout, `mm` env, or SGLang checkout is declared on
-this machine. Set `LMDEPLOY_MM_SOURCE` or `SGLANG_DEV_SOURCE` only after
-confirming the path exists.
+No multimodal LMDeploy checkout or `mm` env is declared on this machine. Set
+`LMDEPLOY_MM_SOURCE` only after confirming the path exists.
 
 `gh` lives at `$GH_EXE` and is on `PATH` in the current container. `sudo` is
 not usable, so prefer workspace-local or conda installs over `apt`.
