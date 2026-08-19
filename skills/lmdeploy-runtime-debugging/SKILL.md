@@ -19,17 +19,9 @@ Prefer the adjacent skills when the symptom is already classified:
 
 ## Output Contract
 
-When reporting progress or a final diagnosis, return:
-
-- problem class,
-- what was checked,
-- strongest signal so far,
-- current best guess,
-- what was ruled out,
-- next step,
-- production or validation risk.
-
-This keeps runtime debugging from becoming a loose log summary.
+When reporting progress or a final diagnosis, return the problem class, checks
+performed, strongest signal, current best guess, ruled-out causes, next step,
+and production or validation risk.
 
 ## 1. Build A Timeline First
 

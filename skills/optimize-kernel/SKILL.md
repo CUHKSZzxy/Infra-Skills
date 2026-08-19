@@ -5,10 +5,6 @@ description: Use when optimizing or validating an identified LMDeploy CUDA/Trito
 
 # Optimize Kernel For LMDeploy
 
-Use this for kernel work where correctness and speed both matter. Do not use it
-for ordinary model wiring or serving bugs unless the failing boundary is already
-a CUDA/Triton kernel.
-
 Pair with:
 
 - `lmdeploy-attention-dataflow` when the active attention/KV path is uncertain.
@@ -96,54 +92,43 @@ representative prefill/decode shapes and include neutral or regressing cases.
 
 ## 4. Run A Bounded Campaign
 
-Use a campaign when iterating through multiple optimization hypotheses. Use the
-single runner for one-off validation. Start from
-`scripts/microbench_case_template.py`; each `BenchmarkPair` must expose
-equivalent baseline and candidate callables for one production-relevant shape.
-Record correctness tolerances and path-affecting knobs in pair metadata.
-When the target and benchmark contract are clear, drive the edit-run-inspect
-loop without waiting for confirmation between rounds; stop for unclear
-correctness, changed scope, or exhausted budget.
+Use a campaign for multiple optimization hypotheses and the single runner for
+one-off validation. Start from `scripts/microbench_case_template.py`; each
+`BenchmarkPair` must compare equivalent baseline/candidate callables for one
+production-relevant shape and record tolerances plus path-affecting knobs.
 
 ```bash
-SKILL_DIR=/home/zhouxinyu/common/Infra-Skills/skills/optimize-kernel
-RUN_DIR="$LMDEPLOY_DEV_SOURCE/benchmark/kernel_<target>"
+: "${INFRA_SKILLS_HOME:?set INFRA_SKILLS_HOME from docs/local-conventions.md}"
+: "${CONDA_ROOT:?set CONDA_ROOT from docs/local-conventions.md}"
+: "${LMDEPLOY_DEV_SOURCE:?set LMDEPLOY_DEV_SOURCE from docs/local-conventions.md}"
+SKILL_DIR="$INFRA_SKILLS_HOME/skills/optimize-kernel"
+PYTHON_BIN="$CONDA_ROOT/envs/dev/bin/python"
+RUN_DATE=${RUN_DATE:-$(date +%Y%m%d)}
+RUN_DIR="$LMDEPLOY_DEV_SOURCE/benchmark/${RUN_DATE}_kernel_<target>"
 
-/home/zhouxinyu/miniconda3/envs/dev/bin/python \
+"$PYTHON_BIN" \
   "$SKILL_DIR/scripts/kernel_campaign.py" init "$RUN_DIR" \
   --case-file /path/to/kernel_cases.py \
   --source-checkout "$LMDEPLOY_DEV_SOURCE" \
-  --python /home/zhouxinyu/miniconda3/envs/dev/bin/python \
+  --python "$PYTHON_BIN" \
   --gpu 0 --max-rounds 5
 
-/home/zhouxinyu/miniconda3/envs/dev/bin/python \
+"$PYTHON_BIN" \
   "$SKILL_DIR/scripts/kernel_campaign.py" run "$RUN_DIR" \
   --hypothesis "Coalesce cache payload loads for long decode contexts"
 ```
 
-Initialization freezes the case-file hash, and the first run freezes
-`workloads.json`. Do not change shapes, tolerances, required cases, or headline
-cases between rounds; create a new campaign when the contract changes. Each
-round records its hypothesis, exact command, raw samples, decision, and
-comparison report. `status` reports the resumable checkpoint.
+Initialization freezes the case-file hash; the first run freezes
+`workloads.json`. Create a new campaign when shapes, tolerances, required
+cases, or headline cases change. Each round records the hypothesis, command,
+samples, decision, and comparison report; `status` reports the checkpoint.
 
-For each round:
-
-1. Make one narrow edit tied to the recorded hypothesis.
-2. Run focused correctness before timing; any required failure rejects the
-   candidate.
-3. Let the paired runner interleave A/B samples and evaluate the geometric-mean
-   headline gain plus per-case regression limits.
-4. Keep an accepted candidate only after dispatch and integration validation.
-   Treat an inconclusive result as evidence to refine or abandon the hypothesis.
-5. Stop at the configured round budget and report a no-go result when no
-   candidate is accepted.
-
-The wrapper checkpoints evidence but does not edit, commit, or push source; the
-agent owns the bounded optimization loop. It defaults to one GPU and must not be
-expanded to all available cards unless the user explicitly asks. Use NCU or a
-serving trace only when the evidence would choose the next edit; profiling every
-round adds noise and cost without improving the decision.
+For each round, make one narrow edit, run focused correctness before timing,
+let the paired runner interleave A/B samples, and keep a candidate only after
+dispatch and integration validation. Stop on unclear correctness, changed
+scope, inconclusive evidence, or the configured budget. The wrapper defaults to
+one GPU, checkpoints evidence, and does not edit, commit, or push source. Use
+NCU or a serving trace only when it would choose the next edit.
 
 When a hardware-specific technique or bottleneck is unclear, read
 `references/external-kernel-evidence.md`. Query the pinned KernelWiki before

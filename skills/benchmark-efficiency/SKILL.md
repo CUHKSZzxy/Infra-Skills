@@ -5,12 +5,9 @@ description: Use when measuring profiler-free LMDeploy API or server efficiency,
 
 # Benchmark Efficiency
 
-Use this when the question is user-visible serving efficiency: throughput, TTFT,
-TPOT/ITL, memory capacity, concurrency, or latency under a real API/server flow.
-Pair with `optimize-kernel` only after the slow stage is known to be a
-kernel. Use `profile-serving-timeline` for short LMDeploy/vLLM PyTorch traces
-and bottleneck attribution, then return here for the profiler-free benchmark.
-Use `benchmark-accuracy` for dataset correctness checks.
+Use `profile-serving-timeline` for short LMDeploy, vLLM, or SGLang traces,
+`optimize-kernel` after a kernel hotspot is known, and `benchmark-accuracy` for
+dataset correctness.
 
 ## Workflow
 
@@ -24,15 +21,12 @@ Use `benchmark-accuracy` for dataset correctness checks.
    - backend, TP/DP/EP, quant policy or KV-cache dtype,
    - dataset, prompt count, input/output length policy,
    - GPU/node placement and server extra args.
-3. Run one baseline and one candidate with the same workload. For KV-cache work,
-   keep weight quantization separate from KV-cache quantization in labels.
-   For request admission, concurrency, queue, or multimodal flow-control knobs,
-   include a disabled/default or high-limit variant; low limits can cap
-   effective batching and make TTFT mostly queue wait.
-   When several independent changes are under review, predefine an auditable
-   matrix: Baseline, each isolated change (`A`, `B`, ...), then a cumulative
-   chain (`A+B`, `A+B+C`, ...). Use immutable source snapshots and verify
-   unrelated dirty files are identical across variants.
+3. Run baseline and candidate with the same workload. Keep weight quantization
+   separate from KV-cache quantization in labels. For admission, queue, or
+   multimodal flow-control knobs, include a disabled/default or high-limit
+   variant so the limit itself is not the throughput cap. For multiple
+   independent changes, predefine Baseline, isolated variants, and cumulative
+   variants using immutable source snapshots.
 4. Warm the exact measured batch size, CUDA-graph key, and feature branch
    before trial 1. A small warmup may not initialize the graph or lazy path used
    by a large-batch measurement.
@@ -59,16 +53,9 @@ Use `benchmark-accuracy` for dataset correctness checks.
    unrepresentative. Disable MTP for the main efficiency comparison or report
    acceptance separately; do not attribute rejected-draft overhead to the
    optimization under test.
-10. Finish by writing `summary.md` in the benchmark folder. Keep it short, but
-   include the model/config, workload, commands, key metrics, artifact paths,
-   whether server errors occurred, fixes made, and caveats. Put key output
-   data in Markdown tables near the top, before config and command details, so
-   baseline/candidate deltas are easy to compare at a glance. The final
-   response must include the run folder and exact `summary.md` path.
-11. When comparing several LMDeploy candidates or feature variants, keep failed
-   and skipped candidates in the same result set with concrete reasons. A readable
-   "what we tried but did not select" table prevents later reruns from
-   rediscovering the same bad command.
+10. Write `summary.md` with config, workload, commands, metric tables, artifact
+   paths, server errors, fixes, caveats, and failed/skipped variants. Final
+   responses must include the run folder and exact `summary.md` path.
 
 ## Bundled Scripts
 
@@ -95,7 +82,7 @@ helpers.
 Typical layout:
 
 ```bash
-INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
+: "${INFRA_SKILLS_HOME:?set INFRA_SKILLS_HOME from docs/local-conventions.md}"
 SKILL_DIR="$INFRA_SKILLS_HOME/skills/benchmark-efficiency"
 MODEL_LABEL=qwen35_35b
 RUN_DATE=${RUN_DATE:-$(date +%Y%m%d)}
@@ -123,7 +110,7 @@ python "$SKILL_DIR/scripts/collect_bench.py" \
 Image quick-check layout:
 
 ```bash
-INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
+: "${INFRA_SKILLS_HOME:?set INFRA_SKILLS_HOME from docs/local-conventions.md}"
 SKILL_DIR="$INFRA_SKILLS_HOME/skills/benchmark-efficiency"
 MODEL_LABEL=qwen35_35b_a3b
 RUN_DATE=${RUN_DATE:-$(date +%Y%m%d)}
@@ -145,16 +132,12 @@ Local defaults on this machine:
   dataset path is assumed.
 - Benchmark client:
   `$INFRA_SKILLS_HOME/skills/benchmark-efficiency/scripts/profile_restful_api.py`
-- Fast matrix: `OUT_LENS=(None 2048)` and
-  `NUM_PROMPTS=(1000 1000)`
-- Medium matrix: `OUT_LENS=(None 2048 4096 8192)` and
-  `NUM_PROMPTS=(1000 1000 500 200)`
-- Full matrix: `OUT_LENS=(None 2048 4096 8192 16384 32768)` and
-  `NUM_PROMPTS=(10000 8000 8000 4000 1000 500)`
 
-Use `WORKLOAD_PRESET=fast` for quick agent benchmarks, `medium` for a more
-useful development comparison, and `full` only when the server is stable and
-the comparison is worth the runtime.
+| Preset | OUT_LENS | NUM_PROMPTS | Use |
+| --- | --- | --- | --- |
+| `fast` | `None 2048` | `1000 1000` | quick agent benchmark |
+| `medium` | `None 2048 4096 8192` | `1000 1000 500 200` | development comparison |
+| `full` | `None 2048 4096 8192 16384 32768` | `10000 8000 8000 4000 1000 500` | stable server, worthwhile runtime |
 
 For image benchmarks, use `IMAGE_WORKLOAD_PRESET=quick` for a first agent check:
 `IMAGE_INPUT_LENS=(100)`, `IMAGE_OUTPUT_LENS=(100)`,
@@ -164,13 +147,9 @@ For image benchmarks, use `IMAGE_WORKLOAD_PRESET=quick` for a first agent check:
 because it generates synthetic `image_url` data URIs in the benchmark client.
 Use `IMAGE_WORKLOAD_PRESET=fast` only after the server is stable.
 
-Do not add `--log-level` by default. Normal LMDeploy serve logging is useful
-and stays on disk because `SERVE_STREAM_LOGS=0` redirects stdout/stderr to the
-serve log. Add `--log-level INFO` in `LMDEPLOY_EXTRA_ARGS` only when debugging
-serve details. Use `SERVE_BACKGROUND=1` when a script should start the server
-and return after writing a pid file beside the serve log.
-Keep `BENCH_STREAM_LOGS=0` for larger benchmark matrices; the script still
-prints the per-case log path before redirecting benchmark output.
+Do not add `--log-level` by default; redirected normal serve logs are usually
+enough. Use `SERVE_BACKGROUND=1` for non-blocking server launch and keep
+`BENCH_STREAM_LOGS=0` for larger matrices.
 
 For LMDeploy KV-cache quant labels:
 
@@ -187,19 +166,7 @@ can group it.
 
 ## Acceptance
 
-Before reporting a win, provide:
-
-- exact serve and benchmark commands,
-- summary CSV or table with baseline and candidate,
-- Markdown tables for key output metrics at the top of `summary.md`,
-- failed, skipped, or SLA-failing candidates when a matrix tried more than the
-  selected baseline/candidate pair,
-- deterministic output parity or a targeted numerical/correctness check when
-  the optimization changes model math, indexing, cache layout, or dispatch,
-- one short response-shape check for serving-layer changes,
-- whether the run measured only API macrobenchmarks or also kernel/profiler
-  evidence,
-- for admission/concurrency limit changes, evidence that the configured limit
-  did not become the throughput cap, such as a disabled/high-limit comparison
-  or visible request-completion wave analysis,
-- run folder and exact `summary.md` path.
+Before reporting a win, provide the exact serve/benchmark commands, baseline
+and candidate table, failed/skipped/SLA-failing variants, output parity or a
+response-shape check when relevant, API-only versus profiler/kernel evidence,
+and proof that admission/concurrency limits did not cap throughput.

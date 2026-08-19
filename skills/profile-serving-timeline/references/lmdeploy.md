@@ -4,6 +4,12 @@ Use the integrated PyTorch profiler for short CPU/CUDA Chrome traces. The
 canonical upstream page is
 <https://lmdeploy.readthedocs.io/en/latest/advance/pytorch_profiling.html>.
 
+## Contents
+
+- [Launch](#launch)
+- [Timer semantics](#timer-semantics)
+- [Validation and pitfalls](#validation-and-pitfalls)
+
 ## Launch
 
 Set the profiler variables before starting the PyTorch API server:

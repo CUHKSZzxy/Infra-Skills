@@ -29,8 +29,14 @@ SERVE_STREAM_LOGS="${SERVE_STREAM_LOGS:-0}"
 
 # Benchmark client.
 PYTHON_BIN="${PYTHON_BIN:-python3}"
-INFRA_SKILLS_HOME="${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}"
-PROFILE_RESTFUL_API="${PROFILE_RESTFUL_API:-${INFRA_SKILLS_HOME}/skills/benchmark-efficiency/scripts/profile_restful_api.py}"
+CONFIG_SOURCE_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+if [ -z "${PROFILE_RESTFUL_API:-}" ]; then
+    if [ -n "${INFRA_SKILLS_HOME:-}" ]; then
+        PROFILE_RESTFUL_API="${INFRA_SKILLS_HOME}/skills/benchmark-efficiency/scripts/profile_restful_api.py"
+    else
+        PROFILE_RESTFUL_API="${CONFIG_SOURCE_DIR}/profile_restful_api.py"
+    fi
+fi
 API_BACKEND_LABEL="lmdeploy"
 DATASET_NAME="sharegpt"
 DATASET_PATH="${DATASET_PATH:-}"

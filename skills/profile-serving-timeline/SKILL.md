@@ -34,34 +34,24 @@ separate, profiler-free throughput/latency measurement that follows.
    a smaller warmup can leave lazy graph capture or feature-specific setup in
    the first sample. Do not enable eager mode or skip DeepGEMM/library warmup
    merely to simplify profiling; those change the workload being diagnosed.
-6. Drive a small, deterministic workload with a scripted client, not a manual
-   request typed after the profiler is armed. For steady decode, use a few
-   concurrent long requests with `ignore_eos=true`, wait until every request is
-   running and tokens are advancing, then capture a long-enough window to cover
-   scheduler jitter and client launch uncertainty. Do not use a 1-second timer
-   window unless an earlier dry run proves requests are already active before
-   the profiler starts; prefer about 5 seconds for timer-based profilers, then
-   extend toward 10 seconds only when dry-run timestamps show slow client
-   startup, retries, or scheduler jitter. Trim/analyze the steady subsection.
-   Account for agent-side delay, client tokenizer/dataset setup, shell startup,
-   and health-check retries; an unreasonably small trace file, such as only a
-   few KB, or an annotation-empty trace usually means no request was processed
-   during the capture window, not that model loading or CUDA-graph capture was
-   included. For prefill, launch the client from a script immediately before
-   the capture window or choose a delay/duration from measured client-submit
-   timestamps.
-7. Stop and flush the profiler before cancelling clients or killing the
-   server. Trace flushing can take much longer than capture. Validate every TP
-   rank file parses, contains the intended annotation and enough complete
-   cycles for the intended analysis, and exercises the expected kernel branch;
-   steady-state decode normally requires multiple cycles. File existence and
-   nonzero size are insufficient; a few-KB trace can still be useless. If a
-   trace file is unreasonably small for the expected workload,
-   annotation-empty, or only contains idle/runtime setup, recapture with a
-   fresh prefix, a scripted client, and a wider or better-aligned capture
-   window. Use fresh output labels so stale traces cannot satisfy the harness.
-   Then stop clients/server and verify no matching process, container, or GPU
-   compute process remains.
+6. Drive a small deterministic workload from a script, never by typing a
+   request after arming the profiler. For steady decode, submit a few long
+   concurrent `ignore_eos=true` requests, wait until all are running and tokens
+   advance, then capture about 5 seconds. Use 1 second only after a dry run
+   proves requests are already active; extend toward 10 seconds only when
+   timestamps show slow client startup, retries, or scheduler jitter. Account
+   for agent delay, tokenizer/dataset setup, shell startup, and health-check
+   retries. An unreasonably small trace, such as only a few KB, or an
+   annotation-empty trace usually means no request work hit the capture window.
+   For prefill, script the client immediately before the capture window or set
+   delay/duration from measured client-submit timestamps.
+7. Stop and flush the profiler before cancelling clients or killing the server.
+   Validate every TP rank file parses, contains the intended annotation, has
+   enough complete cycles, and exercises the expected kernel branch. File
+   existence and nonzero size are insufficient. Recapture with a fresh prefix,
+   scripted client, and wider or better-aligned window when traces are too
+   small, annotation-empty, idle-only, or setup-only. Then stop clients/server
+   and verify no matching process, container, or GPU compute process remains.
 8. Analyze and re-profile the candidate with the identical payload. After the
    timeline explains the change, run a separate profiler-free benchmark with
    `benchmark-efficiency`. If it isolates one hot kernel but not the GPU-side
@@ -77,7 +67,7 @@ separate, profiler-free throughput/latency measurement that follows.
 Start with the bundled dependency-free summarizer:
 
 ```bash
-INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
+: "${INFRA_SKILLS_HOME:?set INFRA_SKILLS_HOME from docs/local-conventions.md}"
 ANALYZER="$INFRA_SKILLS_HOME/skills/profile-serving-timeline/scripts/summarize_torch_trace.py"
 RUN_DIR=/absolute/path/to/benchmark/YYYYMMDD_model_system_profile
 
@@ -119,16 +109,12 @@ than hiding it in a rank-average.
 
 Write `summary.md` with:
 
-- exact launch and workload commands;
-- capture phase, delay, duration, client-submit timing, active/waiting request
-  evidence, and trace count;
-- median forward/cycle timing and cross-rank spread;
-- top strict kernel families with explicit category boundaries;
-- baseline/candidate deltas and remaining bottlenecks;
-- profiler perturbation and cross-system comparability caveats;
-- excluded or recaptured traces with concrete reasons;
-- server/client/GPU cleanup status;
-- the planned or completed profiler-free benchmark.
+- launch/workload commands and capture timing: phase, delay, duration,
+  client-submit timing, active-request evidence, and trace count;
+- median forward/cycle timing, cross-rank spread, strict kernel-family table,
+  baseline/candidate deltas, and remaining bottlenecks;
+- profiler perturbation, cross-system caveats, excluded/recaptured traces,
+  cleanup status, and planned or completed profiler-free benchmark.
 
 Retain commands, payloads, timestamps, metrics snapshots, traces, analyzer
 output, and successful logs. Remove only disposable compile/autotune caches

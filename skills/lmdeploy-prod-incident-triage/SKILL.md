@@ -13,31 +13,11 @@ the narrowed boundary.
 Do not start with profiling or code changes. Production triage is first about
 capturing enough evidence that the problem can be replayed and compared.
 
-Pair with:
-
-- `lmdeploy-runtime-debugging` after the issue is narrowed to API server,
-  request preparation, AsyncEngine, MP engine, ZMQ, streaming, or sandbox
-  reachability.
-- `benchmark-efficiency` when the reproducer is a serving speed or capacity
-  comparison.
-- `lmdeploy-attention-dataflow` or `optimize-kernel` when replay
-  points to attention, KV cache, kernels, or backend dispatch.
-- `support-new-model` when wrong output or crashes are tied to model/VLM
-  architecture support.
-
 ## Output Contract
 
-Return:
-
-- problem class
-- incident bundle path, if collected
-- exact reproducer or why one is not available yet
-- what was checked
-- strongest signal so far
-- current best guess
-- what was ruled out
-- next tool or next step
-- production risk
+Return the problem class, bundle path, reproducer status, checks performed,
+strongest signal, current best guess, ruled-out causes, next tool or step, and
+production risk.
 
 ## 1. Collect A Read-Only Bundle
 
@@ -53,14 +33,7 @@ python skills/lmdeploy-prod-incident-triage/scripts/incident_artifact_tool.py su
   /tmp/lmdeploy_incident_bundle
 ```
 
-If auth is enabled:
-
-```bash
-python skills/lmdeploy-prod-incident-triage/scripts/incident_artifact_tool.py collect-bundle \
-  --base-url http://127.0.0.1:23333 \
-  --token "$LMDEPLOY_API_KEY" \
-  --outdir /tmp/lmdeploy_incident_bundle
-```
+If auth is enabled, add `--token "$LMDEPLOY_API_KEY"` to `collect-bundle`.
 
 The bundle collects best-effort responses for:
 

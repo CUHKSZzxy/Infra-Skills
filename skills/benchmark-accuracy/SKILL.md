@@ -40,31 +40,25 @@ only when you also need serving speed logs for the same model/config.
 
 Copy or invoke scripts from `scripts/`:
 
-- `gsm8k_acc.py`: GSM8K-style numeric-answer accuracy test against an
-  OpenAI-compatible server. By default it downloads/caches the full GSM8K test
-  JSONL; pass `--mini` only for a tiny route check, or `--data-path` for a
-  local GSM8K-format JSONL file with `question` and `answer` fields.
-- `mmlu_pro_acc.py`: MMLU-Pro text multiple-choice accuracy test against an
-  OpenAI-compatible server. By default it loads `TIGER-Lab/MMLU-Pro` through
-  Hugging Face `datasets`; pass `--mini` for a tiny route check, or
-  `--data-path` for local JSONL/JSON records with `question`, `options`,
-  `answer`, and optional `category` fields. It asks for a final
-  `ANSWER: <LETTER>` line and scores by deterministic letter extraction plus
-  exact match. It does not require an LLM judge.
-- `ocrbench_acc.py`: OCRBench visual accuracy test against an
-  OpenAI-compatible VLM server. It reads VLMEvalKit-style OCRBench TSV files
-  with `index`, `image`, `question`, `answer`, and `category` fields, sends
-  images as OpenAI `image_url` data URIs, and applies VLMEvalKit-style
-  substring scoring by category. It reports `request_errors` in stdout and JSON.
-  Use `OCRBench.tsv` for normal benchmark conclusions; use `OCRBench_MINI.tsv`
-  only as a quick route check.
+- `gsm8k_acc.py`: numeric-answer accuracy; use `--mini` for a route check or
+  `--data-path` for local JSONL with `question` and `answer`.
+- `mmlu_pro_acc.py`: MMLU-Pro letter accuracy; use `--mini` for a route check
+  or `--data-path` for local records with `question`, `options`, `answer`, and
+  optional `category`. Scores deterministic `ANSWER: <LETTER>` extraction.
+- `ocrbench_acc.py`: OCRBench VLM accuracy from VLMEvalKit-style TSV, sending
+  images as OpenAI `image_url` data URIs and reporting `request_errors`.
 
-Example:
+Examples assume:
 
 ```bash
-INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
+: "${INFRA_SKILLS_HOME:?set INFRA_SKILLS_HOME from docs/local-conventions.md}"
 SKILL_DIR="$INFRA_SKILLS_HOME/skills/benchmark-accuracy"
 RUN_DATE=${RUN_DATE:-$(date +%Y%m%d)}
+```
+
+GSM8K:
+
+```bash
 RUN_DIR="./benchmark/${RUN_DATE}_${MODEL_ABBR}_gsm8k"
 mkdir -p "$RUN_DIR/accuracy"
 
@@ -75,10 +69,9 @@ python "$SKILL_DIR/scripts/gsm8k_acc.py" \
   --dump-json "$RUN_DIR/accuracy/gsm8k_acc.json"
 ```
 
+MMLU-Pro:
+
 ```bash
-INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
-SKILL_DIR="$INFRA_SKILLS_HOME/skills/benchmark-accuracy"
-RUN_DATE=${RUN_DATE:-$(date +%Y%m%d)}
 RUN_DIR="./benchmark/${RUN_DATE}_${MODEL_ABBR}_mmlu_pro"
 mkdir -p "$RUN_DIR/accuracy"
 
@@ -90,10 +83,9 @@ python "$SKILL_DIR/scripts/mmlu_pro_acc.py" \
   2>&1 | tee "$RUN_DIR/accuracy/mmlu_pro_acc.client.log"
 ```
 
+OCRBench:
+
 ```bash
-INFRA_SKILLS_HOME=${INFRA_SKILLS_HOME:-/home/zhouxinyu/common/Infra-Skills}
-SKILL_DIR="$INFRA_SKILLS_HOME/skills/benchmark-accuracy"
-RUN_DATE=${RUN_DATE:-$(date +%Y%m%d)}
 RUN_DIR="./benchmark/${RUN_DATE}_${MODEL_ABBR}_ocrbench"
 mkdir -p "$RUN_DIR/accuracy"
 
@@ -109,11 +101,9 @@ python "$SKILL_DIR/scripts/ocrbench_acc.py" \
 
 Before reporting accuracy, include:
 
-- exact server and accuracy command,
-- dataset source/path and example count,
-- answer extraction rule,
-- score, failed examples if any, and result JSON path if saved,
-- server log path, or an explicit note that no server log was captured,
+- exact server/client commands, dataset source/path, example count, and answer
+  extraction rule,
+- result table covering accuracy, correct/total, errors, failures, and artifact
+  paths,
+- server/client log paths, or explicit notes that they were not captured,
 - run folder and exact `summary.md` path.
-- client log path, or an explicit note that no client log was captured,
-- result table covering accuracy, correct/total, errors, and artifact path.

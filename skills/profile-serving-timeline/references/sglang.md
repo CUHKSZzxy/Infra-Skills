@@ -4,6 +4,12 @@ Use SGLang's HTTP profile controls or `sglang.benchmark.serving --profile` for
 short PyTorch Chrome traces. The canonical upstream page is
 <https://docs.sglang.io/docs/developer_guide/benchmark_and_profiling>.
 
+## Contents
+
+- [Launch](#launch)
+- [Capture](#capture)
+- [Validation and pitfalls](#validation-and-pitfalls)
+
 ## Launch
 
 Start from the real serving command. On the shared-storage machine, use the
