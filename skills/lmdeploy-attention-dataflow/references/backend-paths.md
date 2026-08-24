@@ -4,6 +4,17 @@ Load only the section that matches the selected runtime path. File names and
 symbols may move across branches; when they do, search for the class or function
 name and continue from the discovered call site.
 
+## Contents
+
+- [Shared Non-MLA Attention Shape](#shared-non-mla-attention-shape)
+- [KV Cache Fill Flow](#kv-cache-fill-flow)
+- [Default Triton Decode Flow](#default-triton-decode-flow)
+- [Default Triton Prefill Flow](#default-triton-prefill-flow)
+- [FA3 Flow](#fa3-flow)
+- [DSA Indexer Flow](#dsa-indexer-flow)
+- [FlashMLA Flow](#flashmla-flow)
+- [GLM-5.2 Sparse DSA: BF16 Versus FP8 MLA KV Cache](#glm-52-sparse-dsa-bf16-versus-fp8-mla-kv-cache)
+
 ## Shared Non-MLA Attention Shape
 
 Default Triton and FA3 implementations both have the same outer pattern:
@@ -208,3 +219,122 @@ Code anchors:
 - `lmdeploy/pytorch/backends/cuda/attention/mla.py`
 - `lmdeploy/pytorch/kernels/cuda/flatten_kv_cache.py`
 - FlashMLA third-party wrapper imported by `mla.py`
+
+### GLM-5.2 Sparse DSA: BF16 Versus FP8 MLA KV Cache
+
+Treat these as independent choices before tracing this path:
+
+- checkpoint/model weight dtype;
+- the separate DSA indexer Q/K representation;
+- the main MLA KV-cache dtype selected by `--quant-policy`.
+
+`--quant-policy` controls KV-cache storage, not model weights. The GLM-5.2 DSA
+indexer remains a separate low-precision path in both cases: it prepares
+quantized Q/K, writes its own packed indexer-K cache, scores with the available
+DeepGEMM contiguous/paged MQA path (or the Triton FP8 fallback), and emits
+`nsa_indices`. GLM then passes those indices to sparse MLA attention.
+
+#### DSA Indexer Kernel Map
+
+The indexer path is the same for BF16 and FP8 main MLA caches. With indexer
+fusion enabled (the default), Triton kernels prepare the current rows and write
+the separate packed FP8 indexer cache:
+
+```text
+prepare_dsa_indexer_q
+  -> Triton: RoPE + FP8 Q quantization + head-gate/score scaling
+
+prepare_dsa_indexer_k_cache
+  -> Triton: K LayerNorm + RoPE + FP8 quantization + paged cache write
+```
+
+The scoring and selection paths then differ by serving stage:
+
+| Stage | Indexer-K access | Score API | Top-k |
+|---|---|---|---|
+| Prefill | Triton `flatten_dsa_indexer_k_cache`, once per layer/forward | DeepGEMM `fp8_fp4_mqa_logits` over query-row chunks | TileLang `sparse_index_topk` for K=512/2048; otherwise Triton `bitonic_topk` |
+| Decode, including multi-token decode | packed paged cache directly | DeepGEMM `fp8_fp4_paged_mqa_logits` | same top-k dispatch |
+
+Despite the DeepGEMM API name, this GLM path supplies FP8 Q and FP8 K plus K
+scales; it is not evidence that the indexer cache is FP4. DeepGEMM emits FP32
+scores. When its required MQA APIs or CUDA metadata are unavailable, both
+stages fall back to the Triton `fp8_index` kernel.
+
+On the bounded DeepGEMM prefill path, compute the query-row chunk size from
+`max_logits_bytes // (max_kv_seqlen * 4)`, reuse the flattened K across chunks,
+select top-k immediately, and release each FP32 score chunk. Reserve the same
+budget before automatic KV-cache sizing. The default is 512 MiB through
+`LMDEPLOY_DSA_INDEXER_MAX_LOGITS_MB`. This bound does not currently cover the
+Triton `fp8_index` fallback, so identify the active scorer before claiming the
+OOM fix applies.
+
+With no explicit quant policy, current GLM-5.2 configuration selects a BF16
+main MLA cache:
+
+```text
+prefill:
+  Triton fill_kv_cache writes the BF16 MLA cache
+    -> Triton flatten_kv_cache gathers paged KV to contiguous BF16
+    -> flash_mla_sparse_fwd(query, flattened KV, nsa_indices)
+
+decode:
+  Triton fill_kv_cache writes the BF16 MLA cache
+    -> expose paged cache through a zero-copy strided BF16 view
+    -> translate logical top-k positions to storage offsets
+    -> flash_mla_sparse_fwd(query, BF16 cache view, translated indices)
+```
+
+With `--quant-policy fp8`, the cache engine first selects the model-specific
+`fp8_ds_mla` layout. It may then reset the generic cache quant-policy field to
+`NONE`; this is intentional because the specialized MLA writer and reader
+dispatch by actual cache dtype/layout. Do not infer BF16 from the later metadata
+value without checking `model_config.mla_kv_cache_dtype` and `k_cache.dtype`.
+
+```text
+prefill:
+  Triton fill_kv_cache_blocked_fp8 writes the latent and scales
+    -> Triton fill_kv_cache writes the RoPE component
+    -> Triton flatten_kv_cache_mla_fp8 dequantizes to contiguous query dtype (BF16)
+    -> flash_mla_sparse_fwd(query, flattened BF16 KV, nsa_indices)
+
+decode:
+  same specialized Triton packed-cache writers
+    -> flash_mla_with_kvcache(
+           paged FP8 cache,
+           is_fp8_kvcache=True,
+           indices=nsa_indices,
+           causal=False)
+```
+
+The specialized FP8 MLA record stores the non-positional latent in FP8, its
+scales, and the RoPE component in the dtype expected by the writer. Verify the
+exact constants and layout in the target checkout rather than assuming a
+regular MHA/GQA FP8 cache.
+
+For GLM-5.2, `nsa_indices` selects the sparse prefill branch before the FA3
+branch, so neither BF16-cache nor FP8-cache sparse prefill should be labeled
+FA3. Typical timeline evidence is:
+
+| Main MLA cache | Prefill attention | Decode attention |
+|---|---|---|
+| BF16 | Triton flatten, then `flash_mla_sparse_fwd` | zero-copy strided view, then `flash_mla_sparse_fwd` |
+| FP8 | Triton FP8 flatten/dequantize, then `flash_mla_sparse_fwd` | paged `flash_mla_with_kvcache(is_fp8_kvcache=True, indices=...)` |
+
+Use this ownership summary when reading traces:
+
+```text
+DeepGEMM -> calculate DSA token-selection scores
+TileLang -> normal GLM top-k selection (K=2048)
+FlashMLA -> perform the selected sparse MLA attention
+Triton   -> prepare/fill/flatten caches and provide score/top-k fallbacks
+```
+
+Code anchors:
+
+- `lmdeploy/pytorch/configurations/glm_moe_dsa.py`: GLM default MLA cache dtype
+- `lmdeploy/pytorch/engine/cache_engine.py`: sparse-MLA quant-policy conversion and allocation
+- `lmdeploy/pytorch/models/glm_moe_dsa.py`: DSA indices passed into attention
+- `lmdeploy/pytorch/backends/cuda/nsa.py`: indexer preparation, scoring, and top-k
+- `lmdeploy/pytorch/backends/cuda/attention/mla.py`: shared cache fill, flatten, and paged decode primitives
+- `lmdeploy/pytorch/backends/cuda/attention/sparse_mla.py`: sparse prefill/decode dispatch on refactored branches
+- `lmdeploy/pytorch/kernels/cuda/dsa_indexer_preprocess.py`: Triton fused indexer preparation and flattening

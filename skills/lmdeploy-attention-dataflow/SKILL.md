@@ -79,6 +79,7 @@ section needed by the active path:
 - default Triton decode or prefill
 - FA3 decode, speculative decode, or prefill
 - FlashMLA / MLA cache paths
+- GLM-5.2 sparse DSA with BF16 versus FP8 MLA KV cache
 
 If a listed file or symbol has moved in the target checkout, use `rg` for the
 class/function name and continue from the discovered call site.
