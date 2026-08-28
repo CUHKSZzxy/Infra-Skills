@@ -156,9 +156,7 @@ def parse_options(value: Any) -> list[str]:
                 continue
             if isinstance(parsed, (list, tuple)):
                 return [
-                    str(item).strip()
-                    for item in parsed
-                    if str(item).strip() != "N/A"
+                    str(item).strip() for item in parsed if str(item).strip() != "N/A"
                 ]
 
         labeled_options = []
@@ -259,9 +257,7 @@ def load_records(args) -> tuple[list[MMLUProRecord], str]:
     if args.data_path:
         path = Path(args.data_path).expanduser()
         raw_records = (
-            read_jsonl(path)
-            if path.suffix == ".jsonl"
-            else read_json(path, args.split)
+            read_jsonl(path) if path.suffix == ".jsonl" else read_json(path, args.split)
         )
         return [
             record_from_mapping(record, index)
@@ -277,8 +273,7 @@ def load_records(args) -> tuple[list[MMLUProRecord], str]:
 
     dataset = load_dataset(args.dataset_name, split=args.split)
     return [
-        record_from_mapping(dict(record), index)
-        for index, record in enumerate(dataset)
+        record_from_mapping(dict(record), index) for index, record in enumerate(dataset)
     ], f"{args.dataset_name}:{args.split}"
 
 
@@ -302,9 +297,7 @@ def split_examples(
 
 
 def format_options(options: list[str]) -> str:
-    return "\n".join(
-        f"{CHOICES[idx]}. {option}" for idx, option in enumerate(options)
-    )
+    return "\n".join(f"{CHOICES[idx]}. {option}" for idx, option in enumerate(options))
 
 
 def format_example(record: MMLUProRecord, include_answer: bool) -> str:
@@ -572,7 +565,7 @@ def parse_args():
     parser.add_argument(
         "--num-threads",
         type=int,
-        default=16,
+        default=32,
         help="Concurrent request threads.",
     )
     parser.add_argument(

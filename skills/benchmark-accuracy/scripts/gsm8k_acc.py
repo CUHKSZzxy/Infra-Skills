@@ -350,7 +350,7 @@ def parse_args():
     parser.add_argument(
         "--num-threads",
         type=int,
-        default=16,
+        default=32,
         help="Concurrent request threads.",
     )
     parser.add_argument(
