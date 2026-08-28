@@ -1,8 +1,8 @@
 # Recent PyTorch Model-Support Patterns
 
 Use this after reading the target HF config and before writing model code. These
-patterns come from LMDeploy PyTorch model-support PRs merged in the year before
-2026-06-16, after the engine and multimodal paths changed substantially.
+patterns come from substantial LMDeploy PyTorch model-support PRs merged through
+2026-08-28, after the engine and multimodal paths changed substantially.
 
 ## Recent PR Map
 
@@ -12,6 +12,10 @@ model-adaptation examples.
 
 | PR | Area | Main pattern |
 | --- | --- | --- |
+| `#4846` | Kimi K2.6 | Combine native language model, vision tower, compressed-tensors W4A16 MoE, tool parser, and EAGLE3 speculative decoding |
+| `#4816` | InternS2 Mobius | Add PyTorch meta-MoE configs/models, fused-MoE routing support, module map entries, and kernel coverage |
+| `#4815` | Hy3 | Add model plus embedded MTP, static FP8 linear/MoE modules, router kernels, and spec proposer |
+| `#4737` | GLM-5.2 | Add DSA/NSA indexing, MTP, routed-expert replay, BF16/FP8 sparse FlashMLA paths, serving parser, and tests |
 | `#4652` | Qwen3.5 MTP | Keep MTP fixes coordinated across config, cudagraph, paging state, spec agent, and graph runner |
 | `#4411` | Qwen3 Omni | Add audio/multimodal plumbing end-to-end: config, model map, media IO, processor, PyTorch model, VLM wrapper, and tests |
 | `#4611` | Qwen3.5 MTP DP | Make speculative/MTP support DP-aware across token dispatch, model-agent inputs, graph runner, and spec strategy state |
@@ -70,9 +74,13 @@ map unless they introduce a substantial reusable architecture pattern.
 - For MTP/spec decoding, add or reuse a separate `*_mtp.py`, draft-model config
   rewrite, `model_paradigm='ar_spec'`, spec proposer, and TP/quant edge-case
   handling.
+- For model families with custom serving syntax, include parser and API-routing
+  checks in the same support plan; Kimi and GLM-style tool/reasoning paths are
+  not just model-file work.
 - Hardware and quant support often changes config policy rather than model
   math: add check-env guards, Volta/Ascend fallbacks, FP8/AWQ ignore-layer
-  rules, and dtype controls where the target model requires them.
+  rules, static-FP8 or compressed-tensors module choices, and dtype controls
+  where the target model requires them.
 
 ## Validation Pattern
 

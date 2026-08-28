@@ -16,12 +16,11 @@ boundaries and update loop.
 | `/benchmark-efficiency` | Profiler-free end-to-end serving efficiency comparisons |
 | `/engineering-guardrails` | Default scope, style, and validation guardrails |
 | `/lmdeploy-attention-dataflow` | Attention, KV cache, quant policy, and backend dispatch tracing |
-| `/lmdeploy-humanize-review` | Corpus-backed LMDeploy human-style PR/code review |
 | `/lmdeploy-prod-incident-triage` | Replay-first production serving incident triage |
 | `/lmdeploy-runtime-debugging` | Serve/generation stalls, slow endpoints, and runtime symptoms |
 | `/pr-workflow` | Workspace commit/push and LMDeploy PR workflow |
-| `/profile-serving-timeline` | Short LMDeploy/vLLM trace capture and bottleneck diagnosis |
-| `/review-code-smells` | Diff-focused maintainability review using the code-smell catalog |
+| `/profile-serving-timeline` | Short LMDeploy, vLLM, and SGLang trace capture and bottleneck diagnosis |
+| `/review-code` | Code review with mandatory code-smell review and optional LMDeploy corpus evidence |
 | `/support-new-model` | New LLM/VLM PyTorch backend support |
 | `/optimize-kernel` | CUDA/Triton kernel correctness, optimization, and NCU evidence |
 | `/update-session-skill` | End-of-session or retrospective compression into reusable skill guidance |

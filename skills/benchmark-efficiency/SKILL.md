@@ -79,7 +79,7 @@ Load `references/result-schema.md` when a local LMDeploy run needs normalized
 JSONL rows or failed-candidate reporting beyond the baseline/candidate CSV
 helpers.
 
-Typical layout:
+Typical launch shape:
 
 ```bash
 : "${INFRA_SKILLS_HOME:?set INFRA_SKILLS_HOME from docs/local-conventions.md}"
@@ -100,52 +100,12 @@ python "$SKILL_DIR/scripts/api_smoke.py" \
   --base-url http://127.0.0.1:23334/v1 --model "$MODEL_ABBR" \
   --out ./analysis/baseline_response_check.jsonl
 bash "$SKILL_DIR/scripts/bench_sharegpt.sh" ./config.sh baseline
-
-python "$SKILL_DIR/scripts/collect_bench.py" \
-  --log-dir ./bench_logs --out-dir ./analysis \
-  --baseline-group baseline --candidate-group kvfp8 \
-  --baseline-label "BF16 KV" --candidate-label "FP8 KV"
 ```
 
-Image quick-check layout:
-
-```bash
-: "${INFRA_SKILLS_HOME:?set INFRA_SKILLS_HOME from docs/local-conventions.md}"
-SKILL_DIR="$INFRA_SKILLS_HOME/skills/benchmark-efficiency"
-MODEL_LABEL=qwen35_35b_a3b
-RUN_DATE=${RUN_DATE:-$(date +%Y%m%d)}
-RUN_DIR="./benchmark/${RUN_DATE}_${MODEL_LABEL}_image_quick"
-mkdir -p "$RUN_DIR"
-cp "$SKILL_DIR/scripts/lmdeploy_config.sh" "$RUN_DIR/config.sh"
-cd "$RUN_DIR"
-# edit MODEL_PATH, MODEL_ABBR, TP, BACKEND, QUANT_POLICY, PORT
-source ./config.sh
-
-bash "$SKILL_DIR/scripts/lmdeploy_serve.sh" ./config.sh baseline
-bash "$SKILL_DIR/scripts/wait_server.sh" ./config.sh
-bash "$SKILL_DIR/scripts/bench_image.sh" ./config.sh baseline
-```
-
-Local defaults on this machine:
-
-- ShareGPT dataset: set `DATASET_PATH` in the copied config; no machine-local
-  dataset path is assumed.
-- Benchmark client:
-  `$INFRA_SKILLS_HOME/skills/benchmark-efficiency/scripts/profile_restful_api.py`
-
-| Preset | OUT_LENS | NUM_PROMPTS | Use |
-| --- | --- | --- | --- |
-| `fast` | `None 2048` | `1000 1000` | quick agent benchmark |
-| `medium` | `None 2048 4096 8192` | `1000 1000 500 200` | development comparison |
-| `full` | `None 2048 4096 8192 16384 32768` | `10000 8000 8000 4000 1000 500` | stable server, worthwhile runtime |
-
-For image benchmarks, use `IMAGE_WORKLOAD_PRESET=quick` for a first agent check:
-`IMAGE_INPUT_LENS=(100)`, `IMAGE_OUTPUT_LENS=(100)`,
-`IMAGE_NUM_PROMPTS=(10)`, `IMAGE_RESOLUTIONS=(1024x1024)`, and
-`IMAGE_COUNTS=(1)`. The image wrapper defaults to
-`IMAGE_API_BACKEND_LABEL=lmdeploy-chat` and does not require `DATASET_PATH`,
-because it generates synthetic `image_url` data URIs in the benchmark client.
-Use `IMAGE_WORKLOAD_PRESET=fast` only after the server is stable.
+The copied config owns preset values. Set `DATASET_PATH` for ShareGPT runs; for
+synthetic multimodal runs, use `bench_image.sh` with
+`IMAGE_WORKLOAD_PRESET=quick` first and move to `fast` only after the server is
+stable.
 
 Do not add `--log-level` by default; redirected normal serve logs are usually
 enough. Use `SERVE_BACKGROUND=1` for non-blocking server launch and keep

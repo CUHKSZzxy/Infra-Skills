@@ -48,53 +48,29 @@ Copy or invoke scripts from `scripts/`:
 - `ocrbench_acc.py`: OCRBench VLM accuracy from VLMEvalKit-style TSV, sending
   images as OpenAI `image_url` data URIs and reporting `request_errors`.
 
-Examples assume:
+Use `--mini` first, then pass `--data-path` or the script's dataset source for
+the real run. Typical setup:
 
 ```bash
 : "${INFRA_SKILLS_HOME:?set INFRA_SKILLS_HOME from docs/local-conventions.md}"
 SKILL_DIR="$INFRA_SKILLS_HOME/skills/benchmark-accuracy"
 RUN_DATE=${RUN_DATE:-$(date +%Y%m%d)}
-```
-
-GSM8K:
-
-```bash
-RUN_DIR="./benchmark/${RUN_DATE}_${MODEL_ABBR}_gsm8k"
+RUN_DIR="./benchmark/${RUN_DATE}_${MODEL_ABBR}_<dataset>"
 mkdir -p "$RUN_DIR/accuracy"
 
-python "$SKILL_DIR/scripts/gsm8k_acc.py" \
-  --base-url http://127.0.0.1:23334/v1 \
-  --model "$MODEL_ABBR" \
-  --num-shots 5 \
-  --dump-json "$RUN_DIR/accuracy/gsm8k_acc.json"
+python "$SKILL_DIR/scripts/<dataset>_acc.py" --help
 ```
 
-MMLU-Pro:
+GSM8K and MMLU-Pro use text requests; OCRBench sends image files as OpenAI
+`image_url` data URIs. Keep client stdout/stderr beside the JSON result, for
+example:
 
 ```bash
-RUN_DIR="./benchmark/${RUN_DATE}_${MODEL_ABBR}_mmlu_pro"
-mkdir -p "$RUN_DIR/accuracy"
-
-python "$SKILL_DIR/scripts/mmlu_pro_acc.py" \
-  --base-url http://127.0.0.1:23334/v1 \
+python "$SKILL_DIR/scripts/mmlu_pro_acc.py" --base-url http://127.0.0.1:23334/v1 \
   --model "$MODEL_ABBR" \
   --num-examples 200 \
   --dump-json "$RUN_DIR/accuracy/mmlu_pro_acc.json" \
   2>&1 | tee "$RUN_DIR/accuracy/mmlu_pro_acc.client.log"
-```
-
-OCRBench:
-
-```bash
-RUN_DIR="./benchmark/${RUN_DATE}_${MODEL_ABBR}_ocrbench"
-mkdir -p "$RUN_DIR/accuracy"
-
-python "$SKILL_DIR/scripts/ocrbench_acc.py" \
-  --base-url http://127.0.0.1:23333/v1 \
-  --model "$MODEL_ABBR" \
-  --data-path /path/to/OCRBench.tsv \
-  --dump-json "$RUN_DIR/accuracy/ocrbench_acc.json" \
-  2>&1 | tee "$RUN_DIR/accuracy/ocrbench_acc.client.log"
 ```
 
 ## Acceptance

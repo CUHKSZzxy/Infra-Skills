@@ -3,39 +3,39 @@
   "code_languages": [
     [
       "python",
-      362
+      463
     ],
     [
       "yaml",
-      66
+      69
     ],
     [
       "markdown",
-      21
+      25
     ],
     [
       "cpp",
-      20
+      24
+    ],
+    [
+      "shell",
+      11
     ],
     [
       "text",
       9
     ],
     [
-      "shell",
-      7
-    ],
-    [
       "cuda",
       6
     ],
     [
-      "jetson",
+      "extensionless",
       2
     ],
     [
-      "extensionless",
-      1
+      "jetson",
+      2
     ],
     [
       "ps1",
@@ -48,108 +48,108 @@
     "pull_requests": "PR created_at within inclusive date window; bot and coding-agent PR authors excluded.",
     "review_comments": "GitHub pull review comments grouped by in_reply_to_id thread."
   },
-  "comment_count": 620,
+  "comment_count": 774,
   "comment_language_hints": [
     [
       "en_or_ascii",
-      524
+      664
     ],
     [
       "non_ascii_other",
-      95
+      108
     ],
     [
       "zh_or_cjk",
-      1
+      2
     ]
   ],
   "comment_stats": {
-    "agent_reviewer_comments_on_target_prs": 1273,
-    "all_review_comments_seen": 1991,
-    "human_reviewer_comments_on_target_prs": 620,
-    "threads": 495
+    "agent_reviewer_comments_on_target_prs": 1435,
+    "all_review_comments_seen": 2307,
+    "human_reviewer_comments_on_target_prs": 774,
+    "threads": 612
   },
-  "generated_at": "2026-07-17T12:31:38+00:00",
-  "human_reviewer_comment_count": 620,
+  "generated_at": "2026-08-28T12:12:55+00:00",
+  "human_reviewer_comment_count": 774,
   "max_comments_per_thread": 5,
   "pull_request_stats": {
     "excluded_agent_prs": 8,
-    "included_human_prs": 397,
-    "included_human_prs_2026": 397,
-    "search_result_items_seen": 405,
-    "search_total_count_sum": 405,
-    "window_prs": 405
+    "included_human_prs": 529,
+    "included_human_prs_2026": 529,
+    "search_result_items_seen": 537,
+    "search_total_count_sum": 537,
+    "window_prs": 537
   },
   "repo": "InternLM/lmdeploy",
   "schema_version": 1,
   "source_date_window": [
     "2026-01-01T00:00:00+00:00",
-    "2026-07-17T12:30:47+00:00"
+    "2026-08-28T23:59:59+00:00"
   ],
-  "thread_count": 495,
+  "thread_count": 612,
   "threads_by_pr_year": {
-    "2026": 495
+    "2026": 612
   },
   "top_categories": [
     [
+      "pytorch-backend",
+      323
+    ],
+    [
       "api-compat",
-      257
+      311
     ],
     [
       "models-quant",
-      254
-    ],
-    [
-      "pytorch-backend",
-      231
+      306
     ],
     [
       "correctness",
-      188
-    ],
-    [
-      "turbomind-backend",
-      154
-    ],
-    [
-      "docs-examples",
-      144
+      234
     ],
     [
       "memory-cache",
-      142
+      181
+    ],
+    [
+      "turbomind-backend",
+      176
     ],
     [
       "style-maintainability",
-      136
+      169
+    ],
+    [
+      "docs-examples",
+      165
     ],
     [
       "tests-ci",
-      131
-    ],
-    [
-      "distributed-concurrency",
-      102
+      160
     ],
     [
       "gpu-kernel",
-      97
+      147
     ],
     [
-      "multimodal",
-      88
+      "distributed-concurrency",
+      137
     ],
     [
       "build-deps",
-      86
+      119
     ],
     [
       "performance",
-      80
+      109
+    ],
+    [
+      "multimodal",
+      93
     ],
     [
       "observability",
-      75
+      92
     ],
     [
       "general-review",
@@ -159,27 +159,31 @@
   "top_human_reviewers": [
     [
       "lvhan028",
-      292
-    ],
-    [
-      "windreamer",
-      87
-    ],
-    [
-      "RunningLeon",
-      64
+      325
     ],
     [
       "grimoire",
-      51
+      112
+    ],
+    [
+      "windreamer",
+      89
+    ],
+    [
+      "RunningLeon",
+      69
     ],
     [
       "CUHKSZzxy",
-      50
+      65
     ],
     [
       "irexyc",
-      16
+      29
+    ],
+    [
+      "qescccczmr",
+      15
     ],
     [
       "lzhangzz",
@@ -206,11 +210,19 @@
       4
     ],
     [
+      "caikun-pjlab",
+      4
+    ],
+    [
       "jinminxi104",
       3
     ],
     [
       "ziyangliu-666",
+      3
+    ],
+    [
+      "SuperMarioYL",
       3
     ],
     [
@@ -238,11 +250,15 @@
       2
     ],
     [
-      "43758726",
-      1
+      "wanfengcxz",
+      2
     ],
     [
-      "SuperMarioYL",
+      "zupengwang",
+      2
+    ],
+    [
+      "43758726",
       1
     ],
     [
@@ -257,14 +273,18 @@
   "top_paths": [
     [
       "lmdeploy/serve/openai/api_server.py",
-      18
+      20
     ],
     [
       "lmdeploy/pytorch/spec_decode/spec_agent.py",
-      14
+      15
     ],
     [
       "lmdeploy/serve/openai/responses/serving.py",
+      14
+    ],
+    [
+      "lmdeploy/pytorch/engine/model_agent/agent.py",
       13
     ],
     [
@@ -280,11 +300,11 @@
       10
     ],
     [
-      "lmdeploy/pytorch/engine/model_agent/agent.py",
+      "lmdeploy/pytorch/engine/logits_process.py",
       9
     ],
     [
-      "lmdeploy/pytorch/engine/logits_process.py",
+      "lmdeploy/pytorch/backends/cuda/graph_runner.py",
       8
     ],
     [
@@ -296,6 +316,10 @@
       7
     ],
     [
+      "lmdeploy/pytorch/engine/executor/base.py",
+      7
+    ],
+    [
       "lmdeploy/vl/model/base.py",
       7
     ],
@@ -304,7 +328,11 @@
       7
     ],
     [
-      "lmdeploy/pytorch/engine/executor/base.py",
+      "lmdeploy/pytorch/backends/dlinfer/ascend/op_backend.py",
+      6
+    ],
+    [
+      "lmdeploy/serve/openai/protocol.py",
       6
     ],
     [
@@ -312,23 +340,15 @@
       6
     ],
     [
-      "lmdeploy/pytorch/backends/cuda/graph_runner.py",
-      6
-    ],
-    [
       "lmdeploy/turbomind/__init__.py",
       6
-    ],
-    [
-      "lmdeploy/pytorch/backends/dlinfer/ascend/op_backend.py",
-      5
     ],
     [
       "lmdeploy/serve/parsers/_openai_harmony.py",
       5
     ],
     [
-      "lmdeploy/serve/openai/protocol.py",
+      "lmdeploy/pytorch/engine/inputs_maker.py",
       5
     ],
     [
@@ -352,28 +372,24 @@
       4
     ],
     [
+      "docker/install.sh",
+      4
+    ],
+    [
+      "lmdeploy/pytorch/paging/scheduler.py",
+      4
+    ],
+    [
+      "lmdeploy/pytorch/engine/engine_loop.py",
+      4
+    ],
+    [
       "docs/en/advance/spec_decoding.md",
       4
     ],
     [
       "lmdeploy/lite/apis/calibrate.py",
       4
-    ],
-    [
-      "lmdeploy/lite/quantization/awq.py",
-      4
-    ],
-    [
-      "lmdeploy/turbomind/models/qwen3_5.py",
-      4
-    ],
-    [
-      "lmdeploy/pytorch/backends/cuda/attention/__init__.py",
-      3
-    ],
-    [
-      "lmdeploy/pipeline.py",
-      3
     ]
   ]
 }

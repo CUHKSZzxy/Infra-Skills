@@ -14,25 +14,11 @@ This skill is the compression gate for the repo's heuristic-learning loop. Use
 
 ## 1. Decide Whether Anything Belongs
 
-Add or update skill guidance only when the session produced a pattern likely to
-recur.
-
-Good candidates:
-
-- a debugging workflow that found root cause, not just a one-off fix
-- a PR/update workflow that avoided a local-tool or branch trap
-- a validation pattern the user explicitly prefers
-- a repo convention that future agents should follow
-- a compact decision rule that would have prevented confusion
-- repeated feedback across sessions that can be reduced to one small rule
-
-Poor candidates:
-
-- private prompts, request payloads, model paths, logs, or local data
-- details that only explain this single session
-- generic engineering advice Codex already knows
-- broad skills that would trigger too often
-- examples that are longer than the rule they teach
+Use the candidate and rejection tests in
+`../../docs/heuristic-learning.md`. Add or update skill guidance only when the
+session produced a small pattern likely to recur. Reject private,
+session-specific, generic, broad, or context-expensive material instead of
+turning every session detail into active guidance.
 
 ## 2. Periodic Retrospective Mode
 
@@ -52,41 +38,22 @@ references, scripts, or docs; if no durable lesson is found, say so.
 
 Use the promotion choices in `../../docs/heuristic-learning.md`. Prefer
 updating an existing file over adding a new skill. If the lesson might consume
-context without clear value, say so and skip it.
-
-When the promotion decision is not obvious, use this scratchpad in chat or a
-temporary note, then discard it:
-
-- Symptom:
-- Root cause:
-- Reusable rule:
-- Target home: skill / reference / script / defer / reject
-- Validation:
+context without clear value, say so and skip it. When the promotion decision is
+not obvious, use the doc's five-field scratchpad in chat or a temporary note,
+then discard it.
 
 ## 4. Write Trigger-First Skills When Needed
 
-Frontmatter description should answer "when should an agent load this?"
-
-Use:
+When editing `SKILL.md`, keep only instructions that change decisions in future
+runs. The frontmatter description should answer "when should an agent load
+this?" and start with:
 
 ```yaml
 description: Use when [specific symptoms or task conditions]
 ```
 
-Avoid:
-
-- workflow summaries in the description
-- vague names like `debugging`
-- personal session narratives
-- over-specific triggers such as one endpoint, one file, or one prompt
-
-Body style:
-
-- keep it concise and operational
-- list steps in the order an agent should do them
-- include commands only when they are reusable
-- state what not to do when that prevents repeated mistakes
-- keep local machine assumptions explicit and scoped
+Put mode-specific detail in references and reusable mechanics in scripts instead
+of expanding the entrypoint.
 
 ## 5. Keep The Repo Aligned
 

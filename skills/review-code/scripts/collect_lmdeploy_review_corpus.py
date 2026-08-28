@@ -350,7 +350,7 @@ def api_get(
     headers = {
         "Accept": "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
-        "User-Agent": "lmdeploy-humanize-review-corpus",
+        "User-Agent": "review-code-lmdeploy-corpus",
     }
     if token:
         headers["Authorization"] = f"Bearer {token}"
@@ -493,7 +493,9 @@ def fetch_target_pulls(
         next_month = (
             dt.datetime(chunk_start.year + 1, 1, 1, tzinfo=dt.timezone.utc)
             if chunk_start.month == 12
-            else dt.datetime(chunk_start.year, chunk_start.month + 1, 1, tzinfo=dt.timezone.utc)
+            else dt.datetime(
+                chunk_start.year, chunk_start.month + 1, 1, tzinfo=dt.timezone.utc
+            )
         )
         chunk_end = min(end_dt, next_month - dt.timedelta(seconds=1))
         query = (
@@ -776,9 +778,9 @@ def write_summary_markdown(
             "## Query Examples",
             "",
             "```bash",
-            "python3 skills/lmdeploy-humanize-review/scripts/query_lmdeploy_review_corpus.py --query cuda --limit 5",
-            "python3 skills/lmdeploy-humanize-review/scripts/query_lmdeploy_review_corpus.py --path lmdeploy/pytorch --category correctness --limit 8",
-            "python3 skills/lmdeploy-humanize-review/scripts/query_lmdeploy_review_corpus.py --query 'turbomind' --format jsonl --limit 3",
+            "python3 skills/review-code/scripts/query_lmdeploy_review_corpus.py --query cuda --limit 5",
+            "python3 skills/review-code/scripts/query_lmdeploy_review_corpus.py --path lmdeploy/pytorch --category correctness --limit 8",
+            "python3 skills/review-code/scripts/query_lmdeploy_review_corpus.py --query 'turbomind' --format jsonl --limit 3",
             "```",
             "",
         ]
@@ -834,7 +836,7 @@ def main() -> int:
 
     corpus_path = args.out_dir / args.out_name
     metadata_path = args.out_dir / "lmdeploy-review-corpus-2026.metadata.json"
-    summary_path = args.out_dir / "corpus-summary.md"
+    summary_path = args.out_dir / "lmdeploy-corpus-summary.md"
 
     write_jsonl_gz(corpus_path, threads)
     metadata = summarize(

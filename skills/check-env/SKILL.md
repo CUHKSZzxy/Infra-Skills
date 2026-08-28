@@ -78,7 +78,8 @@ export CUDA_VISIBLE_DEVICES=<gpu_id>
 If `conda run -n <env> python` resolves unexpectedly, use the env's interpreter
 directly for tests and scripts.
 
-Use the paired interpreter listed in the `Envs` section of local conventions.
+Use the paired interpreter listed in the `Env pairings` section of local
+conventions.
 
 Example:
 

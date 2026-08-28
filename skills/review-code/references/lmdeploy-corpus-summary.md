@@ -1,12 +1,12 @@
 # LMDeploy Human Review Corpus Summary
 
 - Repo: `InternLM/lmdeploy`
-- Source PR date window: `2026-01-01T00:00:00+00:00` to `2026-07-17T12:30:47+00:00` inclusive
-- Generated at: `2026-07-17T12:31:38+00:00`
+- Source PR date window: `2026-01-01T00:00:00+00:00` to `2026-08-28T23:59:59+00:00` inclusive
+- Generated at: `2026-08-28T12:12:55+00:00`
 - Corpus file: `lmdeploy-review-corpus-2026.jsonl.gz`
-- Threads: `495`
-- Comments in corpus: `620`
-- Human reviewer comments: `620`
+- Threads: `612`
+- Comments in corpus: `774`
+- Human reviewer comments: `774`
 - Agent reviewer comments: `0`
 
 ## Collection Policy
@@ -23,133 +23,137 @@
 | Metric | Count |
 | --- | ---: |
 | `excluded_agent_prs` | 8 |
-| `included_human_prs` | 397 |
-| `included_human_prs_2026` | 397 |
-| `search_result_items_seen` | 405 |
-| `search_total_count_sum` | 405 |
-| `window_prs` | 405 |
+| `included_human_prs` | 529 |
+| `included_human_prs_2026` | 529 |
+| `search_result_items_seen` | 537 |
+| `search_total_count_sum` | 537 |
+| `window_prs` | 537 |
 
 ## Comment Stats
 
 | Metric | Count |
 | --- | ---: |
-| `agent_reviewer_comments_on_target_prs` | 1273 |
-| `all_review_comments_seen` | 1991 |
-| `human_reviewer_comments_on_target_prs` | 620 |
-| `threads` | 495 |
+| `agent_reviewer_comments_on_target_prs` | 1435 |
+| `all_review_comments_seen` | 2307 |
+| `human_reviewer_comments_on_target_prs` | 774 |
+| `threads` | 612 |
 
 ## Top Categories
 
 | Category | Threads |
 | --- | ---: |
-| `api-compat` | 257 |
-| `models-quant` | 254 |
-| `pytorch-backend` | 231 |
-| `correctness` | 188 |
-| `turbomind-backend` | 154 |
-| `docs-examples` | 144 |
-| `memory-cache` | 142 |
-| `style-maintainability` | 136 |
-| `tests-ci` | 131 |
-| `distributed-concurrency` | 102 |
-| `gpu-kernel` | 97 |
-| `multimodal` | 88 |
-| `build-deps` | 86 |
-| `performance` | 80 |
-| `observability` | 75 |
+| `pytorch-backend` | 323 |
+| `api-compat` | 311 |
+| `models-quant` | 306 |
+| `correctness` | 234 |
+| `memory-cache` | 181 |
+| `turbomind-backend` | 176 |
+| `style-maintainability` | 169 |
+| `docs-examples` | 165 |
+| `tests-ci` | 160 |
+| `gpu-kernel` | 147 |
+| `distributed-concurrency` | 137 |
+| `build-deps` | 119 |
+| `performance` | 109 |
+| `multimodal` | 93 |
+| `observability` | 92 |
 | `general-review` | 2 |
 
 ## Code Languages
 
 | Language | Threads |
 | --- | ---: |
-| `python` | 362 |
-| `yaml` | 66 |
-| `markdown` | 21 |
-| `cpp` | 20 |
+| `python` | 463 |
+| `yaml` | 69 |
+| `markdown` | 25 |
+| `cpp` | 24 |
+| `shell` | 11 |
 | `text` | 9 |
-| `shell` | 7 |
 | `cuda` | 6 |
+| `extensionless` | 2 |
 | `jetson` | 2 |
-| `extensionless` | 1 |
 | `ps1` | 1 |
 
 ## Comment Language Hints
 
 | Hint | Comments |
 | --- | ---: |
-| `en_or_ascii` | 524 |
-| `non_ascii_other` | 95 |
-| `zh_or_cjk` | 1 |
+| `en_or_ascii` | 664 |
+| `non_ascii_other` | 108 |
+| `zh_or_cjk` | 2 |
 
 ## Top Paths
 
 | Path | Threads |
 | --- | ---: |
-| `lmdeploy/serve/openai/api_server.py` | 18 |
-| `lmdeploy/pytorch/spec_decode/spec_agent.py` | 14 |
-| `lmdeploy/serve/openai/responses/serving.py` | 13 |
+| `lmdeploy/serve/openai/api_server.py` | 20 |
+| `lmdeploy/pytorch/spec_decode/spec_agent.py` | 15 |
+| `lmdeploy/serve/openai/responses/serving.py` | 14 |
+| `lmdeploy/pytorch/engine/model_agent/agent.py` | 13 |
 | `lmdeploy/serve/core/async_engine.py` | 12 |
 | `lmdeploy/serve/processors/multimodal.py` | 10 |
 | `.github/workflows/api_eval_legacy.yml` | 10 |
-| `lmdeploy/pytorch/engine/model_agent/agent.py` | 9 |
-| `lmdeploy/pytorch/engine/logits_process.py` | 8 |
+| `lmdeploy/pytorch/engine/logits_process.py` | 9 |
+| `lmdeploy/pytorch/backends/cuda/graph_runner.py` | 8 |
 | `lmdeploy/turbomind/models/mixtral.py` | 8 |
 | `lmdeploy/messages.py` | 7 |
+| `lmdeploy/pytorch/engine/executor/base.py` | 7 |
 | `lmdeploy/vl/model/base.py` | 7 |
 | `src/turbomind/generation/guided_decoding.cc` | 7 |
-| `lmdeploy/pytorch/engine/executor/base.py` | 6 |
+| `lmdeploy/pytorch/backends/dlinfer/ascend/op_backend.py` | 6 |
+| `lmdeploy/serve/openai/protocol.py` | 6 |
 | `lmdeploy/pytorch/spec_decode/proposers/eagle3.py` | 6 |
-| `lmdeploy/pytorch/backends/cuda/graph_runner.py` | 6 |
 | `lmdeploy/turbomind/__init__.py` | 6 |
-| `lmdeploy/pytorch/backends/dlinfer/ascend/op_backend.py` | 5 |
 | `lmdeploy/serve/parsers/_openai_harmony.py` | 5 |
-| `lmdeploy/serve/openai/protocol.py` | 5 |
+| `lmdeploy/pytorch/engine/inputs_maker.py` | 5 |
 | `benchmark/benchmark_guided.py` | 5 |
 | `lmdeploy/lite/apis/auto_awq.py` | 5 |
 | `lmdeploy/cli/utils.py` | 4 |
 | `.github/workflows/benchmark_legacy.yml` | 4 |
 | `.github/workflows/daily_ete_test_legacy.yml` | 4 |
+| `docker/install.sh` | 4 |
+| `lmdeploy/pytorch/paging/scheduler.py` | 4 |
+| `lmdeploy/pytorch/engine/engine_loop.py` | 4 |
 | `docs/en/advance/spec_decoding.md` | 4 |
 | `lmdeploy/lite/apis/calibrate.py` | 4 |
-| `lmdeploy/lite/quantization/awq.py` | 4 |
-| `lmdeploy/turbomind/models/qwen3_5.py` | 4 |
-| `lmdeploy/pytorch/backends/cuda/attention/__init__.py` | 3 |
-| `lmdeploy/pipeline.py` | 3 |
 
 ## Top Human Reviewers
 
 | Reviewer | Comments |
 | --- | ---: |
-| `lvhan028` | 292 |
-| `windreamer` | 87 |
-| `RunningLeon` | 64 |
-| `grimoire` | 51 |
-| `CUHKSZzxy` | 50 |
-| `irexyc` | 16 |
+| `lvhan028` | 325 |
+| `grimoire` | 112 |
+| `windreamer` | 89 |
+| `RunningLeon` | 69 |
+| `CUHKSZzxy` | 65 |
+| `irexyc` | 29 |
+| `qescccczmr` | 15 |
 | `lzhangzz` | 13 |
 | `lapy` | 6 |
 | `yao-fengchen` | 5 |
 | `zhulinJulia24` | 5 |
 | `hd9568` | 5 |
 | `yimdev` | 4 |
+| `caikun-pjlab` | 4 |
 | `jinminxi104` | 3 |
 | `ziyangliu-666` | 3 |
+| `SuperMarioYL` | 3 |
 | `zh-nj` | 2 |
 | `CyCle1024` | 2 |
 | `Tsundoku958` | 2 |
 | `ZhijunLStudio` | 2 |
 | `waynehacking8` | 2 |
 | `chuenchen309` | 2 |
+| `wanfengcxz` | 2 |
+| `zupengwang` | 2 |
 | `43758726` | 1 |
-| `SuperMarioYL` | 1 |
 | `Shylin26` | 1 |
 | `littlegy` | 1 |
 
 ## Query Examples
 
 ```bash
-python3 skills/lmdeploy-humanize-review/scripts/query_lmdeploy_review_corpus.py --query cuda --limit 5
-python3 skills/lmdeploy-humanize-review/scripts/query_lmdeploy_review_corpus.py --path lmdeploy/pytorch --category correctness --limit 8
-python3 skills/lmdeploy-humanize-review/scripts/query_lmdeploy_review_corpus.py --query 'turbomind' --format jsonl --limit 3
+python3 skills/review-code/scripts/query_lmdeploy_review_corpus.py --query cuda --limit 5
+python3 skills/review-code/scripts/query_lmdeploy_review_corpus.py --path lmdeploy/pytorch --category correctness --limit 8
+python3 skills/review-code/scripts/query_lmdeploy_review_corpus.py --query 'turbomind' --format jsonl --limit 3
 ```

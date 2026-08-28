@@ -16,16 +16,9 @@ vllm serve /path/to/model \
   '{"profiler":"torch","torch_profiler_dir":"/absolute/profile/path","torch_profiler_with_stack":false}'
 ```
 
-For versions that expose them, `ignore_frontend=true` reduces unrelated
-frontend events and `max_iterations=<small cap>` bounds accidental captures:
-
-```text
-{"profiler":"torch","torch_profiler_dir":"/profiles","torch_profiler_with_stack":false,"ignore_frontend":true,"max_iterations":96}
-```
-
-Confirm version-specific keys with `vllm serve --help`; fall back to the
-documented minimal JSON if rejected. Gzip traces and the CUDA self-time table
-are enabled by default in current vLLM.
+Confirm version-specific keys with `vllm serve --help` before adding anything
+beyond the documented minimal JSON. Gzip traces and the CUDA self-time table are
+enabled by default in current vLLM.
 
 For Docker, bind-mount the output directory at exactly
 `torch_profiler_dir`. Mount the whole Hugging Face model cache/root rather than

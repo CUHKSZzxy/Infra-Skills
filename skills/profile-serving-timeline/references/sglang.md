@@ -12,14 +12,14 @@ short PyTorch Chrome traces. The canonical upstream page is
 
 ## Launch
 
-Start from the real serving command. On the shared-storage machine, use the
-`sglang-dev` env and keep SGLang caches under the workspace so imports and JIT
-builds do not try read-only home paths:
+Start from the real serving command. Use `../../docs/local-conventions.md` for
+the active machine's `sglang-dev` env and source checkout. Keep SGLang caches
+under the workspace so imports and JIT builds do not try read-only home paths:
 
 ```bash
-WORKSPACE_ROOT=${WORKSPACE_ROOT:-/mnt/shared-storage-user/zhouxinyu1}
-SGLANG_DEV_SOURCE=${SGLANG_DEV_SOURCE:-$WORKSPACE_ROOT/sglang_dev}
-CONDA_ROOT=${CONDA_ROOT:-$WORKSPACE_ROOT/miniconda3}
+: "${WORKSPACE_ROOT:?set WORKSPACE_ROOT from docs/local-conventions.md}"
+: "${SGLANG_DEV_SOURCE:?set SGLANG_DEV_SOURCE from docs/local-conventions.md}"
+: "${CONDA_ROOT:?set CONDA_ROOT from docs/local-conventions.md}"
 
 RUN_DIR=/absolute/path/to/benchmark/YYYYMMDD_model_sglang_profile
 MODEL_PATH=/absolute/path/to/model
