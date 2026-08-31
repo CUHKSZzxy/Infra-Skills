@@ -133,4 +133,5 @@ If `gh` is unavailable or unauthenticated:
 - use the GitHub PR URL printed by `git push` when available,
 - use a credential-helper token with `gh` or the GitHub API without printing it,
 - otherwise report the pushed branch, intended base/head, and prepared PR body,
-- follow local conventions if SSH hangs before retrying transport.
+- follow `../../../docs/conventions/machines.md` if SSH hangs before retrying
+  transport.

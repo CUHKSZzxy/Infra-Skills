@@ -29,7 +29,14 @@ boundaries and update loop.
 
 - `docs/heuristic-learning.md`: repo boundaries, promotion choices, compression
   checks, and validation expectations.
-- `docs/local-conventions.md`: local paths, env names, and symlink conventions.
+- `docs/conventions/machines.md`: local paths, env names, tool locations, and
+  repo/env pairings.
+- `docs/conventions/environments.md`: env activation and validation commands.
+- `docs/conventions/linking.md`: symlink-based skill linking.
+- `docs/conventions/deployment-context.md`: benchmark deployment-space context
+  captured with each run.
+- `docs/conventions/benchmark-artifacts.md`: benchmark run folder and artifact
+  layout.
 
 ______________________________________________________________________
 
@@ -69,7 +76,8 @@ For Claude repo-level wiring without symlinks, add this shape to
 }
 ```
 
-See `docs/local-conventions.md` for the canonical local paths and env names.
+See `docs/conventions/machines.md` for canonical local paths and env names, and
+`docs/conventions/linking.md` for symlink behavior.
 
 ## Optional kernel evidence
 

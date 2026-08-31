@@ -7,8 +7,9 @@ updatable at their upstream cadence.
 
 ## Initialize
 
-Resolve the Infra-Skills checkout from `INFRA_SKILLS_HOME` in local conventions,
-then initialize the pinned HTTPS submodules if their `SKILL.md` files are absent:
+Resolve the Infra-Skills checkout from `INFRA_SKILLS_HOME` in
+`../../../docs/conventions/machines.md`, then initialize the pinned HTTPS
+submodules if their `SKILL.md` files are absent:
 
 ```bash
 git -C "$INFRA_SKILLS_HOME" submodule update --init \

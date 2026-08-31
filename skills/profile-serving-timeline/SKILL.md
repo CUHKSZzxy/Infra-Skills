@@ -20,9 +20,10 @@ separate, profiler-free throughput/latency measurement that follows.
    TP/DP/EP, graph/eager mode, quantization, kernel backends, memory settings,
    and every non-default serve flag. Compare one intentional change at a time.
 3. Create `benchmark/<YYYYMMDD>_<model>_<system>_profile[_<feature>]/`
-   under the measured checkout, following `../../docs/local-conventions.md`.
-   Keep `profiles/`, `profile_workload/`, `serve_logs/`, `analysis/`, and a root
-   `summary.md`.
+   under the measured checkout, following
+   `../../docs/conventions/benchmark-artifacts.md`.
+   Use `profiles/`, `profile_workload/`, `serve_logs/`, and `analysis/` only
+   for files they actually receive; keep a root `summary.md`.
 4. Read only the serving-system reference needed for launch:
    - LMDeploy: [references/lmdeploy.md](references/lmdeploy.md)
    - vLLM: [references/vllm.md](references/vllm.md)
@@ -67,7 +68,7 @@ separate, profiler-free throughput/latency measurement that follows.
 Start with the bundled dependency-free summarizer:
 
 ```bash
-: "${INFRA_SKILLS_HOME:?set INFRA_SKILLS_HOME from docs/local-conventions.md}"
+: "${INFRA_SKILLS_HOME:?set INFRA_SKILLS_HOME from docs/conventions/machines.md}"
 ANALYZER="$INFRA_SKILLS_HOME/skills/profile-serving-timeline/scripts/summarize_torch_trace.py"
 RUN_DIR=/absolute/path/to/benchmark/YYYYMMDD_model_system_profile
 

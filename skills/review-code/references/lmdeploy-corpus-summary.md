@@ -117,39 +117,6 @@
 | `docs/en/advance/spec_decoding.md` | 4 |
 | `lmdeploy/lite/apis/calibrate.py` | 4 |
 
-## Top Human Reviewers
-
-| Reviewer | Comments |
-| --- | ---: |
-| `lvhan028` | 325 |
-| `grimoire` | 112 |
-| `windreamer` | 89 |
-| `RunningLeon` | 69 |
-| `CUHKSZzxy` | 65 |
-| `irexyc` | 29 |
-| `qescccczmr` | 15 |
-| `lzhangzz` | 13 |
-| `lapy` | 6 |
-| `yao-fengchen` | 5 |
-| `zhulinJulia24` | 5 |
-| `hd9568` | 5 |
-| `yimdev` | 4 |
-| `caikun-pjlab` | 4 |
-| `jinminxi104` | 3 |
-| `ziyangliu-666` | 3 |
-| `SuperMarioYL` | 3 |
-| `zh-nj` | 2 |
-| `CyCle1024` | 2 |
-| `Tsundoku958` | 2 |
-| `ZhijunLStudio` | 2 |
-| `waynehacking8` | 2 |
-| `chuenchen309` | 2 |
-| `wanfengcxz` | 2 |
-| `zupengwang` | 2 |
-| `43758726` | 1 |
-| `Shylin26` | 1 |
-| `littlegy` | 1 |
-
 ## Query Examples
 
 ```bash

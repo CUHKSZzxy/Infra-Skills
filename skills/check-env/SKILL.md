@@ -10,11 +10,10 @@ description: Use when an LMDeploy command fails with wrong Python, wrong `lmdepl
 First determine which local LMDeploy checkout you are in and which ready-made
 env should back it.
 
-Use `../../docs/local-conventions.md` as the source of truth for exact local
-paths, conda binaries, GitHub CLI location, and remote protocol preference.
-Match the current checkout to the repo/env pairing listed there. Treat that
-pairing as a local convention, not universal truth, and assume the checkout is
-installed from source in its paired env.
+Use `../../docs/conventions/machines.md` as the source of truth for exact local
+paths, conda binaries, GitHub CLI location, remote protocol preference, and
+repo/env pairings. Treat each pairing as a machine convention, not universal
+truth, and assume the checkout is installed from source in its paired env.
 
 ## 2. Check Python and repo wiring
 
@@ -37,8 +36,8 @@ drift instead of changing the checkout assumption.
 
 ## 3. Activate or recover the right env
 
-Set `CONDA_EXE` and `CONDA_PROFILE` from local conventions before using the
-commands below.
+Set `CONDA_EXE` and `CONDA_PROFILE` from `../../docs/conventions/machines.md`
+before using the commands below.
 
 ```bash
 conda env list
@@ -58,7 +57,8 @@ Or invoke conda directly:
 ```
 
 Do env activation before concluding a Python package is missing. `gh` is not a
-conda-env tool; if `command -v gh` fails, check the path in local conventions.
+conda-env tool; if `command -v gh` fails, check the path in
+`../../docs/conventions/machines.md`.
 
 ## 4. Check CUDA visibility
 
@@ -78,8 +78,8 @@ export CUDA_VISIBLE_DEVICES=<gpu_id>
 If `conda run -n <env> python` resolves unexpectedly, use the env's interpreter
 directly for tests and scripts.
 
-Use the paired interpreter listed in the `Env pairings` section of local
-conventions.
+Use the paired interpreter listed in the `Env pairings` section of
+`../../docs/conventions/machines.md`.
 
 Example:
 
@@ -93,10 +93,10 @@ CUDA_VISIBLE_DEVICES=X /path/to/paired-env/bin/python -m pytest ...
 - `lmdeploy.__file__` points outside the repo: wrong env or wrong install is winning
 - `which python` shows system Python: env activation failed
 - Torch imports but sees zero GPUs: CUDA visibility, driver, or container issue
-- `which gh` fails: check the GitHub CLI path in local conventions
+- `which gh` fails: check the GitHub CLI path in machine conventions
 - `conda run` uses the wrong Python: switch to the direct env interpreter
 - GitHub HTTPS auth or hanging SSH: follow the GitHub section in local
-  conventions before debugging git itself
+  machine conventions before debugging git itself
 - pytest fails on DNS, HF metadata, or proxy access: rerun the same command with
   network access before treating it as a code failure
 - async tests that use executor threads hang only in the sandbox: rerun outside

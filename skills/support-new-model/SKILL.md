@@ -63,7 +63,6 @@ Style defaults for LMDeploy model code:
 - when an auxiliary module is shared with an already-supported public model,
   run a focused regression on that model as well as parity on the new one,
 - remove reference-only branches and unused args after parity is established,
-- keep comments sparse and useful; do not explain obvious assignments,
 - after simplification or op replacement, rerun module-level and end-to-end
   numeric parity checks against the reference.
 
@@ -106,10 +105,14 @@ Minimum checks:
 
 ```bash
 python -m lmdeploy.pytorch.chat <model_path> --backend pytorch
-pytest tests/test_lmdeploy/test_vl/
 ```
 
-For VLMs, also run a tiny pipeline quick check:
+For VLMs, also run the relevant VL pytest target and a tiny pipeline quick
+check:
+
+```bash
+pytest tests/test_lmdeploy/test_vl/
+```
 
 ```python
 from lmdeploy import pipeline

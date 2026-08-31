@@ -104,8 +104,3 @@ Use profiler evidence to choose the edit:
 
 Keep the first accepted patch small enough that one before/after table explains
 why it is correct and faster.
-
-External method references:
-
-- [KDA-Pilot standalone benchmark contract](https://github.com/BBuf/KDA-Pilot/blob/main/diffusion/docs/standalone_diffusion_benchmark.md)
-- [AI-Infra-Auto-Driven-SKILLS](https://github.com/BBuf/AI-Infra-Auto-Driven-SKILLS)

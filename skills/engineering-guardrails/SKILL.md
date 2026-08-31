@@ -16,9 +16,6 @@ Bias toward simple, verified changes over clever or expansive ones.
   enough to change the design.
 - **Build the minimum requested behavior.** Skip speculative flags, aliases,
   abstractions, and compatibility paths.
-- **Keep APIs narrow until proven.** Keep public API surface smaller than the
-  experimental branch surface until semantics, tests, backend support, and
-  users are clear.
 - **Minimize GPU allocation.** Use the fewest GPU cards needed for the task. Do
   not reserve or run on all available GPUs unless the user explicitly requests
   a full-machine or all-GPU run.

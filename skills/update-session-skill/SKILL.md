@@ -57,7 +57,9 @@ of expanding the entrypoint.
 
 ## 5. Keep The Repo Aligned
 
-Use local paths and envs from `../../docs/local-conventions.md`.
+Use local paths and env pairings from `../../docs/conventions/machines.md`,
+validation commands from `../../docs/conventions/environments.md`, and symlink
+behavior from `../../docs/conventions/linking.md`.
 
 When changing skills:
 
@@ -81,7 +83,7 @@ rather than leaving a partial link.
 
 ## 6. Validate And Report
 
-Run the narrow validation command from `../../docs/local-conventions.md`.
+Run the narrow validation command from `../../docs/conventions/environments.md`.
 
 Report:
 

@@ -23,7 +23,7 @@ git ls-files --others --exclude-standard
 files. Read relevant untracked files explicitly. For a PR or branch review,
 compare `HEAD` with the merge base of the target branch.
 
-Read enough surrounding code, callers, tests, and local conventions to
+Read enough surrounding code, callers, tests, and relevant convention docs to
 understand ownership and change cost. Use history only when intent or whether
 debt is pre-existing remains unclear.
 

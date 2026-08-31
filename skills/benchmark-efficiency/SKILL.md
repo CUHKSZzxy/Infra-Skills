@@ -12,15 +12,23 @@ dataset correctness.
 ## Workflow
 
 1. Create the run folder under the current source checkout's `benchmark/`
-   directory. Follow `../../docs/local-conventions.md` for naming, summary, and
-   artifact subfolder layout. If the user names a desired destination or run
-   folder, put the benchmark folder there and state that path before long runs.
-2. Record the exact matrix before running:
-   - repo/commit, package import path, Python env,
-   - model path and model alias,
-   - backend, TP/DP/EP, quant policy or KV-cache dtype,
-   - dataset, prompt count, input/output length policy,
-   - GPU/node placement and server extra args.
+   directory. Follow `../../docs/conventions/benchmark-artifacts.md` for
+   naming, summary, and artifact subfolder layout. If the user names a desired
+   destination or run folder, put the benchmark folder there and state that path
+   before long runs.
+   Create `context/` immediately; performance claims are not reportable without
+   a deployment-context record.
+2. Record the exact deployment space before running. Use
+   `scripts/capture_context.sh` and follow
+   `../../docs/conventions/deployment-context.md`. Treat this as the
+   reproducibility boundary for the result. Manually fill only
+   benchmark-critical gaps; leave stable or inaccessible machine/runtime fields
+   as `unknown` or `null`. For efficiency, make sure the context captures
+   baseline/candidate labels, dataset or synthetic workload, prompt count,
+   input/output length policy, image count/resolution/content when multimodal,
+   request rate or concurrency policy, streaming and ignore-EOS settings, seed,
+   SLO targets, warmup and trial count, and whether admission, queue, proxy, or
+   flow-control limits could cap throughput.
 3. Run baseline and candidate with the same workload. Keep weight quantization
    separate from KV-cache quantization in labels. For admission, queue, or
    multimodal flow-control knobs, include a disabled/default or high-limit
@@ -32,7 +40,10 @@ dataset correctness.
    by a large-batch measurement.
 5. Keep serving logs and benchmark logs under the same run directory. The log
    filename must encode model, parallelism, feature label, dataset, output
-   length, and prompt count.
+   length, and prompt count. Helper scripts also mirror exact command lines to
+   `context/commands/`; write ad hoc commands there before running them. Use
+   `analysis/` only for derived CSVs, plots, response-shape checks, or post-hoc
+   scripts; do not precreate placeholder artifact folders.
 6. Record GPU memory, utilization, power, and clocks beside every variant.
    Reject a run when another process changes occupancy or clocks. If an
    external sweep rotates jobs across devices, wait for its controller to exit
@@ -53,17 +64,21 @@ dataset correctness.
    unrepresentative. Disable MTP for the main efficiency comparison or report
    acceptance separately; do not attribute rejected-draft overhead to the
    optimization under test.
-10. Write `summary.md` with config, workload, commands, metric tables, artifact
-   paths, server errors, fixes, caveats, and failed/skipped variants. Final
-   responses must include the run folder and exact `summary.md` path.
+10. Write `summary.md` with config, deployment-context path, workload, commands,
+   metric tables, artifact paths, server errors, fixes, caveats, and
+   failed/skipped variants. Final responses must include the run folder, exact
+   `summary.md` path, and exact `context/deployment_context.md` path.
 
 ## Bundled Scripts
 
 Copy or invoke the scripts from `scripts/`:
 
 - `lmdeploy_config.sh`: editable benchmark config template.
+- `capture_context.sh`: create `$RUN_DIR/context/` and its `commands/` folder
+  for local deployment-context capture.
 - `lmdeploy_serve.sh`: start an LMDeploy OpenAI-compatible server with stable
-  labels and logs.
+  labels and logs; by default it refreshes `context/` and mirrors its command
+  into `context/commands/`.
 - `wait_server.sh`: poll `/v1/models` with proxy disabled for localhost.
 - `bench_sharegpt.sh`: run a ShareGPT-style API benchmark matrix.
 - `bench_image.sh`: run a synthetic image+text API benchmark matrix through
@@ -75,27 +90,24 @@ Copy or invoke the scripts from `scripts/`:
   baseline/candidate response-shape checks.
 - `collect_bench.py`: parse benchmark logs into CSV and comparison plots.
 
-Load `references/result-schema.md` when a local LMDeploy run needs normalized
-JSONL rows or failed-candidate reporting beyond the baseline/candidate CSV
-helpers.
-
 Typical launch shape:
 
 ```bash
-: "${INFRA_SKILLS_HOME:?set INFRA_SKILLS_HOME from docs/local-conventions.md}"
+: "${INFRA_SKILLS_HOME:?set INFRA_SKILLS_HOME from docs/conventions/machines.md}"
 SKILL_DIR="$INFRA_SKILLS_HOME/skills/benchmark-efficiency"
 MODEL_LABEL=qwen35_35b
 RUN_DATE=${RUN_DATE:-$(date +%Y%m%d)}
 RUN_DIR="./benchmark/${RUN_DATE}_${MODEL_LABEL}_sharegpt_kvfp8"
-mkdir -p "$RUN_DIR"
+mkdir -p "$RUN_DIR"/{context,serve_logs,bench_logs}
 cp "$SKILL_DIR/scripts/lmdeploy_config.sh" "$RUN_DIR/config.sh"
 cd "$RUN_DIR"
-# edit MODEL_PATH, MODEL_ABBR, TP, BACKEND, QUANT_POLICY
+# edit MODEL_PATH, MODEL_ABBR, topology, SLO, TP, BACKEND, QUANT_POLICY
 source ./config.sh
-mkdir -p ./analysis
+bash "$SKILL_DIR/scripts/capture_context.sh" "$PWD" "${LMDEPLOY_DEV_SOURCE:-$(pwd)}" ./config.sh
 
 bash "$SKILL_DIR/scripts/lmdeploy_serve.sh" ./config.sh baseline
 bash "$SKILL_DIR/scripts/wait_server.sh" ./config.sh
+mkdir -p ./analysis
 python "$SKILL_DIR/scripts/api_smoke.py" \
   --base-url http://127.0.0.1:23334/v1 --model "$MODEL_ABBR" \
   --out ./analysis/baseline_response_check.jsonl
@@ -129,4 +141,5 @@ can group it.
 Before reporting a win, provide the exact serve/benchmark commands, baseline
 and candidate table, failed/skipped/SLA-failing variants, output parity or a
 response-shape check when relevant, API-only versus profiler/kernel evidence,
-and proof that admission/concurrency limits did not cap throughput.
+proof that admission/concurrency limits did not cap throughput, and
+`context/deployment_context.md` captured before result reporting.

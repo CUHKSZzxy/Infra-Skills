@@ -10,6 +10,50 @@ SCRIPT_DIR = REPO_ROOT / "skills" / "benchmark-efficiency" / "scripts"
 
 class EfficiencyImageWorkflowTest(unittest.TestCase):
 
+    def test_bench_sharegpt_mirrors_command_to_context(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            config_path = tmp_path / "config.sh"
+            profile_path = tmp_path / "profile_restful_api.py"
+            dataset_path = tmp_path / "sharegpt.json"
+            profile_path.write_text("# benchmark client placeholder\n", encoding="utf-8")
+            dataset_path.write_text("[]\n", encoding="utf-8")
+            config_path.write_text(
+                "\n".join(
+                    [
+                        "source " + str(SCRIPT_DIR / "lmdeploy_config.sh"),
+                        "MODEL_PATH=/models/qwen35-35b-a3b",
+                        "MODEL_ABBR=qwen35_35b_a3b",
+                        "PORT=18035",
+                        "TENSOR_PARALLEL_SIZE=2",
+                        "DATA_PARALLEL_SIZE=1",
+                        "QUANT_POLICY=0",
+                        "PROFILE_RESTFUL_API=" + str(profile_path),
+                        "PYTHON_BIN=python3",
+                        "DATASET_PATH=" + str(dataset_path),
+                        "WORKLOAD_PRESET=custom",
+                        "OUT_LENS=(None)",
+                        "NUM_PROMPTS=(1)",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            result = subprocess.run(
+                [str(SCRIPT_DIR / "bench_sharegpt.sh"), str(config_path), "baseline"],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+            command_files = list((tmp_path / "context" / "commands").glob("*.cmd"))
+            self.assertEqual(len(command_files), 1)
+            command_text = command_files[0].read_text(encoding="utf-8")
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("--dataset-name sharegpt", command_text)
+        self.assertIn("--dataset-path", command_text)
+        self.assertIn(str(dataset_path), command_text)
+
     def test_bench_image_dry_run_builds_chat_image_command(self):
         with tempfile.TemporaryDirectory() as tmp:
             tmp_path = Path(tmp)
@@ -49,6 +93,9 @@ class EfficiencyImageWorkflowTest(unittest.TestCase):
                 capture_output=True,
                 text=True,
             )
+            command_files = list((tmp_path / "context" / "commands").glob("*.cmd"))
+            self.assertEqual(len(command_files), 1)
+            command_text = command_files[0].read_text(encoding="utf-8")
 
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("--backend lmdeploy-chat", result.stdout)
@@ -59,6 +106,8 @@ class EfficiencyImageWorkflowTest(unittest.TestCase):
         self.assertIn("--image-count 1", result.stdout)
         self.assertNotIn("--dataset-path", result.stdout)
         self.assertIn("/bench_logs/", result.stdout)
+        self.assertIn("--dataset-name image", command_text)
+        self.assertIn("--image-resolution 360p", command_text)
 
 
 if __name__ == "__main__":

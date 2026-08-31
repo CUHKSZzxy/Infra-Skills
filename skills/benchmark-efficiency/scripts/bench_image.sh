@@ -3,6 +3,7 @@ set -euo pipefail
 
 CONFIG_FILE="${1:-$(dirname "$0")/lmdeploy_config.sh}"
 CUSTOM_LABEL="${2:-}"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
 if [ ! -f "${CONFIG_FILE}" ]; then
     echo "Config file not found: ${CONFIG_FILE}" >&2
@@ -17,6 +18,8 @@ IMAGE_BENCH_EXTRA_ARGS=()
 source "${CONFIG_FILE}"
 
 BENCH_STREAM_LOGS="${BENCH_STREAM_LOGS:-0}"
+CONTEXT_SUBDIR="${CONTEXT_SUBDIR:-context}"
+CONTEXT_CAPTURE="${CONTEXT_CAPTURE:-1}"
 IMAGE_BENCH_DRY_RUN="${IMAGE_BENCH_DRY_RUN:-0}"
 IMAGE_API_BACKEND_LABEL="${IMAGE_API_BACKEND_LABEL:-lmdeploy-chat}"
 IMAGE_RANGE_RATIO="${IMAGE_RANGE_RATIO:-1}"
@@ -46,8 +49,17 @@ fi
 
 CONFIG_DIR="$(cd "$(dirname "${CONFIG_FILE}")" && pwd)"
 LOG_DIR="${CONFIG_DIR}/${BENCH_LOG_DIR}"
+CONTEXT_DIR="${CONFIG_DIR}/${CONTEXT_SUBDIR}"
+COMMAND_DIR="${CONTEXT_DIR}/commands"
 DATE="$(date +%y%m%d_%H%M%S)"
-mkdir -p "${LOG_DIR}"
+mkdir -p "${LOG_DIR}" "${COMMAND_DIR}"
+
+if [ "${CONTEXT_CAPTURE}" = "1" ]; then
+    SOURCE_FOR_CONTEXT="${SOURCE_CHECKOUT:-${CONFIG_DIR}}"
+    if ! bash "${SCRIPT_DIR}/capture_context.sh" "${CONFIG_DIR}" "${SOURCE_FOR_CONTEXT}" "${CONFIG_FILE}" > "${CONTEXT_DIR}/capture_context.log" 2>&1; then
+        echo "WARNING: context capture failed; see ${CONTEXT_DIR}/capture_context.log" >&2
+    fi
+fi
 
 QUANT_POLICY_ARG="${QUANT_POLICY}"
 if [ "${QUANT_POLICY_ARG}" = "none" ]; then
@@ -75,6 +87,8 @@ for idx in "${!IMAGE_INPUT_LENS[@]}"; do
     IMAGE_COUNT="${IMAGE_COUNTS[$idx]}"
     IMAGE_LABEL="img${IMAGE_COUNT}-${IMAGE_RESOLUTION}-${IMAGE_FORMAT}-${IMAGE_CONTENT}"
     LOG_FILE="${LOG_DIR}/${DATE}_${MODEL_ABBR}_${SUFFIX}_${IMAGE_LABEL}_image_out_${OUT_LEN}_prompts_${NUM_PROMPT}.log"
+    CMD_FILE="${LOG_FILE%.log}.cmd"
+    CONTEXT_CMD_FILE="${COMMAND_DIR}/$(basename "${CMD_FILE}")"
 
     echo "Running image benchmark | in_len=${IN_LEN} out_len=${OUT_LEN} prompts=${NUM_PROMPT} images=${IMAGE_COUNT} resolution=${IMAGE_RESOLUTION} log=${LOG_FILE}"
 
@@ -99,8 +113,10 @@ for idx in "${!IMAGE_INPUT_LENS[@]}"; do
     )
     CMD+=("${BENCH_EXTRA_ARGS[@]}" "${IMAGE_BENCH_EXTRA_ARGS[@]}")
 
-    printf '%q ' "${CMD[@]}" > "${LOG_FILE%.log}.cmd"
-    printf '\n' >> "${LOG_FILE%.log}.cmd"
+    printf '%q ' "${CMD[@]}" > "${CMD_FILE}"
+    printf '\n' >> "${CMD_FILE}"
+    printf '%q ' "${CMD[@]}" > "${CONTEXT_CMD_FILE}"
+    printf '\n' >> "${CONTEXT_CMD_FILE}"
 
     if [ "${IMAGE_BENCH_DRY_RUN}" = "1" ]; then
         printf '%q ' "${CMD[@]}"

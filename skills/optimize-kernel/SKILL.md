@@ -98,9 +98,9 @@ one-off validation. Start from `scripts/microbench_case_template.py`; each
 production-relevant shape and record tolerances plus path-affecting knobs.
 
 ```bash
-: "${INFRA_SKILLS_HOME:?set INFRA_SKILLS_HOME from docs/local-conventions.md}"
-: "${CONDA_ROOT:?set CONDA_ROOT from docs/local-conventions.md}"
-: "${LMDEPLOY_DEV_SOURCE:?set LMDEPLOY_DEV_SOURCE from docs/local-conventions.md}"
+: "${INFRA_SKILLS_HOME:?set INFRA_SKILLS_HOME from docs/conventions/machines.md}"
+: "${CONDA_ROOT:?set CONDA_ROOT from docs/conventions/machines.md}"
+: "${LMDEPLOY_DEV_SOURCE:?set LMDEPLOY_DEV_SOURCE from docs/conventions/machines.md}"
 SKILL_DIR="$INFRA_SKILLS_HOME/skills/optimize-kernel"
 PYTHON_BIN="$CONDA_ROOT/envs/dev/bin/python"
 RUN_DATE=${RUN_DATE:-$(date +%Y%m%d)}

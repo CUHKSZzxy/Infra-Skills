@@ -677,7 +677,6 @@ def summarize(
     path_counts: collections.Counter[str] = collections.Counter()
     language_counts: collections.Counter[str] = collections.Counter()
     body_language_counts: collections.Counter[str] = collections.Counter()
-    reviewer_counts: collections.Counter[str] = collections.Counter()
     pr_year_counts: collections.Counter[str] = collections.Counter()
     comments_per_thread: list[int] = []
 
@@ -691,8 +690,6 @@ def summarize(
         comments_per_thread.append(len(thread["comments"]))
         for comment in thread["comments"]:
             body_language_counts[comment["body_language_hint"]] += 1
-            if not comment["author"]["is_agent"]:
-                reviewer_counts[comment["author"]["login"] or "unknown"] += 1
 
     return {
         "schema_version": 1,
@@ -720,7 +717,6 @@ def summarize(
         "top_paths": path_counts.most_common(30),
         "code_languages": language_counts.most_common(),
         "comment_language_hints": body_language_counts.most_common(),
-        "top_human_reviewers": reviewer_counts.most_common(30),
         "max_comments_per_thread": max(comments_per_thread, default=0),
     }
 
@@ -770,8 +766,6 @@ def write_summary_markdown(
     lines.extend(table(metadata["comment_language_hints"], "Hint", "Comments"))
     lines.extend(["", "## Top Paths", ""])
     lines.extend(table(metadata["top_paths"], "Path", "Threads"))
-    lines.extend(["", "## Top Human Reviewers", ""])
-    lines.extend(table(metadata["top_human_reviewers"], "Reviewer", "Comments"))
     lines.extend(
         [
             "",

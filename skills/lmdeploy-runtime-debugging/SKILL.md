@@ -175,7 +175,7 @@ register:
 
 Before finishing:
 
-- remove temporary debug logs and local benchmark files
-- stage only intended files
+- remove temporary debug probes or disposable scratch files introduced for
+  diagnosis
 - validate with a narrow compile/test plus the original reproduction
 - state what was and was not measured

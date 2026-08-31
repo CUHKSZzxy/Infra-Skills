@@ -27,9 +27,10 @@ Confirm:
 - unrelated changes will remain unstaged,
 - the target validation environment and remote are known.
 
-Use `../../docs/local-conventions.md` for local envs, GitHub CLI location, and
-transport preferences. Check `gh auth status` only when GitHub API or PR work
-needs it.
+Use `../../docs/conventions/machines.md` for local envs, GitHub CLI location,
+and transport preferences. Use `../../docs/conventions/environments.md` for
+validation command shape. Check `gh auth status` only when GitHub API or PR
+work needs it.
 
 ## 2. Review And Validate
 

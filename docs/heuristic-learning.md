@@ -31,8 +31,8 @@ Use the smallest durable home:
   that should only load after a specific skill step needs it.
 - `skills/*/scripts/`: deterministic helpers that are safer to run than
   retyping commands or benchmark snippets.
-- `docs/local-conventions.md`: machine-specific paths, env names, and local
-  linking rules.
+- `docs/conventions/*.md`: machine paths, environment setup, linking behavior,
+  and benchmark artifact layout.
 - rollout summaries and memory: raw session history, exact logs, private paths,
   and facts that are useful but not worth loading as skills.
 
@@ -42,7 +42,8 @@ Do not promote:
 - generic advice the agent already knows;
 - broad rules that would trigger too often;
 - examples longer than the rule they teach;
-- local-machine facts unless they are clearly marked as local conventions.
+- local-machine facts unless they clearly belong in
+  `docs/conventions/machines.md`.
 
 ## Promotion Choices
 
@@ -80,5 +81,5 @@ Only adding rules is not enough.
 ## Validation
 
 For changed docs or skills, run the narrow validation command from
-`docs/local-conventions.md`. When skills are added or removed, run
-`scripts/link_skills.sh` and verify the local symlinks if possible.
+`docs/conventions/environments.md`. When skills are added or removed, follow
+`docs/conventions/linking.md` and verify the local symlinks if possible.
