@@ -4,6 +4,9 @@
 set -euo pipefail
 
 # Links all skills in this repository into local agent skill directories.
+# Also links this repo's docs beside each skills directory so skill-relative
+# references such as ../../docs/conventions/machines.md resolve correctly from
+# symlinked agent skill homes.
 # Default targets are Claude and Codex. Pass "copilot" explicitly if your
 # Copilot setup watches a local skills directory.
 
@@ -82,6 +85,41 @@ add_agent() {
   add_target "$agent" "$(agent_dest "$agent")"
 }
 
+link_docs_for_dest() {
+  local label="$1"
+  local dest="$2"
+  local agent_home docs_target current_target
+
+  agent_home="$(dirname "$dest")"
+  docs_target="$agent_home/docs"
+
+  if [ -L "$docs_target" ]; then
+    current_target="$(readlink -f "$docs_target" || true)"
+    if [ "$current_target" = "$REPO/docs" ]; then
+      echo "linked $label/docs -> $REPO/docs"
+      return
+    fi
+  fi
+
+  if [ -e "$docs_target" ] && [ ! -L "$docs_target" ]; then
+    if [ "$FORCE" -eq 0 ]; then
+      echo "skip $label/docs: $docs_target exists and is not a symlink (use --force to replace)" >&2
+      return
+    fi
+
+    if [ "$DRY_RUN" -eq 0 ]; then
+      rm -rf "$docs_target"
+    fi
+  fi
+
+  if [ "$DRY_RUN" -eq 0 ]; then
+    mkdir -p "$agent_home"
+    ln -sfn "$REPO/docs" "$docs_target"
+  fi
+
+  echo "linked $label/docs -> $REPO/docs"
+}
+
 link_one_dest() {
   local label="$1"
   local dest="$2"
@@ -105,6 +143,8 @@ link_one_dest() {
   if [ "$DRY_RUN" -eq 0 ]; then
     mkdir -p "$dest"
   fi
+
+  link_docs_for_dest "$label" "$dest"
 
   if [ -d "$dest" ]; then
     find "$dest" -maxdepth 1 -type l -print0 |
