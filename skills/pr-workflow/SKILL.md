@@ -12,6 +12,14 @@ Never run `git push`, create a PR, or otherwise publish local work unless the
 user asks for that publish action in the current request. Prior permission or a
 successful commit is not publish permission.
 
+## LMDeploy Title Format (Required)
+
+LMDeploy commit subjects and PR titles must use the unscoped conventional
+format `<type>: <summary>`. This is a hard constraint for both surfaces: never
+add a parenthesized scope such as `feat(pytorch): ...` or `fix(engine): ...`.
+Use forms such as `feat: support ...` and `fix: handle ...` instead. Verify the
+format before creating a commit or publishing a PR.
+
 ## 1. Preflight
 
 ```bash
@@ -70,9 +78,10 @@ git diff --cached
 git commit -m "<type>: <summary>"
 ```
 
-Follow the repository's existing message style. Where conventional commits are
-used, keep the summary concise, lowercase, and imperative. After committing,
-verify the commit and worktree:
+Follow the repository's existing message style. For LMDeploy, apply the
+required unscoped title format above. Where conventional commits are used, keep
+the summary concise, lowercase, and imperative. After committing, verify the
+commit and worktree:
 
 ```bash
 git show --stat --oneline --summary HEAD

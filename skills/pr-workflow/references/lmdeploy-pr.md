@@ -22,8 +22,8 @@ git switch -c <type>/<short-description>
 ```
 
 Prefer typed branch names such as `fix/`, `feat/`, `refactor/`, `docs/`,
-`test/`, or `chore/`. Use the repository's conventional commit style for the
-title and commits.
+`test/`, or `chore/`. Both commit subjects and PR titles must follow the
+required unscoped LMDeploy title format in `SKILL.md`.
 
 If a pushed branch is renamed, push the new branch and verify its upstream
 before deleting an old remote branch. Delete the old branch only when the user
@@ -77,6 +77,9 @@ gh pr create \
   --title "<type>: <summary>" \
   --body-file <body.md>
 ```
+
+Before running the command, verify that the PR title uses `<type>: <summary>`
+and contains no parenthesized scope.
 
 Creating or updating a PR requires explicit publish permission in the current
 request.
