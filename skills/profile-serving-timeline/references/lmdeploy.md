@@ -48,12 +48,9 @@ cache, graph, or eager overrides.
 
 - `LMDEPLOY_PROFILE_DELAY` is counted by each model-agent profiler task after
   that agent loop starts. It is not tied to request readiness.
-- In current LMDeploy profiling, the capture timer is already after model
-  loading, warmup, and CUDA-graph capture. An unreasonably small trace file,
-  such as only a few KB, or an otherwise useless trace is usually caused by no
-  request work landing in the timer window, often because the agent or shell
-  submitted the client after thinking, tokenizing, loading a dataset, or waiting
-  through retries.
+- The integrated timer is after model loading, warmup, and graph capture in
+  the mapped implementation; verify placement in the target checkout for a
+  startup study. Small traces can indicate client work missed the window.
 - The `Profiler start on rank[...]` warning is emitted while constructing the
   profiler, before the delay. It confirms profiler enablement, not the actual
   capture timestamp. Current code emits no separate delayed-start log.
@@ -62,12 +59,8 @@ cache, graph, or eager overrides.
   when an uncompressed `.json` trace is required. Graceful shutdown also dumps
   an active profiler.
 - Use a positive finite duration; duration `<=0` is unsupported for DP greater
-  than one and makes accidental giant traces easier. Do not use a 1-second
-  duration until a dry run proves requests are already active before the timer
-  starts. Prefer 5 seconds for timer-based captures, then extend toward 10
-  seconds only when measured client-submit timing, retries, or scheduler jitter
-  need the wider window. Analyze the steady subsection and exclude
-  profiler-boundary cycles.
+  than one. About 5 seconds is a useful initial timer window. Shorten or widen
+  it based on active-request timestamps and the phase being studied.
 - Create the output directory first and use a fresh, absolute prefix. TP `N`
   should produce rank 0 through rank `N-1`.
 
@@ -89,20 +82,18 @@ decode.
   as multiple complete `forward_cudagraph` cycles. Validate the phase and
   expected feature kernel from trace contents rather than inferring them from
   the enablement warning.
-- Treat unreasonably small traces, including files that are only a few KB,
-  traces with no expected annotation, or traces containing only idle/setup
-  activity as invalid. Recapture with a fresh prefix, a scripted client,
-  measured client-submit timestamps, and either a wider duration or
-  better-aligned delay.
+- If the intended steady phase is missing, use client-submit timestamps to
+  distinguish a missed window from a real execution stall. Recapture a missed
+  window with a fresh prefix and corrected timing; retain stall evidence.
 - Use a fresh output prefix for every retry. A previous nonempty rank file can
   otherwise make a failed recapture look successful.
-- Exclude the first captured iteration and any collective crossing the trace
-  boundary before computing steady medians.
-- Inspect all expected ranks for mismatched windows and isolated NCCL stalls.
-  Recapture a contaminated rank set instead of averaging the outlier away.
+- Exclude incomplete iterations/collectives crossing trace boundaries from
+  steady medians. Keep complete iterations and genuine outliers.
+- Inspect rank-window alignment and NCCL stalls. Recapture confirmed
+  contamination; investigate repeatable stalls as possible findings.
 - Multi-rank traces can still be large even when compressed; check free disk
   first, especially before disabling gzip.
-- Stop the server only after all rank dumps finish.
+- Stop a server launched for this capture after its rank dumps finish.
 
 Use `LMDEPLOY_RAY_NSYS_ENABLE`, `LMDEPLOY_RAY_NSYS_OUT_PREFIX`, or the Ray
 timeline variables only when PyTorch traces cannot answer the question; they

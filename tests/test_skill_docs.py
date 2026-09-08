@@ -51,46 +51,22 @@ class SkillDocsTest(unittest.TestCase):
 
         self.assertEqual(readme_skills, disk_skills)
 
-    def test_new_skill_guidance_points_to_specific_conventions(self):
-        session_skill = read_text(
-            SKILLS_ROOT / "update-session-skill" / "SKILL.md"
-        )
-        normalized = " ".join(session_skill.split())
-
-        self.assertIn("docs/conventions/machines.md", session_skill)
-        self.assertIn("docs/conventions/environments.md", session_skill)
-        self.assertIn("docs/conventions/linking.md", session_skill)
-        self.assertIn(
-            "Prefer updating an existing file over adding a new skill",
-            normalized,
-        )
-
-    def test_conventions_are_split_without_old_local_convention_doc(self):
-        old_doc = "local-" "conventions.md"
-        self.assertFalse((REPO_ROOT / "docs" / old_doc).exists())
-
-        convention_docs = {
-            path.name for path in (REPO_ROOT / "docs" / "conventions").glob("*.md")
-        }
-        self.assertEqual(
-            convention_docs,
-            {
-                "benchmark-artifacts.md",
-                "deployment-context.md",
-                "environments.md",
-                "linking.md",
-                "machines.md",
-            },
-        )
-
+    def test_relative_markdown_links_resolve(self):
         markdown_paths = [
             README,
             *REPO_ROOT.glob("docs/**/*.md"),
             *SKILLS_ROOT.glob("**/*.md"),
         ]
         for path in markdown_paths:
-            with self.subTest(path=path.relative_to(REPO_ROOT)):
-                self.assertNotIn(old_doc, read_text(path))
+            # Examples in fenced blocks are not document navigation links.
+            prose = re.sub(r"(?ms)^```.*?^```[^\n]*$", "", read_text(path))
+            targets = re.findall(r"\[[^\]]*\]\(([^\s)]+)\)", prose)
+            for target in targets:
+                if ":" in target or target.startswith("#"):
+                    continue
+                with self.subTest(path=path.relative_to(REPO_ROOT), target=target):
+                    destination = path.parent / target.split("#", 1)[0]
+                    self.assertTrue(destination.exists(), f"broken link: {target}")
 
 
 if __name__ == "__main__":

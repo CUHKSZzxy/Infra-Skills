@@ -14,13 +14,13 @@ boundaries and update loop.
 | `/check-env` | Local LMDeploy env, Python, CUDA, and tool wiring |
 | `/benchmark-accuracy` | Deterministic model/API correctness checks and dataset passes |
 | `/benchmark-efficiency` | Profiler-free end-to-end serving efficiency comparisons |
-| `/engineering-guardrails` | Default scope, style, and validation guardrails |
+| `/engineering-guardrails` | Workspace coding preferences and minimal GPU use |
 | `/lmdeploy-attention-dataflow` | Attention, KV cache, quant policy, and backend dispatch tracing |
-| `/lmdeploy-prod-incident-triage` | Replay-first production serving incident triage |
-| `/lmdeploy-runtime-debugging` | Serve/generation stalls, slow endpoints, and runtime symptoms |
+| `/lmdeploy-prod-incident-triage` | Production evidence preservation and replay |
+| `/lmdeploy-runtime-debugging` | Local or reproduced serving and worker failures |
 | `/pr-workflow` | Workspace commit/push and LMDeploy PR workflow |
 | `/profile-serving-timeline` | Short LMDeploy, vLLM, and SGLang trace capture and bottleneck diagnosis |
-| `/review-code` | Code review with mandatory code-smell review and optional LMDeploy corpus evidence |
+| `/review-code` | LMDeploy contract review and optional maintainer corpus evidence |
 | `/support-new-model` | New LLM/VLM PyTorch backend support |
 | `/optimize-kernel` | CUDA/Triton kernel correctness, optimization, and NCU evidence |
 | `/update-session-skill` | End-of-session or retrospective compression into reusable skill guidance |

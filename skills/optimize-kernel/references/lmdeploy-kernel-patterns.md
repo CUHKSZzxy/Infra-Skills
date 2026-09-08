@@ -6,7 +6,7 @@ the exact code in the target checkout before applying any heuristic.
 
 ## Stage The Pipeline
 
-Measure these as separate lanes before touching kernels:
+When a pipeline comparison needs stage attribution, measure the affected lanes:
 
 - cache fill/write
 - paged decode attention
@@ -94,7 +94,7 @@ For iterative optimization, freeze a paired benchmark contract:
 
 ## Patch Selection
 
-Use profiler evidence to choose the edit:
+Use timing or profiler evidence to choose the edit:
 
 - `flatten_kv_cache` dominates: bypass, fuse, or change dataflow before tuning attention.
 - paged decode first kernel dominates: tune tile shape, split-K, scale loads, or memory coalescing.
@@ -102,5 +102,5 @@ Use profiler evidence to choose the edit:
 - cache fill dominates: inspect vectorization, scale computation, metadata stores, and page/block indexing.
 - CPU gaps or many tiny kernels dominate: consider dispatch consolidation or graph-capture compatibility.
 
-Keep the first accepted patch small enough that one before/after table explains
-why it is correct and faster.
+Attribute pipeline claims to the measured workload mix, including affected
+stages that regressed.

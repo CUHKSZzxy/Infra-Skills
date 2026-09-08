@@ -117,3 +117,29 @@ to stream or aggregate for the client.
 
 For TurboMind, do not assume this PyTorch MP/ZMQ shape; `AsyncEngine` builds
 the TurboMind backend path instead.
+
+## Large Payload Handoffs
+
+When a large request appears stuck after preprocessing, use process and stack
+probes before assuming GPU prefill is slow. Compare `top`/`nvidia-smi` memory
+with Python stacks from `py-spy`, `gdb`, or an equivalent sampler/debugger for
+the API process and engine worker. If the API process is busy serializing or
+sending a large payload while the worker waits to receive it, inspect the
+handoff payload for tensor views, duplicated buffers, or other objects whose
+backing storage is much larger than their logical request slice.
+
+## DP And Proxy Startup Hangs
+
+For DP/proxy startup hangs where the proxy stays alive but backends never
+register:
+
+- map the parent, child, engine, and distributed-runtime process tree before
+  changing code
+- collect per-process logs and stack dumps, then identify the first missing
+  readiness or registration boundary
+- check whether one failed, exited, or wedged child is being hidden behind
+  another healthy long-running process
+- prefer explicit child readiness/error reporting, exit-code or sentinel
+  monitoring, and bounded terminate-then-kill cleanup over unbounded joins
+- when a child fails, clean up the failed child's process group as well as
+  sibling groups because descendants may outlive their process leader

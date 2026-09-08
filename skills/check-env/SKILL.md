@@ -1,111 +1,21 @@
 ---
 name: check-env
-description: Use when an LMDeploy command fails with wrong Python, wrong `lmdeploy` import path, missing CUDA/GPU visibility, missing repo tools such as `gh`, or sandbox/network fixture errors.
+description: Use when LMDeploy commands fail because of environment, tool-path, or sandbox setup.
 ---
 
-# Check the LMDeploy Dev Environment
+# LMDeploy Environment Recovery
 
-## 1. Identify the current repo and env target
+[Machine conventions](../../docs/conventions/machines.md) identify the paired
+checkout/environment and direct interpreter. LMDeploy is installed from source
+in that environment; compare the imported `lmdeploy.__file__` with the intended
+checkout before changing packages. A dependency error in the correct pairing
+is environment drift, not evidence for selecting a different checkout.
 
-First determine which local LMDeploy checkout you are in and which ready-made
-env should back it.
+Use the paired interpreter directly when conda wrappers resolve unexpectedly;
+source `CONDA_PROFILE` when activation is needed. GitHub CLI has a separate
+machine-specific path and need not belong to the paired environment.
 
-Use `../../docs/conventions/machines.md` as the source of truth for exact local
-paths, conda binaries, GitHub CLI location, remote protocol preference, and
-repo/env pairings. Treat each pairing as a machine convention, not universal
-truth, and assume the checkout is installed from source in its paired env.
-
-## 2. Check Python and repo wiring
-
-Run these first:
-
-```bash
-pwd
-which python
-python -c "import sys, lmdeploy; print(sys.executable); print(lmdeploy.__file__)"
-```
-
-Healthy state:
-
-- `python` points to the paired conda env
-- `lmdeploy.__file__` points into the current checkout
-
-If `import lmdeploy` points elsewhere, switch to the paired env first, then
-retry. If it fails with a missing dependency, report env preparation or package
-drift instead of changing the checkout assumption.
-
-## 3. Activate or recover the right env
-
-Set `CONDA_EXE` and `CONDA_PROFILE` from `../../docs/conventions/machines.md`
-before using the commands below.
-
-```bash
-conda env list
-conda activate <paired-env>
-```
-
-If `conda` is not initialized:
-
-```bash
-source "$CONDA_PROFILE"
-```
-
-Or invoke conda directly:
-
-```bash
-"$CONDA_EXE" run -n <paired-env> python -c "import sys; print(sys.executable)"
-```
-
-Do env activation before concluding a Python package is missing. `gh` is not a
-conda-env tool; if `command -v gh` fails, check the path in
-`../../docs/conventions/machines.md`.
-
-## 4. Check CUDA visibility
-
-```bash
-nvidia-smi
-python -c "import torch; print(torch.__version__, torch.version.cuda, torch.cuda.device_count())"
-```
-
-If a specific GPU is needed, pick it explicitly:
-
-```bash
-export CUDA_VISIBLE_DEVICES=<gpu_id>
-```
-
-## 5. Prefer direct env Python when wrappers are unreliable
-
-If `conda run -n <env> python` resolves unexpectedly, use the env's interpreter
-directly for tests and scripts.
-
-Use the paired interpreter listed in the `Env pairings` section of
-`../../docs/conventions/machines.md`.
-
-Example:
-
-```bash
-CUDA_VISIBLE_DEVICES=X /path/to/paired-env/bin/python -m pytest ...
-```
-
-## 6. Common diagnosis patterns
-
-- `import lmdeploy` fails: wrong env is active or `python` is not from the intended conda env
-- `lmdeploy.__file__` points outside the repo: wrong env or wrong install is winning
-- `which python` shows system Python: env activation failed
-- Torch imports but sees zero GPUs: CUDA visibility, driver, or container issue
-- `which gh` fails: check the GitHub CLI path in machine conventions
-- `conda run` uses the wrong Python: switch to the direct env interpreter
-- GitHub HTTPS auth or hanging SSH: follow the GitHub section in local
-  machine conventions before debugging git itself
-- pytest fails on DNS, HF metadata, or proxy access: rerun the same command with
-  network access before treating it as a code failure
-- async tests that use executor threads hang only in the sandbox: rerun outside
-  sandbox before debugging application logic
-
-## Output Contract
-
-This skill should help produce:
-
-- The intended repo and env pairing
-- The exact command to use next
-- The first concrete mismatch: wrong Python, wrong install path, or missing GPU visibility
+For DNS/HF/proxy failures or sandbox-only executor hangs, retry the same command
+through an available approved execution path. If that path is unavailable,
+report the limitation rather than changing application code to accommodate it.
+Resume the original task once the environment mismatch is resolved.

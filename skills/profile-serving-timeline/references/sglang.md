@@ -45,7 +45,8 @@ CUDA_VISIBLE_DEVICES=0,1 "$CONDA_ROOT/envs/sglang-dev/bin/python" \
 the module form when the env's console scripts are not on `PATH`. If custom
 all-reduce JIT compilation fails and that path is not under test, relaunch with
 `--disable-custom-all-reduce` instead of spending time on repeated fallback
-warnings.
+warnings. Record this as a changed backend configuration and use the same
+setting across compared variants; it does not validate the failed backend.
 
 If a sandboxed client cannot reach a server launched outside the sandbox, run
 the readiness probe and profile client in the same execution mode as the
@@ -76,12 +77,9 @@ already local and fast:
   --profile-prefix sglang_smoke
 ```
 
-Run the same benchmark once without `--profile` first if it may download
-datasets, initialize tokenizers, or prepare prompts. In a local Qwen3.5 TP=2
-smoke, `--dataset-name random` tried to download an HF fixture before sending
-`/start_profile`, so no trace would have been captured until that setup
-finished. Prefer `random-ids`, an explicit local dataset, or a small scripted
-native `/generate` workload for short diagnostic profiles.
+Prepare datasets/tokenizers before arming a short capture. `random` can
+fetch HF fixtures; `random-ids`, local data, or a scripted native `/generate`
+workload avoids download time in the capture window.
 
 For the most deterministic window, call the HTTP endpoints directly from a
 script that has already built its payloads:
@@ -125,9 +123,9 @@ Those traces are written under
 - Expect one `{profile_prefix}-{profile_id}-TP-{rank}.trace.json.gz` file per
   TP rank, or additionally `merged-{profile_id}.trace.json.gz` when merging is
   enabled. Validate rank count against TP/DP/PP/EP settings.
-- Check gzip integrity, file size, parseability, and trace contents. A tiny
-  file or a trace without `step[...]` annotations is invalid for timeline
-  diagnosis even if it is nonempty.
+- Check parseability and intended phase/annotations. Missing `step[...]`
+  execution limits steady-state conclusions; retain the trace when diagnosing
+  a stall or failure before those steps.
 - Analyze steady serving traces with `--step-regex 'step\['`. With
   `detailed_annotations=true`, require expected `EXTEND`, `DECODE`, or `MIXED`
   step names and the relevant `c_`/`g_` aggregate fields.
@@ -138,5 +136,5 @@ Those traces are written under
   make Python stacks easier unless that is the intended variant.
 - If PyTorch profiler raises the known Python replay stack assertion, retry
   with `SGLANG_PROFILE_WITH_STACK=False` before changing the workload.
-- Do not use trace-implied cycle rate as final throughput evidence; follow with
-  a profiler-free benchmark when the trace explains the bottleneck.
+- Trace-implied cycle rate is not throughput evidence. A profiler-free
+  benchmark is needed when the task includes a serving-performance claim.

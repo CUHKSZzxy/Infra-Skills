@@ -6,8 +6,7 @@ keeping raw session history out of the active skill context.
 
 ## Loop
 
-Use this loop after meaningful debugging, PR, review, kernel, model-support, or
-study sessions:
+When a session yields a candidate lesson, use this loop:
 
 ```text
 session feedback
@@ -25,8 +24,8 @@ heuristics.
 
 Use the smallest durable home:
 
-- `skills/*/SKILL.md`: triggerable rules and ordered workflows an agent should
-  load during a task.
+- `skills/*/SKILL.md`: precise triggers, essential constraints, completion
+  criteria, and routes to task-specific detail.
 - `skills/*/references/`: longer examples, file maps, pitfalls, and background
   that should only load after a specific skill step needs it.
 - `skills/*/scripts/`: deterministic helpers that are safer to run than
@@ -71,7 +70,12 @@ Periodically review the repo for accumulated complexity:
 - Are two skills overlapping?
 - Is a trigger too broad or too narrow?
 - Did a reference become stale after an LMDeploy API change?
-- Can a paragraph become a script or a one-line rule?
+- Can a repeated rule be removed or mechanics moved into an existing helper?
+- Does a mandatory step still protect a concrete contract, or can it be conditional?
+- Does a permission rule honor existing authorization for the same task?
+- Is the completion condition tied to the requested outcome and evidence?
+- Does guidance apply across the models using this repo, without stale model labels?
+- Does it preserve domain knowledge instead of coaching basic model capabilities?
 - Did a rule help in later sessions, or should it be deleted?
 - Does README still match the real skill behavior?
 

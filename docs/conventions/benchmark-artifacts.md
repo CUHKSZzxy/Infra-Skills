@@ -36,7 +36,8 @@ Do not precreate `analysis/` or other placeholder folders just because a
 template names them. Do not add numeric prefixes. Store server and client logs
 with the run so comparisons remain auditable. Final reports must include the
 run folder, exact `summary.md` path, and exact `context/deployment_context.md`
-path.
+path when reporting benchmark results. Analysis of supplied traces can cite
+their existing locations and available provenance without creating a new run.
 
 Do not assume datasets exist on a fresh machine. Pass paths explicitly with
 `DATASET_PATH` or the script-specific `--data-path`.

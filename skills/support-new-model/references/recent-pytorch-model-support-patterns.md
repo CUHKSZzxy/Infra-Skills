@@ -1,6 +1,6 @@
 # Recent PyTorch Model-Support Patterns
 
-Use this after reading the target HF config and before writing model code. These
+Use this when recent support patterns help resolve an implementation choice. These
 patterns come from substantial LMDeploy PyTorch model-support PRs merged through
 2026-08-28, after the engine and multimodal paths changed substantially.
 

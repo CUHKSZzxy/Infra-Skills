@@ -9,8 +9,8 @@ with LMDeploy runtime primitives.
 
 1. Keep HF parameter names in mind, then decide which runtime modules should be
    packed or fused in LMDeploy.
-2. Build LMDeploy modules around backend-aware helpers, not raw `nn.Linear`
-   except where no LMDeploy helper exists.
+2. Prefer backend-aware helpers when checkpoint loading, layout, and runtime
+   metadata contracts match. Keep reference ops when those contracts differ.
 3. Move mask, cache, position, and multimodal bookkeeping out of HF-style
    forward code and into `StepContext`, input processors, and attention
    metadata.
