@@ -17,9 +17,17 @@ local artifacts. Supply multiline PR bodies with `--body-file` or a structured
 tool argument.
 
 Include an `## Assistance` section when requested or after confirmed manual
-review. Use the actual tool/model and known reasoning setting; say "reviewed
-manually" only when the user confirms it. Preserve an existing note unless the
-task calls for updating it.
+review. For the current setup, use:
+
+```md
+## Assistance
+
+Assisted with Codex + gpt-6-astra high
+```
+
+Append `, reviewed manually` only when the user confirms that review. If the
+actual model or reasoning setting differs, reflect it in the note. Preserve an
+existing note unless the task calls for updating it.
 
 For review fixes, verify the comment still applies to the current head and
 publish to that PR's head branch when authorized. If renaming a remote branch,
