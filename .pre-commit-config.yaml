@@ -46,15 +46,12 @@ repos:
       - id: clang-format
         types_or: [c++, cuda]
         args: [--style=file, --verbose]
-  - repo: https://github.com/lycheeverse/lychee.git
-    rev: lychee-v0.22.0
+  - repo: local
     hooks:
-      - id: lychee
-        name: check doc links (offline)
-        args: ["--config", ".github/linters/lychee.toml"]
-        stages: [manual]
-        files: |
-          (?x)^(
-            README\.md|
-            skills/.*\.md
-          )$
+      - id: skill-docs
+        name: validate skill frontmatter and local references
+        entry: python -m unittest discover -s tests -p test_skill_docs.py
+        language: python
+        additional_dependencies: ["PyYAML>=6,<7"]
+        pass_filenames: false
+        files: ^(README\.md|docs/.*\.md|skills/.*\.md|tests/test_skill_docs\.py|\.pre-commit-config\.yaml)$

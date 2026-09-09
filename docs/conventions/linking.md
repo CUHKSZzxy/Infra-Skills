@@ -3,13 +3,19 @@
 Use [machines.md](machines.md) for `INFRA_SKILLS_HOME`, `CODEX_HOME`, and
 `CLAUDE_HOME`.
 
-Expose repo skills by symlink, not copy. Pass explicit agent homes so linking
-also works when `$HOME` is `/root`:
+Expose repo skills by symlink, retaining the complete checkout for shared docs
+and scripts. Explicit destinations avoid shell-home differences and override
+ambient agent-home settings. After selecting paths from machine conventions:
 
 ```bash
-env CLAUDE_HOME="$CLAUDE_HOME" CODEX_HOME="$CODEX_HOME" \
-  scripts/link_skills.sh
+scripts/link_skills.sh --dry-run \
+  --dest codex="$CODEX_HOME/skills" \
+  --dest claude="$CLAUDE_HOME/skills"
 ```
+
+Inspect the preview, then run the same command without `--dry-run`. Named
+targets (`codex`, `claude`, `copilot`) use the corresponding `*_SKILLS_DIR`
+setting first, then `*_HOME/skills`, then `$HOME/.<agent>/skills`.
 
 Built-in Codex skills under `$CODEX_HOME/skills/.system` stay in place; custom
 repo skills are additive.

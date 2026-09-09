@@ -14,6 +14,11 @@ conda activate <paired-env>
 "$CONDA_ROOT/envs/<paired-env>/bin/python" <args>
 ```
 
+The documentation tests require `PyYAML>=6,<7` in the selected Python
+environment. If absent, install it with that interpreter's
+`python -m pip install 'PyYAML>=6,<7'`. The `skill-docs` pre-commit hook installs
+the same dependency in its isolated environment and runs these checks offline.
+
 For Infra-Skills documentation changes, check skill structure and references:
 
 ```bash

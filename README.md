@@ -42,26 +42,38 @@ ______________________________________________________________________
 
 ## Wiring locally
 
-Link the repo skills into local agent skill directories:
+Choose the destination directories from
+[machine conventions](docs/conventions/machines.md). In shared-storage sessions,
+the shell home and agent homes can differ. Preview explicit destinations before
+linking:
 
 ```bash
-scripts/link_skills.sh
+scripts/link_skills.sh --dry-run \
+  --dest codex=/path/to/codex/skills \
+  --dest claude=/path/to/claude/skills
 ```
 
-By default this links every folder under `skills/` into both `~/.claude/skills`
-and `~/.codex/skills`. Built-in Codex skills under `~/.codex/skills/.system`
-are left in place. Stale symlinks that point to removed skills in this repo are
-pruned.
+Replace the example paths with the intended skill homes, then rerun without
+`--dry-run`. Use only the destinations you need; machine-specific paths stay
+in the conventions document.
 
-Useful variants:
+Keep the complete checkout: skills share `docs/` and the root `scripts/`
+directory, so copying an individual skill directory is not a supported install.
+The linker exposes owned skills and a shared `docs` symlink, preserves built-in
+skills under `.system/`, and prunes stale links owned by this repository.
+
+When agent homes are already configured, named targets are also available:
 
 ```bash
 scripts/link_skills.sh claude
 scripts/link_skills.sh codex
 scripts/link_skills.sh copilot
-scripts/link_skills.sh --dry-run
 scripts/link_skills.sh --dest my-agent=/path/to/skills
 ```
+
+Named targets use `<AGENT>_SKILLS_DIR`, then `<AGENT>_HOME/skills`, then the
+shell home's agent directory. With no targets, the script selects Claude and
+Codex. See [linking conventions](docs/conventions/linking.md) for details.
 
 Copilot does not have a standard local skills directory in this workspace. If
 your Copilot client watches one, set `COPILOT_SKILLS_DIR` or pass a custom
@@ -76,8 +88,10 @@ For Claude repo-level wiring without symlinks, add this shape to
 }
 ```
 
-See `docs/conventions/machines.md` for canonical local paths and env names, and
-`docs/conventions/linking.md` for symlink behavior.
+See [environment conventions](docs/conventions/environments.md) for validation
+commands. The documentation checks validate YAML frontmatter, the skill index,
+and local Markdown link targets. They also run through the `skill-docs`
+pre-commit hook.
 
 ## Optional kernel evidence
 
