@@ -5,9 +5,12 @@ description: Use when committing, publishing LMDeploy PRs, or resolving branch a
 
 # Git And LMDeploy PR Conventions
 
-Conversation authorization covers the same action and destination across turns.
-A commit request alone does not authorize publishing. When an intended publish
-action lacks authorization, finish the local preparation before asking about it.
+Push or publish only with explicit user permission covering the changes and
+destination. That permission remains valid while completing the authorized
+action, including retries; a completed push does not authorize publishing later
+follow-up changes. A request to edit or update a skill alone does not authorize
+committing or pushing it. When publication is intended but permission is missing,
+finish the local preparation before asking.
 
 LMDeploy commit subjects and PR titles use **`<type>: <summary>`**, such as
 `fix: handle ...`, without a parenthesized scope. Other repositories retain their

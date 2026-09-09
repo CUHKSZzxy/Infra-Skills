@@ -16,18 +16,15 @@ paths, conda names, GPU IDs, private checkpoints/media, and proxy details in
 local artifacts. Supply multiline PR bodies with `--body-file` or a structured
 tool argument.
 
-Include an `## Assistance` section when requested or after confirmed manual
-review. For the current setup, use:
+The user's PR workflow includes human review. Include this assistance section:
 
 ```md
 ## Assistance
 
-Assisted with Codex + gpt-6-astra high
+Assisted with Codex + GPT-6-Astra High, reviewed manually
 ```
 
-Append `, reviewed manually` only when the user confirms that review. If the
-actual model or reasoning setting differs, reflect it in the note. Preserve an
-existing note unless the task calls for updating it.
+Preserve an existing note unless the task calls for updating it.
 
 For review fixes, verify the comment still applies to the current head and
 publish to that PR's head branch when authorized. If renaming a remote branch,

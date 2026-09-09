@@ -72,7 +72,7 @@ Periodically review the repo for accumulated complexity:
 - Did a reference become stale after an LMDeploy API change?
 - Can a repeated rule be removed or mechanics moved into an existing helper?
 - Does a mandatory step still protect a concrete contract, or can it be conditional?
-- Does a permission rule honor existing authorization for the same task?
+- Does publishing permission cover these changes, rather than an already-completed push?
 - Is the completion condition tied to the requested outcome and evidence?
 - Does guidance apply across the models using this repo, without stale model labels?
 - Does it preserve domain knowledge instead of coaching basic model capabilities?
