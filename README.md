@@ -20,6 +20,7 @@ boundaries and update loop.
 | `/lmdeploy-runtime-debugging` | Local or reproduced serving and worker failures |
 | `/pr-workflow` | Workspace commit/push and LMDeploy PR workflow |
 | `/profile-serving-timeline` | Short LMDeploy, vLLM, and SGLang trace capture and bottleneck diagnosis |
+| `/torch-profiler-layer-track` | Verified layer guides and compact GPU display lanes for existing Torch Profiler traces |
 | `/review-code` | LMDeploy contract review and optional maintainer corpus evidence |
 | `/support-new-model` | New LLM/VLM PyTorch backend support |
 | `/optimize-kernel` | CUDA/Triton kernel correctness, optimization, and NCU evidence |
@@ -104,3 +105,7 @@ git submodule update --init external/KernelWiki external/ncu-report-skill
 
 These submodules are support material for `optimize-kernel`; `link_skills.sh`
 continues to expose only the skills owned by this repository.
+
+## References
+
+- [BBuf/AI-Infra-Auto-Driven-SKILLS](https://github.com/BBuf/AI-Infra-Auto-Driven-SKILLS)

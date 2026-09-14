@@ -39,6 +39,9 @@ capture after their dumps finish; leave pre-existing services running.
 
 ## Analysis
 
+For layer-number guides or fewer GPU display lanes in an existing trace, use
+[torch-profiler-layer-track](../torch-profiler-layer-track/SKILL.md).
+
 The dependency-free `scripts/summarize_torch_trace.py` accepts trace paths,
 `--step-regex`, and repeated `--group NAME=REGEX`. Resolve the script from
 `INFRA_SKILLS_HOME` in [machine conventions](../../docs/conventions/machines.md).

@@ -30,6 +30,12 @@ For changed scripts, run their affected test modules. Use the full
 `unittest discover -s tests` suite for shared helpers or cross-skill changes;
 passing documentation checks does not establish agent behavior.
 
+The imported layer-track helper tests use `pytest` in the `dev` environment:
+
+```bash
+"$CONDA_ROOT/envs/dev/bin/python" -m pytest tests/test_torch_profiler_layer_track.py tests/test_compact_gpu_tracks.py
+```
+
 On shared storage, add `-c safe.directory="$INFRA_SKILLS_HOME"` to Git commands
 when ownership requires it. Run targeted hooks only when `pre-commit` is
 installed in `dev`:
