@@ -9,6 +9,19 @@ Use `profile-serving-timeline` for short LMDeploy, vLLM, or SGLang traces,
 `optimize-kernel` after a kernel hotspot is known, and `benchmark-accuracy` for
 dataset correctness.
 
+## Client Selection
+
+- Use the bundled client for ShareGPT, random, or image/text benchmarks.
+- For EvalScope `perf`, including live or prebuilt SWE-Smith multi-turn workloads,
+  follow [EvalScope benchmarking](references/evalscope.md).
+- For InferenceX agentic trace replay, use the AgentX Harness fork of AIPerf;
+  follow [InferenceX benchmarking](references/inferencex.md).
+
+Preserve a user-supplied client's workload semantics. Do not replace it with a
+custom request loop or silently change dataset construction, warmup, or cache
+busting. Compare server variants within the same client and workload; results
+from different harnesses are not directly interchangeable.
+
 ## Measurement Contract
 
 Use [artifact conventions](../../docs/conventions/benchmark-artifacts.md) for
@@ -24,13 +37,18 @@ leave unavailable facts as `unknown` or `null`.
   seed, SLO, warmup/trial counts, and multimodal image count/resolution/content.
   Include a default/disabled or high-limit variant when admission, queue, or
   flow-control limits might cap throughput.
-- Warm the exact measured batch size, graph key, and feature path before timing;
-  a smaller warmup may leave lazy setup in the first sample.
+- For steady-state measurements, warm the exact measured batch size, graph key,
+  and feature path before timing; smaller warmups may leave lazy setup in the
+  first sample. For an explicitly cold-cache or no-client-warmup workload,
+  preserve that policy, restart each server variant, and label the result.
+  Engine initialization still runs; a fresh server does not clear external KV
+  stores. Record their reset/isolation policy when present.
 - Record GPU memory, utilization, power, and clocks per variant. Reject
   contamination from other processes. If a sweep rotates jobs across GPUs,
   wait for its controller rather than relying on a momentarily idle sample.
-- For optimization claims, use at least three post-warmup trials and report
-  variance. Deltas below roughly 3-5% need measured low variance.
+- For optimization claims, use at least three trials under the same declared
+  warmup/cache policy and report variance. Alternate baseline/candidate order.
+  Deltas below roughly 3-5% need measured low variance.
   Include boundary/small loads for shape-dependent dispatch.
 - Truncated checkpoints do not establish speculative-decoding throughput when
   acceptance is unrepresentative. Disable MTP for that comparison or report
@@ -39,7 +57,9 @@ leave unavailable facts as `unknown` or `null`.
 Save exact commands under `context/commands/` before running; bundled helpers do
 this automatically. Keep server/client logs in the run folder with labels for
 model, parallelism, feature, dataset, output length, and prompt count. Use
-`collect_bench.py` for comparison CSVs; report failed or skipped variants too.
+`collect_bench.py` for bundled-client comparison CSVs; use the native exports
+in the references for EvalScope and InferenceX. Report failed or skipped
+variants too.
 If performance regresses, use the observed startup, queue, prefill, or decode
 signal to choose the next focused investigation.
 
