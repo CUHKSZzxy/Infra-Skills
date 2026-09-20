@@ -44,11 +44,11 @@ behavior; consult another runtime when it resolves a specific porting ambiguity.
 
 For implementation, verify generation/parity for the new architecture and
 modalities. After an op replacement or simplification that changes computation,
-rerun affected numeric
-parity. For shared modules, check the existing supported model as well. Choose
-relevant tests and small pipeline requests; broad VL suites are conditional on
-shared impact. Keep public tests portable if local cached media/checkpoints
-were used for validation, and report unavailable parity evidence.
+rerun affected numeric parity. For shared modules, check the existing supported
+model as well. Choose relevant tests and small pipeline requests; broad VL
+suites are conditional on shared impact. Keep public tests portable if local
+cached media/checkpoints were used for validation, and report unavailable
+parity evidence.
 
 For review, assess the affected contracts and supplied evidence; run additional
 checks when needed to resolve a concrete finding.

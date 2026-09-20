@@ -62,6 +62,4 @@ behavior unless they own the failure.
 
 For a fix, remove temporary probes and validate with the original reproduction
 plus checks for affected behavior. For diagnosis only, report the evidence-backed
-boundary, remaining uncertainty, and next useful step. Progress updates need
-only the strongest new signal and what it changes; final reports should state
-what was tested and any unresolved production or validation risk.
+boundary, validation gaps, and next useful step.

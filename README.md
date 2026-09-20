@@ -2,10 +2,8 @@
 
 Personal skills for LMDeploy development.
 
-This repo is also a small heuristic-learning layer for LMDeploy work: recurring
-feedback from sessions is compressed into triggerable skills, references,
-or scripts. See `docs/heuristic-learning.md` for the
-boundaries and update loop.
+Keep recurring lessons in skills, references, or reusable scripts. See the
+[learning policy](docs/heuristic-learning.md) for scope and validation.
 
 ## Skills
 

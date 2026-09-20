@@ -11,7 +11,3 @@ description: Use when applying workspace coding preferences or planning shared-G
   for non-obvious arguments. Existing subsystem conventions take precedence.
 - Avoid speculative compatibility paths and guards without a concrete failure
   mode. Keep unrelated style changes out of the patch.
-
-Continue through the requested result and its relevant validation. After checks
-pass, broaden testing only for new failures or unresolved concerns. Keep reports
-concise: outcome, supporting evidence, and material gaps.

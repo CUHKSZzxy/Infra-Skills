@@ -5,9 +5,6 @@ description: Use when reviewing LMDeploy changes against backend contracts or ma
 
 # LMDeploy Review Evidence
 
-Use this for LMDeploy-specific review context. Ordinary code review does not
-need a separate tutorial or smell-catalog pass.
-
 Relevant contracts depend on the diff: model/quantization and VLM preprocessing,
 public APIs/CLI, PyTorch/TurboMind ownership, KV accounting, CUDA graphs, worker
 lifecycle, async abort/end, and fallback behavior. Load an implementation skill

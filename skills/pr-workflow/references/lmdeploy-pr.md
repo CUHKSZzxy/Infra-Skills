@@ -1,7 +1,6 @@
 # LMDeploy PR Conventions
 
 Use for LMDeploy PR publication, review fixes, or remote-history repair.
-Conversation authorization is governed by [the entry point](../SKILL.md).
 
 ## Branch And Body
 
@@ -9,6 +8,16 @@ Prefer branch names such as `fix/<summary>`, `feat/<summary>`, or
 `docs/<summary>`. Commit and PR titles use the unscoped `<type>: <summary>`
 format. Review the delta from the target branch's merge base; a two-dot file
 diff can include base-side drift.
+
+## PR Description
+
+- Follow the PR template; explain the problem, why the change is needed, and
+  resulting behavior. Link relevant issues or reproductions.
+- Keep prose brief and direct; omit diff narration, repeated summaries, and
+  task history.
+- Report checks actually run, results, and missing coverage. Include regression
+  evidence or comparable measurements when relevant.
+- Make only claims the contributor has reviewed and can explain.
 
 Keep reviewer-facing validation portable. Summarize intent and result; exact
 commands belong in the PR only when useful in a normal checkout. Keep machine
